@@ -1,0 +1,54 @@
+﻿@model Carisma.Models.Osoba
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Osoba</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.email)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.email)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.lozinka)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.lozinka)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.broj_telefona)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.broj_telefona)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.korisnicko_ime)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.korisnicko_ime)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.uloga)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.uloga)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.blokiran)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.blokiran)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
