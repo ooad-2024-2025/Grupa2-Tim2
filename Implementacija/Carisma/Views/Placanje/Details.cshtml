@@ -1,0 +1,42 @@
+﻿@model Carisma.Models.Placanje
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Placanje</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.iznos)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.iznos)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.datumPlacanja)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.datumPlacanja)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.statusPlacanja)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.statusPlacanja)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.brojKartice)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.brojKartice)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

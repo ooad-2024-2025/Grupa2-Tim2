@@ -32,6 +32,7 @@ namespace Carisma.Data
         //public DbSet<Carisma.Models.Podrska> Podrska { get; set; } = default!;
         //public DbSet<Osoba> Osoba { get; set; }
         public DbSet<Rezervacija> Rezervacija { get; set; }
+        public DbSet<Carisma.Models.Placanje> Placanje { get; set; } = default!;
 
         
 
