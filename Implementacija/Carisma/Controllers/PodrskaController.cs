@@ -1,17 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Carisma.Data;
+using Carisma.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Carisma.Data;
-using Carisma.Models;
 using System;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 
 namespace Carisma.Controllers
 {
+    [Authorize]
     public class PodrskaController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -59,72 +61,69 @@ namespace Carisma.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Pitanje,DatumPostavljanja,Odgovor,Status,DatumOdgovora")] Podrska podrska)
+        public async Task<IActionResult> Create([Bind("Pitanje")] Podrska podrska)
         {
-            //////////////////////SLEDECE cetiri LINIJE NAKNADNO(NISU BILE TU)
-            ///
-
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-            if (userId == null)
+            if (!User.Identity.IsAuthenticated)
             {
-                // Niko nije prijavljen, preusmjeri ili vrati grešku
-                return Unauthorized();
+                return RedirectToAction("Login", "Account");  // Preusmjeri na login ako korisnik nije prijavljen
             }
 
-            // Pronađi Osoba entitet koji ima taj Identity korisnički ID
-            var korisnik = await _context.Osoba.FirstOrDefaultAsync(o => o.korisnicko_ime== userId);
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var korisnik = await _context.Osoba.FirstOrDefaultAsync(o => o.korisnicko_ime == userId);
 
             if (korisnik == null)
             {
-                // Prijavljeni korisnik nije pronađen u Osoba tabeli - možda nije registrovan?
-                return Unauthorized();
+                TempData["Error"] = "Niste registrovani u sistemu!";
+                return RedirectToAction("Index", "Home");
             }
-
-            // Postavi korisnika u zahtev za podršku
-            podrska.Korisnik = korisnik;
-
-            podrska.Status = statusZahtjeva.Otvoren;
-            podrska.Odgovor = " ";
-            podrska.DatumPostavljanja = DateTime.Now;
-            ///////////////do ovde sam dodavala!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             if (ModelState.IsValid)
             {
+                podrska.Korisnik = korisnik;
+                podrska.Status = statusZahtjeva.Otvoren;
+                podrska.Odgovor = " ";
+                podrska.DatumPostavljanja = DateTime.Now;
+
                 _context.Add(podrska);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(podrska);
         }
 
-
         [HttpPost]
-        
-        public async Task<IActionResult> podrskaKorisniku(Osoba korisnik, String pitanje)
+
+        public async Task<IActionResult> podrskaKorisniku(string pitanje)
         {
-            if (korisnik==null || String.IsNullOrEmpty(pitanje))
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId == null || string.IsNullOrWhiteSpace(pitanje))
             {
-                return NotFound("Neispravan unos!");
+                return BadRequest("Neispravan zahtjev.");
+            }
+
+            var korisnik = await _context.Osoba.FirstOrDefaultAsync(o => o.korisnicko_ime == userId);
+            if (korisnik == null)
+            {
+                return Unauthorized();
             }
 
             var noviZahtev = new Podrska
             {
-                Korisnik = korisnik,
+                KorisnikId = korisnik.Id,
                 Pitanje = pitanje,
                 DatumPostavljanja = DateTime.Now,
                 Status = statusZahtjeva.Otvoren
-
             };
 
             _context.Podrska.Add(noviZahtev);
             await _context.SaveChangesAsync();
 
-
             evidentirajInterakciju();
 
             return Ok("Zahtjev je primljen");
-            }
+        }
 
         private void evidentirajInterakciju()
         {
