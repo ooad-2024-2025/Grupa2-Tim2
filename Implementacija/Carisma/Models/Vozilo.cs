@@ -23,6 +23,8 @@ namespace Carisma.Models
 
         public Osoba Osoba { get; set; }
 
+        public Vozilo() { }
+
         [Required(ErrorMessage = "Polje Status je obavezno.")]
         [EnumDataType(typeof(Dostupnost))]
         public Dostupnost Status { get; set; }

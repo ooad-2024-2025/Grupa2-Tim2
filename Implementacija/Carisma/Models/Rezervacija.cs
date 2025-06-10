@@ -1,21 +1,24 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Carisma.Models
 {
     public class Rezervacija
     {
+        [Key]
         public int Id { get; set; }
+
+        [Required(ErrorMessage = "Datum početka je obavezan.")]
         public DateTime datumPocetka { get; set; }
+
+        [Required(ErrorMessage = "Datum završetka je obavezan.")]
         public DateTime datumZavrsetka { get; set; }
 
         public DateTime datumRezervacije { get; set; } = DateTime.Now;
         public StatusRezervacije Status { get; set; } = StatusRezervacije.UToku;
         public Osoba? korisnik { get; set; }
         public double cijena { get; set; } = 0.0;
-        //public Placanje placanje {get; set; }
-
-        //public Vozilo vozilo { get; set; }
-
+        
         public int? korisnikId { get; set; }  // nullable ako je opcionalno
         [ForeignKey("korisnikId")]
        // public Osoba? korisnik { get; set; }
@@ -23,6 +26,8 @@ namespace Carisma.Models
         public int voziloId { get; set; }
         [ForeignKey("voziloId")]
         public Vozilo vozilo { get; set; }
+
+        public Rezervacija() { }
 
 
 

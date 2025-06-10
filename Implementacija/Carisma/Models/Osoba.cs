@@ -4,77 +4,29 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Carisma.Models
 {
-    /*
+   
     public class Osoba
     {
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        public string Email { get; set; }
-
-        public string? Kontakt { get; set; }
-        public string Telefon { get; set; }
-        public string? Kontofile { get; set; }
-
-        public Uloga Uloga { get; set; } = Uloga.RegistrovaniKorisnik;
-        public string? IdKorisnika { get; set; }
-
-
-
-
-        public virtual ICollection<Vozilo> Vozila { get; set; } = new List<Vozilo>();
-
-        // Poslovna logika
-        public void KontaktirajPodrsku(string poruka)
-        {
-            Console.WriteLine($"Poruka podršci: {poruka}");
-        }
-
-        public bool Registruj()
-        {
-            this.Uloga = Uloga.RegistrovaniKorisnik;
-            return true;
-        }
-
-        public void PregledajKorisnika()
-        {
-            Console.WriteLine($"Korisnik: {Email}, Uloga: {Uloga}");
-        }
-
-        public bool AzurirajVozilo(int voziloId, Vozilo novoVozilo)
-        {
-            var vozilo = Vozila.FirstOrDefault(v => v.Id == voziloId);
-            if (vozilo != null)
-            {
-                vozilo.Marka = novoVozilo.Marka;
-                vozilo.Model = novoVozilo.Model;
-                return true;
-            }
-            return false;
-        }
-    }
-    */
-
-
-    public class Osoba
-    {
-        [Key]
-        public int Id { get; set; }
+        [Required(ErrorMessage = "Email je obavezan.")]
+        [EmailAddress(ErrorMessage = "Unesite ispravan format email adrese.")]
+        
         public String email { get; set; }
         public String lozinka { get; set; }
+
+        [Phone(ErrorMessage = "Unesite ispravan format telefonskog broja.")]
+        [StringLength(20, ErrorMessage = "Broj telefona ne smije biti duži od 20 karaktera.")]
         public String broj_telefona { get; set; }
+
+        [Required(ErrorMessage = "Korisničko ime je obavezno.")]
+        [StringLength(50, MinimumLength = 3, ErrorMessage = "Korisničko ime mora imati između 3 i 50 karaktera.")]
         public String korisnicko_ime { get; set; }
         public Uloga? uloga { get; set; }
         public bool blokiran { get; set; } = false;
-        //public bool prihvacena { get; set; } = false;
 
-        /*
-        public void kontaktirajPodrsku()
-        {
-            Console.WriteLine("Kontaktirali ste korisnčku podršku.");
-        }
-        */
+        public Osoba() { }
         public void registracija()
         {
             Console.WriteLine("Registracija korisnika započeta." + korisnicko_ime);
@@ -113,32 +65,7 @@ namespace Carisma.Models
             Console.WriteLine($"Broj uspjesnih placanja je: {brojUspjesnihPlacanja}");
         }
 
-        /*public void pretraziVozila()
-        {
-            Console.WriteLine("Pretrazujem vozilo...");
-        }*/
-
-        /*
-        public bool platiOnline(double iznos, bool doznaka)
-        {
-            if (doznaka == true)
-            {
-                Console.WriteLine("Online placanje izvrseno.");
-                return true;
-            }
-            else
-            {
-                Console.WriteLine("Kartica odbijena");
-                return false;
-            }
-        }
-        */
-
-        /*public bool azurirajVozilo(int id, Vozilo novoVozilo)
-        {
-            Console.WriteLine("Azuriranje vozila");
-            return true;
-        }*/
+        
 
     }
 }
