@@ -22,10 +22,10 @@
                 <input asp-for="datumPlacanja" class="form-control" />
                 <span asp-validation-for="datumPlacanja" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="statusPlacanja" class="control-label"></label>
-                <select asp-for="statusPlacanja" class="form-control"></select>
-                <span asp-validation-for="statusPlacanja" class="text-danger"></span>
+           <div class="form-group">
+        <label asp-for="statusPlacanja" class="control-label"></label>
+         <select asp-for="statusPlacanja" class="form-control" asp-items="Html.GetEnumSelectList<StatusPlacanja>()"></select>
+         <span asp-validation-for="statusPlacanja" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="brojKartice" class="control-label"></label>

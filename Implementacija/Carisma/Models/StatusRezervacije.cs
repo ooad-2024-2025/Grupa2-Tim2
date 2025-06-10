@@ -1,7 +1,16 @@
-﻿namespace Carisma.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Carisma.Models
 {
     public enum StatusRezervacije
     {
-        Kreirana, UToku, Zavrsena, Otkazana
+        [Display(Name = "Kreirana")]
+        Kreirana,
+        [Display(Name = "U toku")]
+        UToku,
+        [Display(Name = "Završena")]
+        Zavrsena,
+        [Display(Name = "Otkazana")]
+        Otkazana
     }
 }

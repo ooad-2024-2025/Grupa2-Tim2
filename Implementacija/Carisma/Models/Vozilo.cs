@@ -18,32 +18,19 @@ namespace Carisma.Models
 
         public double CijenaPoDanu { get; set; }
 
-        //public bool Dostupnost { get; set; }
-
         [ForeignKey("Osoba")]
         public int OsobaId { get; set; }
 
-        public virtual Osoba Osoba { get; set; }
+        public Osoba Osoba { get; set; }
 
+        [Required(ErrorMessage = "Polje Status je obavezno.")]
+        [EnumDataType(typeof(Dostupnost))]
         public Dostupnost Status { get; set; }
-
-
 
         public bool jeDostupno()
         {
-            return true; 
+            return Status == Dostupnost.Dostupno;
         }
-        /*
-        public Rezervacija rezervisiVozilo(Vozilo vozilo, DateTime datum)
-        {
-            return new Rezervacija
-            {
-                Vozilo = vozilo,
-                DatumRezervacije = datum,
-                Osoba = this
-            };
-        }
-        */
 
         public bool azurirajVozilo(int id, Vozilo novoVozilo)
         {

@@ -1,7 +1,16 @@
-﻿namespace Carisma.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Carisma.Models
 {
     public enum Dostupnost
     {
-        Dostupno, NijeDostupno, NaServisu
+        [Display(Name = "Dostupno")]
+        Dostupno,
+
+        [Display(Name = "Nije dostupno")]
+        NijeDostupno,
+
+        [Display(Name = "U servisu")]
+        UServisu
     }
 }

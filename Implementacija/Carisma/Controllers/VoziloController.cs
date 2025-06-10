@@ -60,12 +60,12 @@ namespace Carisma.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Marka,Model,Godina,CijenaPoDanu,OsobaId,Status")] Vozilo vozilo)
         {
-            if (ModelState.IsValid)
-            {
+           // if (ModelState.IsValid)
+          //  {
                 _context.Add(vozilo);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            }
+           // }
             ViewData["OsobaId"] = new SelectList(_context.Osoba, "Id", "Id", vozilo.OsobaId);
             return View(vozilo);
         }
