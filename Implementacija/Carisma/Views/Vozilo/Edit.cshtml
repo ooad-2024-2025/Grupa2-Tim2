@@ -1,59 +1,176 @@
 ﻿@model Carisma.Models.Vozilo
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Izmijeni vozilo";
 }
 
-<h1>Edit</h1>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-white">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-edit me-2"></i>
+                        Izmijeni vozilo
+                    </h3>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Poruka"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["Poruka"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
 
-<h4>Vozilo</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Marka" class="control-label"></label>
-                <input asp-for="Marka" class="form-control" />
-                <span asp-validation-for="Marka" class="text-danger"></span>
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Napomena!</strong> Uredite željene informacije o vozilu.
+                    </div>
+
+                    <form asp-action="Edit">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="bg-light p-4 rounded">
+                            <h5 class="text-primary mb-3">
+                                <i class="fas fa-car me-2"></i>
+                                Detalji vozila
+                            </h5>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-4">
+                                    <strong class="text-muted">Marka:</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input asp-for="Marka" class="form-control" placeholder="Unesite marku vozila..." />
+                                    <span asp-validation-for="Marka" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-4">
+                                    <strong class="text-muted">Model:</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input asp-for="Model" class="form-control" placeholder="Unesite model vozila..." />
+                                    <span asp-validation-for="Model" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-4">
+                                    <strong class="text-muted">Godina:</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input asp-for="Godina" class="form-control" placeholder="npr. 2020" />
+                                    <span asp-validation-for="Godina" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-4">
+                                    <strong class="text-muted">Cijena po danu:</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input asp-for="CijenaPoDanu" class="form-control" placeholder="0.00" />
+                                    <span asp-validation-for="CijenaPoDanu" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-4">
+                                    <strong class="text-muted">Status:</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <select asp-for="Status" class="form-control">
+                                        <option value="0">Dostupno</option>
+                                        <option value="1">Nedostupno</option>
+                                        <option value="2">U servisu</option>
+                                    </select>
+                                    <span asp-validation-for="Status" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-light">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <a asp-action="Index" class="btn btn-secondary btn-lg">
+                                        <i class="fas fa-arrow-left me-2"></i>
+                                        Nazad na listu
+                                    </a>
+                                </div>
+
+                                <div>
+                                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info btn-lg me-2">
+                                        <i class="fas fa-eye me-2"></i>
+                                        Pregled
+                                    </a>
+
+                                    <button type="submit" class="btn btn-success btn-lg">
+                                        <i class="fas fa-save me-2"></i>
+                                        Sačuvaj izmjene
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Model" class="control-label"></label>
-                <input asp-for="Model" class="form-control" />
-                <span asp-validation-for="Model" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Godina" class="control-label"></label>
-                <input asp-for="Godina" class="form-control" />
-                <span asp-validation-for="Godina" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CijenaPoDanu" class="control-label"></label>
-                <input asp-for="CijenaPoDanu" class="form-control" />
-                <span asp-validation-for="CijenaPoDanu" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OsobaId" class="control-label"></label>
-                <select asp-for="OsobaId" class="form-control" asp-items="ViewBag.OsobaId"></select>
-                <span asp-validation-for="OsobaId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-control"></select>
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<style>
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+
+    .card-header {
+        border-radius: 10px 10px 0 0 !important;
+    }
+
+    .btn-lg {
+        padding: 12px 24px;
+        font-size: 1.1rem;
+    }
+
+    .badge {
+        font-size: 0.9rem;
+    }
+
+    .alert {
+        border-left: 4px solid #17a2b8;
+    }
+
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+
+    .text-muted {
+        color: #6c757d !important;
+    }
+
+    .shadow {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .form-control, .form-select {
+        border-radius: 5px;
+        border: 1px solid #ced4da;
+        padding: 8px 12px;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+</style>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

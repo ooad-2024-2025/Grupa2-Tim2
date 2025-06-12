@@ -1,54 +1,124 @@
 ﻿@model Carisma.Models.Vozilo
-
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalji vozila";
 }
 
-<h1>Details</h1>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-car me-2"></i>
+                        Detalji vozila
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="bg-light p-4 rounded">
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong class="text-muted">Marka:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                <span class="badge bg-primary fs-6">@Html.DisplayFor(model => model.Marka)</span>
+                            </div>
+                        </div>
 
-<div>
-    <h4>Vozilo</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Marka)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Marka)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Model)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Model)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Godina)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Godina)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CijenaPoDanu)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CijenaPoDanu)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Osoba)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Osoba.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-    </dl>
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong class="text-muted">Model:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                <span class="text-dark">@Html.DisplayFor(model => model.Model)</span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong class="text-muted">Godina:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                <span class="badge bg-secondary">@Html.DisplayFor(model => model.Godina)</span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong class="text-muted">Cijena po danu:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                <span class="text-success fw-bold fs-5">
+                                    @Html.DisplayFor(model => model.CijenaPoDanu) KM
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong class="text-muted">Status:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                <span class="badge bg-info">@Html.DisplayFor(model => model.Status)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-light">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <a asp-action="Index" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Nazad na listu
+                            </a>
+                        </div>
+
+                        <div>
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-lg me-2">
+                                <i class="fas fa-edit me-2"></i>
+                                Izmijeni
+                            </a>
+
+                            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger btn-lg">
+                                <i class="fas fa-trash-alt me-2"></i>
+                                Obriši
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+
+    .card-header {
+        border-radius: 10px 10px 0 0 !important;
+    }
+
+    .btn-lg {
+        padding: 12px 24px;
+        font-size: 1.1rem;
+    }
+
+    .badge {
+        font-size: 0.9rem;
+    }
+
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+
+    .text-muted {
+        color: #6c757d !important;
+    }
+
+    .shadow {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+</style>

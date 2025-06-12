@@ -1,59 +1,140 @@
 ﻿@model Carisma.Models.Vozilo
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Dodaj novo vozilo";
 }
 
-<h1>Create</h1>
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex align-items-center">
+                        <p class="mb-0">Dodavanje novog vozila</p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-<h4>Vozilo</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Marka" class="control-label"></label>
-                <input asp-for="Marka" class="form-control" />
-                <span asp-validation-for="Marka" class="text-danger"></span>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Marka" class="form-control-label">Marka vozila</label>
+                                    <select asp-for="Marka" class="form-control" id="markaSelect">
+                                        <option value="">Izaberite marku</option>
+                                        <option value="Audi">Audi</option>
+                                        <option value="BMW">BMW</option>
+                                        <option value="Mercedes">Mercedes</option>
+                                        <option value="Volkswagen">Volkswagen</option>
+                                        <option value="Toyota">Toyota</option>
+                                        <option value="Honda">Honda</option>
+                                        <option value="Ford">Ford</option>
+                                        <option value="Renault">Renault</option>
+                                        <option value="Peugeot">Peugeot</option>
+                                        <option value="Fiat">Fiat</option>
+                                    </select>
+                                    <span asp-validation-for="Marka" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Model" class="form-control-label">Model vozila</label>
+                                    <input asp-for="Model" class="form-control" placeholder="Unesite model vozila" />
+                                    <span asp-validation-for="Model" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Godina" class="form-control-label">Godina proizvodnje</label>
+                                    <input asp-for="Godina" type="number" class="form-control" min="1990" max="2024" placeholder="2020" />
+                                    <span asp-validation-for="Godina" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="CijenaPoDanu" class="form-control-label">Cijena po danu (KM)</label>
+                                    <input asp-for="CijenaPoDanu" type="number" step="0.01" class="form-control" placeholder="50.00" />
+                                    <span asp-validation-for="CijenaPoDanu" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="OsobaId" class="form-control-label">Vlasnik vozila</label>
+                                    <select asp-for="OsobaId" class="form-control" asp-items="ViewBag.OsobaId">
+                                        <option value="">Izaberite vlasnika</option>
+                                    </select>
+                                    <span asp-validation-for="OsobaId" class="text-danger"></span>
+                                </div>
+                           </div>
+                       
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Status" class="form-control-label">Status vozila</label>
+                                    <select asp-for="Status" class="form-control">
+                                        <option value="0">Dostupno</option>
+                                        <option value="1">Nedostupno</option>
+                                        <option value="2">U servisu</option>
+                                    </select>
+                                    <span asp-validation-for="Status" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                  
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Nazad na listu
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Sačuvaj vozilo
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Model" class="control-label"></label>
-                <input asp-for="Model" class="form-control" />
-                <span asp-validation-for="Model" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Godina" class="control-label"></label>
-                <input asp-for="Godina" class="form-control" />
-                <span asp-validation-for="Godina" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CijenaPoDanu" class="control-label"></label>
-                <input asp-for="CijenaPoDanu" class="form-control" />
-                <span asp-validation-for="CijenaPoDanu" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OsobaId" class="control-label"></label>
-                <select asp-for="OsobaId" class ="form-control" asp-items="ViewBag.OsobaId"></select>
-             <div class="form-group">
-        <label asp-for="Status"></label>
-        <select asp-for="Status" asp-items="Html.GetEnumSelectList<Dostupnost>()" class="form-control">
-            <option value="">-- Odaberi status --</option>
-        </select>
-        <span asp-validation-for="Status" class="text-danger"></span>
+        </div>
     </div>
-
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Update image preview when marka or model changes
+        $('#markaSelect, input[name="Model"]').on('change keyup', function() {
+            var marka = $('#markaSelect').val();
+            var model = $('input[name="Model"]').val();
+
+            if (marka && model) {
+                var imageName = marka.toLowerCase() + '-' + model.toLowerCase().replace(/\s+/g, '-') + '.jpg';
+                var imagePath = '/images/vozila/' + imageName;
+
+                // Check if image exists, otherwise use default
+                var img = new Image();
+                img.onload = function() {
+                    $('#voziloPreview').attr('src', imagePath);
+                };
+                img.onerror = function() {
+                    $('#voziloPreview').attr('src', '/images/vozila/default-car.jpg');
+                };
+                img.src = imagePath;
+            } else {
+                $('#voziloPreview').attr('src', '/images/vozila/default-car.jpg');
+            }
+        });
+    </script>
 }

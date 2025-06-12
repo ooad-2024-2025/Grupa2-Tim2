@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -8,7 +9,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Carisma.styles.css" asp-append-version="true" />
 
-    <!-- Modern Layout Styles -->
+    <!-- Modern Pink Layout Styles -->
     <style>
         * {
             margin: 0;
@@ -18,7 +19,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #f8b500 100%);
             min-height: 100vh;
         }
 
@@ -26,7 +27,7 @@
             background: rgba(255, 255, 255, 0.95) !important;
             backdrop-filter: blur(20px);
             border: none !important;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+            box-shadow: 0 8px 32px rgba(255, 105, 180, 0.2) !important;
             transition: all 0.3s ease;
             position: sticky;
             top: 0;
@@ -36,7 +37,7 @@
             .modern-navbar .navbar-brand {
                 font-weight: 800;
                 font-size: 1.8rem;
-                background: linear-gradient(45deg, #667eea, #764ba2);
+                background: linear-gradient(45deg, #ff69b4, #ff1493);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
@@ -49,7 +50,7 @@
                 }
 
             .modern-navbar .nav-link {
-                color: #495057 !important;
+                color: #c44569 !important;
                 font-weight: 500;
                 margin: 0 0.5rem;
                 padding: 0.75rem 1rem !important;
@@ -66,7 +67,7 @@
                     left: -100%;
                     width: 100%;
                     height: 100%;
-                    background: linear-gradient(45deg, #667eea, #764ba2);
+                    background: linear-gradient(45deg, #ff69b4, #ff1493);
                     transition: all 0.3s ease;
                     z-index: -1;
                     border-radius: 50px;
@@ -79,18 +80,18 @@
                 .modern-navbar .nav-link:hover {
                     color: white !important;
                     transform: translateY(-2px);
-                    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+                    box-shadow: 0 8px 25px rgba(255, 105, 180, 0.4);
                 }
 
         .navbar-toggler {
             border: none !important;
             padding: 0.5rem;
             border-radius: 10px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, #ff69b4, #ff1493);
         }
 
             .navbar-toggler:focus {
-                box-shadow: 0 0 15px rgba(102, 126, 234, 0.5);
+                box-shadow: 0 0 15px rgba(255, 105, 180, 0.5);
             }
 
         .navbar-toggler-icon {
@@ -103,11 +104,11 @@
         }
 
         .content-wrapper {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 60px rgba(255, 105, 180, 0.2);
+            border: 1px solid rgba(255, 192, 203, 0.3);
             padding: 2rem;
             margin: 1rem;
             transition: all 0.3s ease;
@@ -115,11 +116,11 @@
 
             .content-wrapper:hover {
                 transform: translateY(-5px);
-                box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15);
+                box-shadow: 0 30px 80px rgba(255, 105, 180, 0.3);
             }
 
         .modern-footer {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ff69b4 0%, #ff1493 50%, #c44569 100%);
             color: white;
             padding: 2rem 0;
             margin-top: auto;
@@ -140,13 +141,16 @@
             }
 
         @@keyframes footerFloat {
-            0%, 100% {
-                transform: translateX(0px);
-            }
+            0%, 100%
 
-            50% {
-                transform: translateX(20px);
-            }
+        {
+            transform: translateX(0px);
+        }
+
+        50% {
+            transform: translateX(20px);
+        }
+
         }
 
         .modern-footer .container {
@@ -170,19 +174,22 @@
 
         /* Responsive adjustments */
         @@media (max-width: 768px) {
-            .modern-navbar .nav-link {
-                margin: 0.25rem 0;
-                text-align: center;
-            }
+            .modern-navbar .nav-link
 
-            .content-wrapper {
-                margin: 0.5rem;
-                padding: 1.5rem;
-            }
+        {
+            margin: 0.25rem 0;
+            text-align: center;
+        }
 
-            .main-container {
-                padding: 1rem 0;
-            }
+        .content-wrapper {
+            margin: 0.5rem;
+            padding: 1.5rem;
+        }
+
+        .main-container {
+            padding: 1rem 0;
+        }
+
         }
 
         /* Custom scrollbar */
@@ -196,12 +203,12 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, #ff69b4, #ff1493);
             border-radius: 10px;
         }
 
             ::-webkit-scrollbar-thumb:hover {
-                background: linear-gradient(45deg, #5a67d8, #6b46c1);
+                background: linear-gradient(45deg, #ff1493, #c44569);
             }
 
         /* Loading animation for page transitions */
@@ -210,20 +217,23 @@
         }
 
         @@keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
+            from
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         }
 
         /* Login partial styles */
         .navbar-nav .nav-link.btn {
-            background: linear-gradient(45deg, #28a745, #20c997);
+            background: linear-gradient(45deg, #ff69b4, #ff1493);
             color: white !important;
             border-radius: 25px;
             padding: 0.5rem 1.5rem !important;
@@ -232,10 +242,85 @@
         }
 
             .navbar-nav .nav-link.btn:hover {
-                background: linear-gradient(45deg, #218838, #1ea97c);
+                background: linear-gradient(45deg, #ff1493, #c44569);
                 transform: translateY(-2px);
-                box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+                box-shadow: 0 8px 25px rgba(255, 105, 180, 0.4);
             }
+
+        /* Enhanced pink theme elements */
+        .btn-primary {
+            background: linear-gradient(45deg, #ff69b4, #ff1493) !important;
+            border: none !important;
+            border-radius: 25px !important;
+            padding: 0.75rem 2rem !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+        }
+
+            .btn-primary:hover {
+                background: linear-gradient(45deg, #ff1493, #c44569) !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 8px 25px rgba(255, 105, 180, 0.4) !important;
+            }
+
+        .card {
+            border: none !important;
+            border-radius: 20px !important;
+            box-shadow: 0 10px 30px rgba(255, 105, 180, 0.15) !important;
+            transition: all 0.3s ease !important;
+        }
+
+            .card:hover {
+                transform: translateY(-5px) !important;
+                box-shadow: 0 20px 50px rgba(255, 105, 180, 0.25) !important;
+            }
+
+        .form-control {
+            border: 2px solid rgba(255, 192, 203, 0.3) !important;
+            border-radius: 15px !important;
+            padding: 0.75rem 1rem !important;
+            transition: all 0.3s ease !important;
+        }
+
+            .form-control:focus {
+                border-color: #ff69b4 !important;
+                box-shadow: 0 0 15px rgba(255, 105, 180, 0.2) !important;
+            }
+
+        /* Table styling */
+        .table {
+            border-radius: 15px !important;
+            overflow: hidden !important;
+            box-shadow: 0 10px 30px rgba(255, 105, 180, 0.1) !important;
+        }
+
+            .table thead th {
+                background: linear-gradient(45deg, #ff69b4, #ff1493) !important;
+                color: white !important;
+                border: none !important;
+                font-weight: 600 !important;
+            }
+
+            .table tbody tr:hover {
+                background-color: rgba(255, 192, 203, 0.1) !important;
+            }
+
+        /* Alert styling */
+        .alert {
+            border: none !important;
+            border-radius: 15px !important;
+            border-left: 4px solid #ff69b4 !important;
+        }
+
+        .alert-success {
+            background: linear-gradient(45deg, rgba(255, 105, 180, 0.1), rgba(255, 192, 203, 0.1)) !important;
+            color: #c44569 !important;
+        }
+
+        .alert-danger {
+            background: linear-gradient(45deg, rgba(220, 20, 60, 0.1), rgba(255, 105, 180, 0.1)) !important;
+            color: #dc143c !important;
+        }
     </style>
 </head>
 <body>
@@ -385,7 +470,7 @@
         // Ripple animation
         const style = document.createElement('style');
         style.textContent = `
-            @@keyframes ripple {
+        @@keyframes ripple {
                 to {
                     transform: scale(4);
                     opacity: 0;
