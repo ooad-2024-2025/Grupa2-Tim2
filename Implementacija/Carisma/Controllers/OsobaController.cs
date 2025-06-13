@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Carisma.Data;
 using Carisma.Models;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace Carisma.Controllers
 {
@@ -20,12 +22,14 @@ namespace Carisma.Controllers
         }
 
         // GET: Osoba
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Osoba.ToListAsync());
         }
 
         // GET: Osoba/Details/5
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -44,6 +48,7 @@ namespace Carisma.Controllers
         }
 
         // GET: Osoba/Create
+        [Authorize(Roles = "Administrator")]
         public IActionResult Create()
         {
             return View();
@@ -54,6 +59,7 @@ namespace Carisma.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Create([Bind("Id,email,lozinka,broj_telefona,korisnicko_ime,uloga,blokiran")] Osoba osoba)
         {
             if (ModelState.IsValid)
@@ -66,6 +72,7 @@ namespace Carisma.Controllers
         }
 
         // GET: Osoba/Edit/5
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -86,6 +93,7 @@ namespace Carisma.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,email,lozinka,broj_telefona,korisnicko_ime,uloga,blokiran")] Osoba osoba)
         {
             if (id != osoba.Id)
@@ -117,6 +125,7 @@ namespace Carisma.Controllers
         }
 
         // GET: Osoba/Delete/5
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -135,6 +144,7 @@ namespace Carisma.Controllers
         }
 
         // POST: Osoba/Delete/5
+        [Authorize(Roles = "Administrator")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
