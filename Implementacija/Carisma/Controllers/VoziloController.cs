@@ -7,10 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Carisma.Data;
 using Carisma.Models;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace Carisma.Controllers
 {
+    
     public class VoziloController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -54,8 +56,15 @@ namespace Carisma.Controllers
         }
 
         // GET: Vozilo/Details/5
+        //
+        //[Authorize(Roles = "Administrator, Korisnik")]
+        //
         public async Task<IActionResult> Details(int? id)
         {
+            //
+           // return View(await _context.Vozila.ToListAsync());
+            //
+
             if (id == null)
             {
                 return NotFound();
@@ -73,6 +82,10 @@ namespace Carisma.Controllers
         }
 
         // GET: Vozilo/Create
+
+        //
+        [Authorize(Roles = "Administrator")]
+        //
         public IActionResult Create()
         {
             ViewData["OsobaId"] = new SelectList(_context.Osoba, "Id", "Id");
@@ -97,6 +110,8 @@ namespace Carisma.Controllers
         }
 
         // GET: Vozilo/Edit/5
+
+        [Authorize(Roles ="Administrator")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -155,6 +170,9 @@ namespace Carisma.Controllers
         }
 
         // GET: Vozilo/Delete/5
+
+
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -176,6 +194,8 @@ namespace Carisma.Controllers
         // POST: Vozilo/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
+        
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var vozilo = await _context.Vozila.FindAsync(id);
