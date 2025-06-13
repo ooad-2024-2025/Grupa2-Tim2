@@ -51,11 +51,14 @@ namespace Carisma.Controllers
         }
 
         // GET: Podrska/Create
+        
         public IActionResult Create()
         {
             return View();
         }
 
+
+        /*
         // POST: Podrska/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -68,8 +71,51 @@ namespace Carisma.Controllers
                 return RedirectToAction("Login", "Account");  // Preusmjeri na login ako korisnik nije prijavljen
             }
 
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            var korisnik = await _context.Osoba.FirstOrDefaultAsync(o => o.korisnicko_ime == userId);
+            //var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            //var korisnik = await _context.Osoba.FirstOrDefaultAsync(o => o.korisnicko_ime == userId);
+
+            var email = User.Identity.Name;
+            var korisnik = await _context.Osoba.FirstOrDefaultAsync(o => o.email == email);
+
+
+            if (korisnik == null)
+            {
+                TempData["Error"] = "Niste registrovani u sistemu!";
+                return RedirectToAction("Index", "Home");
+            }
+
+            if (ModelState.IsValid)
+            {
+                podrska.Korisnik = korisnik;
+                podrska.Status = statusZahtjeva.Otvoren;
+                podrska.Odgovor = " ";
+                podrska.DatumPostavljanja = DateTime.Now;
+
+                _context.Add(podrska);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(podrska);
+        }
+        */
+
+        //
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Pitanje")] Podrska podrska)
+
+        {
+            ///
+            ModelState.Remove("Korisnik");
+            //
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var email = User.Identity.Name;
+            var korisnik = await _context.Osoba.FirstOrDefaultAsync(o => o.email == email);
 
             if (korisnik == null)
             {
@@ -92,6 +138,10 @@ namespace Carisma.Controllers
             return View(podrska);
         }
 
+
+
+
+        //
         [HttpPost]
 
         public async Task<IActionResult> podrskaKorisniku(string pitanje)
@@ -104,6 +154,9 @@ namespace Carisma.Controllers
             }
 
             var korisnik = await _context.Osoba.FirstOrDefaultAsync(o => o.korisnicko_ime == userId);
+
+            
+            //
             if (korisnik == null)
             {
                 return Unauthorized();
@@ -137,6 +190,7 @@ namespace Carisma.Controllers
             _context.SaveChanges();
 
         }
+
         
 
         // GET: Podrska/Edit/5

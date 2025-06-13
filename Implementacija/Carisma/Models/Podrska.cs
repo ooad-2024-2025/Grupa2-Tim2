@@ -8,6 +8,7 @@
         public String? Odgovor { get; set; }
         public statusZahtjeva? Status { get; set; }
         public int KorisnikId { get; set; }  // Foreign key
+        
         public Osoba Korisnik { get; set; }  // Navigation property
 
         public DateOnly? DatumOdgovora { get; set; }

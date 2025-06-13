@@ -1,5 +1,5 @@
 ﻿@model Carisma.Models.Podrska
-
+@*
 @{
     ViewData["Title"] = "Create";
 }
@@ -12,6 +12,54 @@
     <div class="col-md-6">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Pitanje" class="control-label"></label>
+                <textarea asp-for="Pitanje" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Pitanje" class="text-danger"></span>
+            </div>
+
+            <!-- Polja ispod se uklanjaju iz forme jer ih puni kontroler -->
+            @* 
+            <input type="hidden" asp-for="DatumPostavljanja" />
+            <input type="hidden" asp-for="Odgovor" />
+            <input type="hidden" asp-for="Status" />
+            <input type="hidden" asp-for="DatumOdgovora" />
+            *@
+
+            @*
+            <div class="form-group">
+                <input type="submit" value="Pošalji zahtjev" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Nazad na listu</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+            *@
+
+
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Novi zahtjev za podršku</h1>
+
+<h4>Podrška</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="All" class="text-danger"></div>
 
             <div class="form-group">
                 <label asp-for="Pitanje" class="control-label"></label>
