@@ -61,12 +61,12 @@ namespace Carisma.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,datumPocetka,datumZavrsetka,datumRezervacije,Status,cijena,korisnikId,voziloId")] Rezervacija rezervacija)
         {
-            //if (ModelState.IsValid)
-           //{
+            if (ModelState.IsValid)
+           {
                 _context.Add(rezervacija);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            //}
+            }
             ViewData["korisnikId"] = new SelectList(_context.Osoba, "Id", "Id", rezervacija.korisnikId);
             ViewData["voziloId"] = new SelectList(_context.Vozila, "Id", "Marka", rezervacija.voziloId);
             return View(rezervacija);
@@ -102,8 +102,8 @@ namespace Carisma.Controllers
                 return NotFound();
             }
 
-           // if (ModelState.IsValid)
-           //{
+            if (ModelState.IsValid)
+           {
                 try
                 {
                     _context.Update(rezervacija);
@@ -121,7 +121,7 @@ namespace Carisma.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
-           // }
+            }
             ViewData["korisnikId"] = new SelectList(_context.Osoba, "Id", "Id", rezervacija.korisnikId);
             ViewData["voziloId"] = new SelectList(_context.Vozila, "Id", "Marka", rezervacija.voziloId);
             return View(rezervacija);

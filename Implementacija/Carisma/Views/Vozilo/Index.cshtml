@@ -19,8 +19,8 @@
                     </div>
                 </div>
 
-                <!-- Search Form -->
-                <div class="card-body px-4 pt-2 pb-2">
+               <!--  <!-- Search Form -->
+                <!--  <div class="card-body px-4 pt-2 pb-2">
                     <form asp-action="Pretrazi" method="get" class="row g-3">
                         <div class="col-md-8">
                             <input type="text" name="pojam" class="form-control" placeholder="Pretražite po marki ili modelu..." />
@@ -31,6 +31,58 @@
                             </button>
                         </div>
                     </form>
+                </div> -->
+                <!-- Search and Sort Form -->
+                <div class="card-body px-4 pt-2 pb-2">
+                    <form asp-action="Index" method="get" class="row g-3">
+                        <div class="col-md-6">
+                            <input type="text" name="pojam" class="form-control" placeholder="Pretražite po marki ili modelu..." value="@ViewData["SearchString"]" />
+                        </div>
+                        <div class="col-md-3">
+                            <select name="sortOrder" class="form-select">
+                                <option value="">Sortiranje po ceni</option>
+                                @if (ViewData["CurrentSort"]?.ToString() == "cijena_asc")
+                                {
+                                    <option value="cijena_asc" selected>Cena (najniža prvo)</option>
+                                }
+                                else
+                                {
+                                    <option value="cijena_asc">Cena (najniža prvo)</option>
+                                }
+                                @if (ViewData["CurrentSort"]?.ToString() == "cijena_desc")
+                                {
+                                    <option value="cijena_desc" selected>Cena (najviša prvo)</option>
+                                }
+                                else
+                                {
+                                    <option value="cijena_desc">Cena (najviša prvo)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="fas fa-search me-2"></i>Pretraži
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Quick Sort Links -->
+                <div class="card-body px-4 pt-0 pb-2">
+                    <div class="d-flex gap-2">
+                        <small class="text-muted me-2">Brzo sortiranje:</small>
+                        <a asp-action="Index" asp-route-sortOrder="cijena_asc" asp-route-pojam="@ViewData["SearchString"]"
+                           class="btn btn-sm btn-outline-success @(ViewData["CurrentSort"]?.ToString() == "cijena_asc" ? "active" : "")">
+                            <i class="fas fa-sort-amount-up me-1"></i>Najjeftiniji
+                        </a>
+                        <a asp-action="Index" asp-route-sortOrder="cijena_desc" asp-route-pojam="@ViewData["SearchString"]"
+                           class="btn btn-sm btn-outline-danger @(ViewData["CurrentSort"]?.ToString() == "cijena_desc" ? "active" : "")">
+                            <i class="fas fa-sort-amount-down me-1"></i>Najskuplji
+                        </a>
+                        <a asp-action="Index" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-undo me-1"></i>Resetuj
+                        </a>
+                    </div>
                 </div>
 
                 <div class="card-body px-0 pt-0 pb-2">
