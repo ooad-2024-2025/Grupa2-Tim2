@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Carisma.Controllers
 {
-    [Authorize]
+    
     public class PodrskaController : Controller
     {
         private readonly ApplicationDbContext _context;

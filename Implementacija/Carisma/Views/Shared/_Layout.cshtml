@@ -362,6 +362,25 @@
             </nav>
         </header>
     }
+    @*
+    @if (User.Identity.IsAuthenticated)
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Rezervacija"
+               asp-action="Index">Rezervacije</a>
+        </li>
+    }
+
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Vozilo"
+               asp-action="Index">Vozila</a>
+        </li>
+    }
+
+    *@
 
     <div class="main-container">
         <div class="container d-flex flex-column h-100">
