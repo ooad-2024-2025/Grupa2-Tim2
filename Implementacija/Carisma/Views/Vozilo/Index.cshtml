@@ -235,16 +235,6 @@
                                                         <span class="badge bg-danger">Nedostupno</span>
                                                     }
                                                 </span>
-
-                                                <!-- Rezervacija Button na slici -->
-                                                @if (item.Status == Dostupnost.Dostupno)
-                                                {
-                                                    <div class="position-absolute end-0 m-3" style="top: 80px;">
-                                                        <a class="btn btn-success" asp-controller="Rezervacija" asp-action="Create" asp-route-voziloId="@item.Id" title="Rezerviši">
-                                                            <i class="fas fa-calendar-check me-2"></i>Rezerviši
-                                                        </a>
-                                                    </div>
-                                                }
                                             </div>
 
                                             <div class="card-body d-flex flex-column">
@@ -254,9 +244,19 @@
                                                         <i class="fas fa-calendar me-1"></i>Godina: @item.Godina
                                                     </small>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <span class="h5 text-primary">@item.CijenaPoDanu KM</span>
-                                                    <small class="text-muted">/ dan</small>
+
+                                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                                    <div>
+                                                        <span class="h5 text-primary">@item.CijenaPoDanu KM</span>
+                                                        <small class="text-muted">/ dan</small>
+                                                    </div>
+
+                                                    @if (item.Status == Dostupnost.Dostupno)
+                                                    {
+                                                        <a class="btn btn-success" asp-controller="Rezervacija" asp-action="Create" asp-route-voziloId="@item.Id" title="Rezerviši">
+                                                            <i class="fas fa-calendar-check me-2"></i>Rezerviši
+                                                        </a>
+                                                    }
                                                 </div>
 
                                                 <div class="mt-auto">
@@ -317,11 +317,7 @@
 @functions {
     string GetVoziloImage(string marka, string model)
     {
-        // Ime fajla koje tražiš
         string fileName = $"{marka.ToLower()}-{model.ToLower().Replace(" ", "-")}.jpg";
-
-        // Jednostavno vrati ime fajla - ako ne postoji, browser će pokazati broken image
         return fileName;
     }
 }
-

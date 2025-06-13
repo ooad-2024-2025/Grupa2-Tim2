@@ -98,13 +98,14 @@ namespace Carisma.Controllers
             {
                 return NotFound();
             }
+
+            // Kreiranje SelectList sa svim osobama
             ViewData["OsobaId"] = new SelectList(_context.Osoba, "Id", "Id", vozilo.OsobaId);
+
             return View(vozilo);
         }
 
         // POST: Vozilo/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Marka,Model,Godina,CijenaPoDanu,OsobaId,Status")] Vozilo vozilo)
@@ -114,12 +115,13 @@ namespace Carisma.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
+           // if (ModelState.IsValid)
+           // {
                 try
                 {
                     _context.Update(vozilo);
                     await _context.SaveChangesAsync();
+                    TempData["Poruka"] = "Vozilo je uspješno izmijenjeno!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -133,8 +135,11 @@ namespace Carisma.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
-            }
+            //}
+
+            // Ako ModelState nije valjan, ponovo postaviti SelectList
             ViewData["OsobaId"] = new SelectList(_context.Osoba, "Id", "Id", vozilo.OsobaId);
+
             return View(vozilo);
         }
 

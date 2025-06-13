@@ -8,9 +8,6 @@ namespace Carisma.Models
         Dostupno,
 
         [Display(Name = "Nije dostupno")]
-        NijeDostupno,
-
-        [Display(Name = "U servisu")]
-        UServisu
+        NijeDostupno
     }
 }

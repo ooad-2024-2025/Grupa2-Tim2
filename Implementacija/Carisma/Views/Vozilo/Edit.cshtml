@@ -28,7 +28,8 @@
                         <strong>Napomena!</strong> Uredite željene informacije o vozilu.
                     </div>
 
-                    <form asp-action="Edit">
+                    <form asp-action="Edit" method="post">
+                        @Html.AntiForgeryToken()
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
                         <input type="hidden" asp-for="Id" />
 
@@ -86,9 +87,20 @@
                                     <select asp-for="Status" class="form-control">
                                         <option value="0">Dostupno</option>
                                         <option value="1">Nedostupno</option>
-                                        <option value="2">U servisu</option>
                                     </select>
                                     <span asp-validation-for="Status" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-4">
+                                    <strong class="text-muted">Osoba:</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <select asp-for="OsobaId" class="form-control" asp-items="ViewBag.OsobaId">
+                                        <option value="">-- Izaberite osobu --</option>
+                                    </select>
+                                    <span asp-validation-for="OsobaId" class="text-danger small"></span>
                                 </div>
                             </div>
                         </div>
@@ -163,10 +175,10 @@
         padding: 8px 12px;
     }
 
-    .form-control:focus, .form-select:focus {
-        border-color: #80bdff;
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    }
+        .form-control:focus, .form-select:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
 </style>
 
 @section Scripts {
