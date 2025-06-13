@@ -1,10 +1,7 @@
-﻿using Carisma.Models;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Carisma.Models
 {
-   
     public class Osoba
     {
         [Key]
@@ -12,21 +9,39 @@ namespace Carisma.Models
 
         [Required(ErrorMessage = "Email je obavezan.")]
         [EmailAddress(ErrorMessage = "Unesite ispravan format email adrese.")]
-        
-        public String email { get; set; }
-        public String lozinka { get; set; }
+        public string email { get; set; }
+
+        public string lozinka { get; set; }
 
         [Phone(ErrorMessage = "Unesite ispravan format telefonskog broja.")]
         [StringLength(20, ErrorMessage = "Broj telefona ne smije biti duži od 20 karaktera.")]
-        public String broj_telefona { get; set; }
+        public string broj_telefona { get; set; }
 
         [Required(ErrorMessage = "Korisničko ime je obavezno.")]
         [StringLength(50, MinimumLength = 3, ErrorMessage = "Korisničko ime mora imati između 3 i 50 karaktera.")]
-        public String korisnicko_ime { get; set; }
+        public string korisnicko_ime { get; set; }
+
+        // Dodaj ova nova svojstva za integraciju sa Identity
+        [Required(ErrorMessage = "Ime je obavezno.")]
+        [StringLength(50, ErrorMessage = "Ime ne može biti duže od 50 karaktera.")]
+        public string Ime { get; set; }
+
+        [Required(ErrorMessage = "Prezime je obavezno.")]
+        [StringLength(50, ErrorMessage = "Prezime ne može biti duže od 50 karaktera.")]
+        public string Prezime { get; set; }
+
+        public string? IdentityUserId { get; set; }  // Povezivanje sa Identity korisnicima
+
         public Uloga? uloga { get; set; }
         public bool blokiran { get; set; } = false;
 
+        // Navigation property za zahtjeve podrške
+        public ICollection<Podrska> ZahtjeviPodrske { get; set; } = new List<Podrska>();
+
         public Osoba() { }
+
+        public string PunoIme => $"{Ime} {Prezime}";
+
         public void registracija()
         {
             Console.WriteLine("Registracija korisnika započeta." + korisnicko_ime);
@@ -44,7 +59,6 @@ namespace Carisma.Models
             {
                 Console.WriteLine("Nepostojeći korisnik.");
                 return false;
-
             }
         }
 
@@ -64,8 +78,5 @@ namespace Carisma.Models
         {
             Console.WriteLine($"Broj uspjesnih placanja je: {brojUspjesnihPlacanja}");
         }
-
-        
-
     }
 }

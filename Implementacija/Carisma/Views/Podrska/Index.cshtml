@@ -1,59 +1,308 @@
 ﻿@model IEnumerable<Carisma.Models.Podrska>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Centar za podršku";
+    var statusFilter = ViewBag.StatusFilter as string;
+    var hitnostFilter = ViewBag.HitnostFilter as string;
 }
 
-<h1>Index</h1>
+<div class="container-fluid mt-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="text-primary">
+                <i class="fas fa-headset me-2"></i>
+                Carisma Centar za podršku
+            </h2>
+            <p class="text-muted mb-0">
+                @if (User.IsInRole("Podrska") || User.IsInRole("Administrator"))
+                {
+                    <span>Upravljanje zahtjevima podrške</span>
+                }
+                else
+                {
+                    <span>Vaši zahtjevi za podršku</span>
+                }
+            </p>
+        </div>
+        <div>
+            @if (!User.IsInRole("Podrska"))
+            {
+                <a asp-action="Create" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus me-1"></i>
+                    Novi zahtjev
+                </a>
+            }
+            @if (User.IsInRole("Podrska") || User.IsInRole("Administrator"))
+            {
+                <a asp-action="Statistike" class="btn btn-outline-info me-2">
+                    <i class="fas fa-chart-bar me-1"></i>
+                    Statistike
+                </a>
+            }
+        </div>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Pitanje)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DatumPostavljanja)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Odgovor)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DatumOdgovora)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Pitanje)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DatumPostavljanja)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Odgovor)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DatumOdgovora)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+    <!-- Filteri -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body py-3">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label for="statusFilter" class="form-label small fw-bold">Status zahtjeva:</label>
+                    <select name="statusFilter" id="statusFilter" class="form-select form-select-sm">
+                        <option value="">🔍 Svi statusi</option>
+                        <option value="0" selected="@(statusFilter == "0" ? "selected" : null)">🔵 Otvoren</option>
+
+                         <option value="1" selected="@(statusFilter == "1")">🟡 U obradi</option>
+<option value="2" selected="@(statusFilter == "2")">⏳ Čeka odgovor</option>
+<option value="3" selected="@(statusFilter == "3")">✅ Zatvoren</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="hitnostFilter" class="form-label small fw-bold">Hitnost:</label>
+                    <select name="hitnostFilter" id="hitnostFilter" class="form-select form-select-sm">
+                        <option value="">🔍 Sve hitnosti</option>
+                        <option value="1" selected="@(hitnostFilter == "1")">🟢 Niska</option>
+<option value="2" selected="@(hitnostFilter == "2")">🔵 Srednja</option>
+<option value="3" selected="@(hitnostFilter == "3")">🟡 Visoka</option>
+<option value="4" selected="@(hitnostFilter == "4")">🔴 Kritična</option>
+
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-filter me-1"></i>
+                            Filtriraj
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-times me-1"></i>
+                            Očisti filtere
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Statistike (samo za podrška tim) -->
+    @if (User.IsInRole("Podrska") || User.IsInRole("Administrator"))
+    {
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-white bg-info">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">@Model.Count(x => x.Status == Carisma.Models.statusZahtjeva.Otvoren)</h5>
+                        <p class="card-text">Otvoreni zahtjevi</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">@Model.Count(x => x.Status == Carisma.Models.statusZahtjeva.UObradi)</h5>
+                        <p class="card-text">U obradi</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-danger">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">@Model.Count(x => x.Hitnost == Carisma.Models.NivoHitnosti.Kriticna && x.Status != Carisma.Models.statusZahtjeva.Zatvoren)</h5>
+                        <p class="card-text">Kritični zahtjevi</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">@Model.Count(x => x.Status == Carisma.Models.statusZahtjeva.Zatvoren)</h5>
+                        <p class="card-text">Zatvoreni zahtjevi</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Lista zahtjeva -->
+    @if (Model.Any())
+    {
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-xl-6 col-lg-12 mb-4">
+                    <div class="card h-100 shadow-sm border-0 @(item.Hitnost == Carisma.Models.NivoHitnosti.Kriticna ? "border-danger border-2" : "")">
+                        <div class="card-header d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="card-title mb-1">
+                                    <strong>Zahtjev #@item.Id</strong>
+                                    <span class="@item.PrioritetniBadge ms-2">
+                                        @switch(item.Hitnost)
+                                        {
+                                            case Carisma.Models.NivoHitnosti.Niska:
+                                                <text>🟢 Niska</text>
+                                                break;
+                                            case Carisma.Models.NivoHitnosti.Srednja:
+                                                <text>🔵 Srednja</text>
+                                                break;
+                                            case Carisma.Models.NivoHitnosti.Visoka:
+                                                <text>🟡 Visoka</text>
+                                                break;
+                                            case Carisma.Models.NivoHitnosti.Kriticna:
+                                                <text>🔴 Kritična</text>
+                                                break;
+                                        }
+                                    </span>
+                                </h6>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    @item.DatumPostavljanja?.ToString("dd.MM.yyyy HH:mm")
+                                </small>
+                            </div>
+                            <span class="@item.StatusBadge">
+                                @switch(item.Status)
+                                {
+                                    case Carisma.Models.statusZahtjeva.Otvoren:
+                                        <text>🔵 Otvoren</text>
+                                        break;
+                                    case Carisma.Models.statusZahtjeva.UObradi:
+                                        <text>🟡 U obradi</text>
+                                        break;
+                                    case Carisma.Models.statusZahtjeva.CekaOdgovor:
+                                        <text>⏳ Čeka odgovor</text>
+                                        break;
+                                    case Carisma.Models.statusZahtjeva.Zatvoren:
+                                        <text>✅ Zatvoren</text>
+                                        break;
+                                }
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                @(item.Pitanje != null && item.Pitanje.Length > 150 ? item.Pitanje.Substring(0, 150) + "..." : item.Pitanje)
+                            </p>
+                            
+                            @if (!string.IsNullOrEmpty(item.Odgovor))
+                            {
+                                <div class="alert alert-success py-2 small mb-2">
+                                    <i class="fas fa-check-circle me-1"></i>
+                                    Odgovoreno @item.DatumOdgovora?.ToString("dd.MM.yyyy")
+                                    @if (item.OcjenaKorisnika.HasValue)
+                                    {
+                                        <span class="float-end">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                <i class="fas fa-star @(i <= item.OcjenaKorisnika ? "text-warning" : "text-muted")"></i>
+                                            }
+                                        </span>
+                                    }
+                                </div>
+                            }
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>
+                                        Detalji
+                                    </a>
+                                    @if (User.IsInRole("Podrska") || User.IsInRole("Administrator"))
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-warning btn-sm">
+                                            <i class="fas fa-reply me-1"></i>
+                                            Odgovori
+                                        </a>
+                                    }
+                                </div>
+                                @if (item.Hitnost == Carisma.Models.NivoHitnosti.Kriticna && item.Status != Carisma.Models.statusZahtjeva.Zatvoren)
+                                {
+                                    <span class="badge bg-danger pulse">
+                                        <i class="fas fa-exclamation-triangle me-1"></i>
+                                        HITNO!
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted">Nema zahtjeva za podršku</h4>
+            <p class="text-muted">
+                @if (User.IsInRole("Podrska") || User.IsInRole("Administrator"))
+                {
+                    <span>Trenutno nema zahtjeva koji odgovaraju vašim kriterijima.</span>
+                }
+                else
+                {
+                    <span>Nemate aktivnih zahtjeva za podršku. Ako imate problema, slobodno kontaktirajte naš tim.</span>
+                }
+            </p>
+            @if (!User.IsInRole("Podrska"))
+            {
+                <a asp-action="Create" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus me-1"></i>
+                    Kreiraj novi zahtjev
+                </a>
+            }
+        </div>
+    }
+</div>
+
+<style>
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+    
+ <style>
+    &#64;keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+</style>
+
+<h1 class="pulse">Dobrodošli u Carisma!</h1>
+
+
+@section Scripts {
+    <script>
+        @if (User.IsInRole("Podrska") || User.IsInRole("Administrator"))
+        {
+            <text>
+            // Auto-refresh svakih 30 sekundi za podrška tim
+            setInterval(function() {
+                // Možete dodati AJAX poziv za ažuriranje brojeva bez refresh stranice
+            }, 30000);
+            </text>
+        }
+       
+        // Prikaži poruke o uspjehu
+        @if (TempData["Success"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'success',
+                title: 'Uspjeh!',
+                text: '@TempData["Success"]',
+                confirmButtonText: 'U redu'
+            });
+            </text>
+        }
+    </script>
 }
-    </tbody>
-</table>

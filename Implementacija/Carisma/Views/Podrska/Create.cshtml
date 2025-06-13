@@ -1,91 +1,182 @@
 ﻿@model Carisma.Models.Podrska
-@*
+
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Kontaktiraj podršku";
 }
 
-<h1>Novi zahtjev za podršku</h1>
+<h1 style="color: pink;">@ViewData["Title"]</h1>
 
-<h4>Podrška</h4>
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+               <div class="card-header" style="background-color: #ff66cc; color: white;">
+                    <h3 class="mb-0">
+                        <i class="fas fa-headset me-2"></i>
+                        Kontaktiraj Carisma podršku
+                    </h3>
+                    <small>Opišite svoj problem detaljno i naš tim će vam odgovoriti u najkraćem roku</small>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+                        
+                        <div asp-validation-summary="All" class="alert alert-danger d-none"></div>
+                        
+                        <!-- Pitanje -->
+                        <div class="mb-4">
+                            <label asp-for="Pitanje" class="form-label fw-bold">
+                                <i class="fas fa-question-circle me-1 text-primary"></i>
+                                Opišite vaš problem ili pitanje
+                            </label>
+                            <textarea asp-for="Pitanje" 
+                                    class="form-control form-control-lg" 
+                                    rows="6" 
+                                    placeholder="Molimo detaljno opišite problem koji ste doživjeli ili pitanje koje imate. Uključite relevantne detalje poput datuma, vremena, koraka koji su doveli do problema, itd."
+                                    required></textarea>
+                            <span asp-validation-for="Pitanje" class="text-danger"></span>
+                            <div class="form-text">
+                                <small><i class="fas fa-info-circle me-1"></i>Minimalno 20 karaktera | <span id="charCount">0</span>/2000</small>
+                            </div>
+                        </div>
 
-            <div class="form-group">
-                <label asp-for="Pitanje" class="control-label"></label>
-                <textarea asp-for="Pitanje" class="form-control" rows="4"></textarea>
-                <span asp-validation-for="Pitanje" class="text-danger"></span>
+                        <!-- Hitnost -->
+                        <div class="mb-4">
+                            <label asp-for="Hitnost" class="form-label fw-bold">
+                                <i class="fas fa-exclamation-triangle me-1 text-warning"></i>
+                                Nivo hitnosti
+                            </label>
+                            <select asp-for="Hitnost" class="form-select form-select-lg">
+                                <option value="@((int)Carisma.Models.NivoHitnosti.Niska)">
+                                    🟢 Niska - Općenito pitanje ili savjet
+                                </option>
+                                <option value="@((int)Carisma.Models.NivoHitnosti.Srednja)" selected>
+                                    🔵 Srednja - Problem koji ne blokira korištenje
+                                </option>
+                                <option value="@((int)Carisma.Models.NivoHitnosti.Visoka)">
+                                    🟡 Visoka - Problem koji značajno utiče na korištenje
+                                </option>
+                                <option value="@((int)Carisma.Models.NivoHitnosti.Kriticna)">
+                                    🔴 Kritična - Sistem ne radi ili blokira važne funkcije
+                                </option>
+                            </select>
+                            <div class="form-text">
+                                <small>Odaberite nivo hitnosti koji najbolje opisuje vaš problem</small>
+                            </div>
+                        </div>
+
+                        <!-- Dugmad -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg me-md-2">
+                                <i class="fas fa-arrow-left me-1"></i>
+                                Nazad na listu
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                <i class="fas fa-paper-plane me-1"></i>
+                                Pošalji zahtjev
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
-            <!-- Polja ispod se uklanjaju iz forme jer ih puni kontroler -->
-            @* 
-            <input type="hidden" asp-for="DatumPostavljanja" />
-            <input type="hidden" asp-for="Odgovor" />
-            <input type="hidden" asp-for="Status" />
-            <input type="hidden" asp-for="DatumOdgovora" />
-            *@
-
-            @*
-            <div class="form-group">
-                <input type="submit" value="Pošalji zahtjev" class="btn btn-primary" />
+            <!-- Savjeti sidebar -->
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card border-success">
+                        <div class="card-header bg-success text-white">
+                            <h6 class="mb-0">
+                                <i class="fas fa-lightbulb me-1"></i>
+                                Savjeti za brži odgovor
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Opišite problem korak po korak
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Navedite poruku o grešci ako postoji
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Uključite broj rezervacije ako je relevantan
+                                </li>
+                                <li>
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Označite pravu hitnost problema
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-info">
+                        <div class="card-header bg-info text-white">
+                            <h6 class="mb-0">
+                                <i class="fas fa-clock me-1"></i>
+                                Očekivano vrijeme odgovora
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <span class="badge bg-danger me-2">Kritična</span>
+                                    Do 2 sata
+                                </li>
+                                <li class="mb-2">
+                                    <span class="badge bg-warning me-2">Visoka</span>
+                                    Do 8 sati
+                                </li>
+                                <li class="mb-2">
+                                    <span class="badge bg-primary me-2">Srednja</span>
+                                    Do 24 sata
+                                </li>
+                                <li>
+                                    <span class="badge bg-success me-2">Niska</span>
+                                    Do 3 dana
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Nazad na listu</a>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
-            *@
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const textarea = document.querySelector('textarea[name="Pitanje"]');
+            const charCount = document.getElementById('charCount');
+            const submitBtn = document.getElementById('submitBtn');
 
+            function updateCharCount() {
+                const length = textarea.value.length;
+                charCount.textContent = length;
+                
+                if (length < 20) {
+                    charCount.classList.add('text-danger');
+                    charCount.classList.remove('text-success');
+                    submitBtn.disabled = true;
+                } else if (length > 2000) {
+                    charCount.classList.add('text-danger');
+                    charCount.classList.remove('text-success');
+                    submitBtn.disabled = true;
+                } else {
+                    charCount.classList.remove('text-danger');
+                    charCount.classList.add('text-success');
+                    submitBtn.disabled = false;
+                }
+            }
 
-
-@{
-    ViewData["Title"] = "Create";
-}
-
-<h1>Novi zahtjev za podršku</h1>
-
-<h4>Podrška</h4>
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Create" method="post">
-            @Html.AntiForgeryToken()
-
-            <div asp-validation-summary="All" class="text-danger"></div>
-
-            <div class="form-group">
-                <label asp-for="Pitanje" class="control-label"></label>
-                <textarea asp-for="Pitanje" class="form-control" rows="4"></textarea>
-                <span asp-validation-for="Pitanje" class="text-danger"></span>
-            </div>
-
-            <!-- Polja ispod se uklanjaju iz forme jer ih puni kontroler -->
-            @* 
-            <input type="hidden" asp-for="DatumPostavljanja" />
-            <input type="hidden" asp-for="Odgovor" />
-            <input type="hidden" asp-for="Status" />
-            <input type="hidden" asp-for="DatumOdgovora" />
-            *@
-
-            <div class="form-group">
-                <input type="submit" value="Pošalji zahtjev" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
-
-<div>
-    <a asp-action="Index">Nazad na listu</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+            textarea.addEventListener('input', updateCharCount);
+            updateCharCount(); // Initial check
+        });
+    </script>
 }

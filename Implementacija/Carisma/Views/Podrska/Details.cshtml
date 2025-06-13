@@ -1,48 +1,363 @@
 ﻿@model Carisma.Models.Podrska
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = $"Zahtjev #{Model.Id} - Detalji";
 }
 
-<h1>Details</h1>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="text-primary mb-1">
+                        <i class="fas fa-ticket-alt me-2"></i>
+                        Zahtjev #@Model.Id
+                    </h2>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="@Model.StatusBadge">
+                            @switch(Model.Status)
+                            {
+                                case Carisma.Models.statusZahtjeva.Otvoren:
+                                    <text>🔵 Otvoren</text>
+                                    break;
+                                case Carisma.Models.statusZahtjeva.UObradi:
+                                    <text>🟡 U obradi</text>
+                                    break;
+                                case Carisma.Models.statusZahtjeva.CekaOdgovor:
+                                    <text>⏳ Čeka odgovor</text>
+                                    break;
+                                case Carisma.Models.statusZahtjeva.Zatvoren:
+                                    <text>✅ Zatvoren</text>
+                                    break;
+                            }
+                        </span>
+                        <span class="@Model.PrioritetniBadge">
+                            @switch(Model.Hitnost)
+                            {
+                                case Carisma.Models.NivoHitnosti.Niska:
+                                    <text>🟢 Niska</text>
+                                    break;
+                                case Carisma.Models.NivoHitnosti.Srednja:
+                                    <text>🔵 Srednja</text>
+                                    break;
+                                case Carisma.Models.NivoHitnosti.Visoka:
+                                    <text>🟡 Visoka</text>
+                                    break;
+                                case Carisma.Models.NivoHitnosti.Kriticna:
+                                    <text>🔴 Kritična</text>
+                                    break;
+                            }
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>
+                        Nazad na listu
+                    </a>
+                    @if (User.IsInRole("Podrska") || User.IsInRole("Administrator"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                            <i class="fas fa-reply me-1"></i>
+                            Odgovori
+                        </a>
+                    }
+                </div>
+            </div>
 
-<div>
-    <h4>Podrska</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Pitanje)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Pitanje)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DatumPostavljanja)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DatumPostavljanja)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Odgovor)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Odgovor)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DatumOdgovora)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DatumOdgovora)
-        </dd>
-    </dl>
+            <!-- Glavni sadržaj -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Pitanje korisnika -->
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">
+                                <i class="fas fa-user me-2 text-primary"></i>
+                                Pitanje korisnika
+                            </h5>
+                            <small class="text-muted">
+                                <i class="fas fa-calendar me-1"></i>
+                                Postavljeno: @Model.DatumPostavljanja?.ToString("dd.MM.yyyy HH:mm")
+                            </small>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-0">@Model.Pitanje</p>
+                        </div>
+                    </div>
+
+                    <!-- Odgovor podrške -->
+                    @if (!string.IsNullOrEmpty(Model.Odgovor))
+                    {
+                        <div class="card mb-4 shadow-sm border-success">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-headset me-2"></i>
+                                    Odgovor podrške
+                                </h5>
+                                <small>
+                                    <i class="fas fa-calendar me-1"></i>
+                                    Odgovoreno: @Model.DatumOdgovora?.ToString("dd.MM.yyyy")
+                                </small>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-0">@Model.Odgovor</p>
+                            </div>
+                        </div>
+
+                        <!-- Ocjena (samo za korisnika koji je poslao zahtjev) -->
+                        @if (!User.IsInRole("Podrska") && !User.IsInRole("Administrator") && Model.OcjenaKorisnika == null && Model.Status != Carisma.Models.statusZahtjeva.Zatvoren)
+                        {
+                            <div class="card mb-4 shadow-sm border-info">
+                                <div class="card-header bg-info text-white">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-star me-2"></i>
+                                        Ocijenite naš odgovor
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <form asp-action="Ocijeni" method="post">
+                                        <input type="hidden" name="id" value="@Model.Id" />
+                                        @Html.AntiForgeryToken()
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label">Ocjena (1-5 zvjezdica):</label>
+                                            <div class="rating">
+                                                @for (int i = 1; i <= 5; i++)
+                                                {
+                                                    <input type="radio" name="ocjena" value="@i" id="star@i" />
+                                                    <label for="star@i" class="star">
+                                                        <i class="fas fa-star"></i>
+                                                    </label>
+                                                }
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="komentar" class="form-label">Komentar (opciono):</label>
+                                            <textarea name="komentar" id="komentar" class="form-control" rows="3" placeholder="Podijelite vaše mišljenje o kvaliteti usluge..."></textarea>
+                                        </div>
+                                        
+                                        <div class="d-flex gap-2">
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="fas fa-check me-1"></i>
+                                                Pošalji ocjenu
+                                            </button>
+                                            <button type="button" class="btn btn-outline-secondary" onclick="zatvoriZahtjev(@Model.Id)">
+                                                <i class="fas fa-times me-1"></i>
+                                                Zatvori bez ocjene
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+
+                        <!-- Prikazana ocjena -->
+                        @if (Model.OcjenaKorisnika.HasValue)
+                        {
+                            <div class="card mb-4 shadow-sm border-warning">
+                                <div class="card-header bg-warning">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-star me-2"></i>
+                                        Vaša ocjena
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-2">
+                                        <strong>Ocjena:</strong>
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            <i class="fas fa-star @(i <= Model.OcjenaKorisnika ? "text-warning" : "text-muted")"></i>
+                                        }
+                                        (@Model.OcjenaKorisnika/5)
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(Model.KomentarOcjene))
+                                    {
+                                        <div>
+                                            <strong>Komentar:</strong>
+                                            <p class="mb-0 mt-1">@Model.KomentarOcjene</p>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <!-- Nema odgovora -->
+                        <div class="card mb-4 shadow-sm border-warning">
+                            <div class="card-body text-center py-4">
+                                <i class="fas fa-clock fa-3x text-warning mb-3"></i>
+                                <h5 class="text-warning">Čeka se odgovor podrške</h5>
+                                <p class="text-muted mb-0">
+                                    Vaš zahtjev je primljen i naš tim će odgovoriti u najkraćem roku.
+                                    <br>
+                                    Očekivano vrijeme odgovora za @(Model.Hitnost.ToString().ToLower()) prioritet:
+                                    <strong>
+                                        @switch(Model.Hitnost)
+                                        {
+                                            case Carisma.Models.NivoHitnosti.Kriticna:
+                                                <text>do 2 sata</text>
+                                                break;
+                                            case Carisma.Models.NivoHitnosti.Visoka:
+                                                <text>do 8 sati</text>
+                                                break;
+                                            case Carisma.Models.NivoHitnosti.Srednja:
+                                                <text>do 24 sata</text>
+                                                break;
+                                            case Carisma.Models.NivoHitnosti.Niska:
+                                                <text>do 3 dana</text>
+                                                break;
+                                        }
+                                    </strong>
+                                </p>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Informacije o zahtjevu
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <dl class="row mb-0">
+                                <dt class="col-sm-6">ID zahtjeva:</dt>
+                                <dd class="col-sm-6">#@Model.Id</dd>
+                                
+                                <dt class="col-sm-6">Status:</dt>
+                                <dd class="col-sm-6">
+                                    <span class="@Model.StatusBadge">
+                                        @Model.Status?.ToString()
+                                    </span>
+                                </dd>
+                                
+                                <dt class="col-sm-6">Prioritet:</dt>
+                                <dd class="col-sm-6">
+                                    <span class="@Model.PrioritetniBadge">
+                                        @Model.Hitnost.ToString()
+                                    </span>
+                                </dd>
+                                
+                                <dt class="col-sm-6">Kreiran:</dt>
+                                <dd class="col-sm-6">@Model.DatumPostavljanja?.ToString("dd.MM.yyyy")</dd>
+                                
+                                @if (Model.DatumOdgovora.HasValue)
+                                {
+                                    <dt class="col-sm-6">Odgovoreno:</dt>
+                                    <dd class="col-sm-6">@Model.DatumOdgovora?.ToString("dd.MM.yyyy")</dd>
+                                }
+                            </dl>
+                        </div>
+                    </div>
+
+                    @if (!User.IsInRole("Podrska") && !User.IsInRole("Administrator") && Model.Status != Carisma.Models.statusZahtjeva.Zatvoren)
+                    {
+                        <div class="card mt-3 shadow-sm border-danger">
+                            <div class="card-header bg-danger text-white">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-times-circle me-2"></i>
+                                    Akcije
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="small text-muted mb-3">
+                                    Ako je vaš problem riješen ili ne želite čekati odgovor, možete zatvoriti zahtjev.
+                                </p>
+                                <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="zatvoriZahtjev(@Model.Id)">
+                                    <i class="fas fa-times me-1"></i>
+                                    Zatvori zahtjev
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<!-- Form za zatvaranje zahtjeva -->
+<form id="zatvoriForm" asp-action="Zatvori" method="post" style="display: none;">
+    <input type="hidden" name="id" id="zahtjevId" />
+    @Html.AntiForgeryToken()
+</form>
+
+<style>
+    /* Stil za ocjenjivanje */
+    .rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+    }
+    
+    .rating input {
+        display: none;
+    }
+    
+    .rating label {
+        cursor: pointer;
+        margin: 0 5px;
+        font-size: 1.5rem;
+        color: #ddd;
+        transition: color 0.3s;
+    }
+    
+    .rating label:hover,
+    .rating label:hover ~ label,
+    .rating input:checked ~ label {
+        color: #ffc107;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        function zatvoriZahtjev(id) {
+            Swal.fire({
+                title: 'Zatvaranje zahtjeva',
+                text: 'Da li ste sigurni da želite zatvoriti ovaj zahtjev?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Da, zatvori',
+                cancelButtonText: 'Odustani',
+                confirmButtonColor: '#dc3545'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('zahtjevId').value = id;
+                    document.getElementById('zatvoriForm').submit();
+                }
+            });
+        }
+
+        // Prikaži poruke o uspjehu
+        @if (TempData["Success"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'success',
+                title: 'Uspjeh!',
+                text: '@TempData["Success"]',
+                confirmButtonText: 'U redu'
+            });
+            </text>
+        }
+
+        @if (TempData["Info"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'info',
+                title: 'Informacija',
+                text: '@TempData["Info"]',
+                confirmButtonText: 'U redu'
+            });
+            </text>
+        }
+    </script>
+} 
