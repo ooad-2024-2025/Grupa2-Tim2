@@ -2,7 +2,6 @@
 
 namespace Carisma.Models
 {
-
     public class Podrska
     {
         public int Id { get; set; }
@@ -24,7 +23,7 @@ namespace Carisma.Models
         [Display(Name = "Nivo hitnosti")]
         public NivoHitnosti Hitnost { get; set; } = NivoHitnosti.Srednja;
 
-        public string? KorisnikId { get; set; }  // Povezano sa Identity korisnicima
+        public string? KorisnikId { get; set; }  // NULL za neregistrovane korisnike
 
         public string? PodrskaKorisnikId { get; set; }  // Ko je odgovorio
 
@@ -37,6 +36,15 @@ namespace Carisma.Models
         [Display(Name = "Komentar o usluzi")]
         [StringLength(500, ErrorMessage = "Komentar ne može biti duži od 500 karaktera")]
         public string? KomentarOcjene { get; set; }
+
+        // Dodano za neregistrovane korisnike
+        [Display(Name = "Email adresa")]
+        [EmailAddress(ErrorMessage = "Unesite validnu email adresu")]
+        public string? Email { get; set; }
+
+        [Display(Name = "Ime i prezime")]
+        [StringLength(100, ErrorMessage = "Ime i prezime ne mogu biti duži od 100 karaktera")]
+        public string? ImePrezime { get; set; }
 
         // Helper properties
         public string PrioritetniBadge => Hitnost switch
@@ -56,7 +64,8 @@ namespace Carisma.Models
             statusZahtjeva.Zatvoren => "badge bg-success",
             _ => "badge bg-secondary"
         };
+
+        // Helper property za prikaz korisnika
+        public bool IsRegisteredUser => !string.IsNullOrEmpty(KorisnikId);
     }
-
-
 }

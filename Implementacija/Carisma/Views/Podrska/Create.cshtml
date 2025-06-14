@@ -4,143 +4,319 @@
     ViewData["Title"] = "Kontaktiraj podršku";
 }
 
-<h1 style="color: pink;">@ViewData["Title"]</h1>
-
 <div class="container mt-4">
+    <!-- Glavni naslov -->
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-dark mb-2">Podrška korisnicima</h1>
+        <p class="lead text-muted">Ovdje smo da vam pomognemo. Kontaktirajte nas ili pronađite odgovore na česta pitanja.</p>
+    </div>
+
     <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-lg border-0">
-               <div class="card-header" style="background-color: #ff66cc; color: white;">
-                    <h3 class="mb-0">
-                        <i class="fas fa-headset me-2"></i>
-                        Kontaktiraj Carisma podršku
-                    </h3>
-                    <small>Opišite svoj problem detaljno i naš tim će vam odgovoriti u najkraćem roku</small>
-                </div>
-                <div class="card-body">
-                    <form asp-action="Create" method="post">
-                        @Html.AntiForgeryToken()
+        <div class="col-xl-10">
+            
+            <!-- FAQ sekcija - sa smooth emoji -->
+            <div class="card shadow-sm border-0 mb-5" style="border-left: 4px solid #ff66cc !important;">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <!-- FAQ smooth emoji krug -->
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle me-3" 
+                             style="width: 60px; height: 60px; background: linear-gradient(135deg, #28a745, #20c997);">
+                            <span style="font-size: 1.8rem;">💭</span>
+                        </div>
+                        <div>
+                            <h5 class="mb-1 text-dark">Najčešća pitanja</h5>
+                            <p class="mb-0 text-muted small">Pronađite brze odgovore na uobičajena pitanja</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion accordion-flush" id="faqAccordion">
                         
-                        <div asp-validation-summary="All" class="alert alert-danger d-none"></div>
-                        
-                        <!-- Pitanje -->
-                        <div class="mb-4">
-                            <label asp-for="Pitanje" class="form-label fw-bold">
-                                <i class="fas fa-question-circle me-1 text-primary"></i>
-                                Opišite vaš problem ili pitanje
-                            </label>
-                            <textarea asp-for="Pitanje" 
-                                    class="form-control form-control-lg" 
-                                    rows="6" 
-                                    placeholder="Molimo detaljno opišite problem koji ste doživjeli ili pitanje koje imate. Uključite relevantne detalje poput datuma, vremena, koraka koji su doveli do problema, itd."
-                                    required></textarea>
-                            <span asp-validation-for="Pitanje" class="text-danger"></span>
-                            <div class="form-text">
-                                <small><i class="fas fa-info-circle me-1"></i>Minimalno 20 karaktera | <span id="charCount">0</span>/2000</small>
+                        <!-- FAQ 1 -->
+                        <div class="accordion-item border-0">
+                            <h6 class="accordion-header" id="faq1">
+                                <button class="accordion-button collapsed py-3 px-0 border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+                                    <span class="me-3" style="font-size: 1.2rem;">🚙</span>
+                                    <span class="fw-medium">Koliko brzo mogu dobiti vozilo?</span>
+                                </button>
+                            </h6>
+                            <div id="collapse1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body px-0 pt-0 pb-3">
+                                    <div class="ps-5 text-muted">
+                                        Vozila su dostupna 24/7. Rezervacija se može napraviti u realnom vremenu, a vozilo možete preuzeti već za 30 minuta nakon potvrde.
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Hitnost -->
-                        <div class="mb-4">
-                            <label asp-for="Hitnost" class="form-label fw-bold">
-                                <i class="fas fa-exclamation-triangle me-1 text-warning"></i>
-                                Nivo hitnosti
-                            </label>
-                            <select asp-for="Hitnost" class="form-select form-select-lg">
-                                <option value="@((int)Carisma.Models.NivoHitnosti.Niska)">
-                                    🟢 Niska - Općenito pitanje ili savjet
-                                </option>
-                                <option value="@((int)Carisma.Models.NivoHitnosti.Srednja)" selected>
-                                    🔵 Srednja - Problem koji ne blokira korištenje
-                                </option>
-                                <option value="@((int)Carisma.Models.NivoHitnosti.Visoka)">
-                                    🟡 Visoka - Problem koji značajno utiče na korištenje
-                                </option>
-                                <option value="@((int)Carisma.Models.NivoHitnosti.Kriticna)">
-                                    🔴 Kritična - Sistem ne radi ili blokira važne funkcije
-                                </option>
-                            </select>
-                            <div class="form-text">
-                                <small>Odaberite nivo hitnosti koji najbolje opisuje vaš problem</small>
+                        <!-- FAQ 2 -->
+                        <div class="accordion-item border-0">
+                            <h6 class="accordion-header" id="faq2">
+                                <button class="accordion-button collapsed py-3 px-0 border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+                                    <span class="me-3" style="font-size: 1.2rem;">💎</span>
+                                    <span class="fw-medium">Koje načine plaćanja prihvatate?</span>
+                                </button>
+                            </h6>
+                            <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body px-0 pt-0 pb-3">
+                                    <div class="ps-5 text-muted">
+                                        Prihvatamo sve glavne kreditne kartice (Visa, MasterCard), debitne kartice, online transfer i gotovinu pri preuzimanju vozila.
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Dugmad -->
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg me-md-2">
-                                <i class="fas fa-arrow-left me-1"></i>
-                                Nazad na listu
-                            </a>
-                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
-                                <i class="fas fa-paper-plane me-1"></i>
-                                Pošalji zahtjev
-                            </button>
+                        <!-- FAQ 3 -->
+                        <div class="accordion-item border-0">
+                            <h6 class="accordion-header" id="faq3">
+                                <button class="accordion-button collapsed py-3 px-0 border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+                                    <span class="me-3" style="font-size: 1.2rem;">🔒</span>
+                                    <span class="fw-medium">Da li je uključeno osiguranje?</span>
+                                </button>
+                            </h6>
+                            <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body px-0 pt-0 pb-3">
+                                    <div class="ps-5 text-muted">
+                                        Da! Sva vozila uključuju osnovnu auto-odgovornost osiguranje. Možete dodati comprehensive pokritije za dodatnu sigurnost.
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </form>
+
+                        <!-- FAQ 4 -->
+                        <div class="accordion-item border-0">
+                            <h6 class="accordion-header" id="faq4">
+                                <button class="accordion-button collapsed py-3 px-0 border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4">
+                                    <span class="me-3" style="font-size: 1.2rem;">🔄</span>
+                                    <span class="fw-medium">Mogu li otkazati rezervaciju?</span>
+                                </button>
+                            </h6>
+                            <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body px-0 pt-0 pb-3">
+                                    <div class="ps-5 text-muted">
+                                        Možete otkazati rezervaciju besplatno do 24 sata prije preuzimanja. Za otkazivanja u kraćem roku naplaćuje se naknada od 20%.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 5 -->
+                        <div class="accordion-item border-0">
+                            <h6 class="accordion-header" id="faq5">
+                                <button class="accordion-button collapsed py-3 px-0 border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5">
+                                    <span class="me-3" style="font-size: 1.2rem;">📄</span>
+                                    <span class="fw-medium">Šta trebam za iznajmljivanje?</span>
+                                </button>
+                            </h6>
+                            <div id="collapse5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body px-0 pt-0 pb-3">
+                                    <div class="ps-5 text-muted">
+                                        Potrebno je važeću vozačku dozvolu (min. 1 godina iskustva), lični dokument i kreditnu kartu. Minimalna godine je 21 godina.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
 
-            <!-- Savjeti sidebar -->
-            <div class="row mt-4">
-                <div class="col-md-6">
-                    <div class="card border-success">
-                        <div class="card-header bg-success text-white">
-                            <h6 class="mb-0">
-                                <i class="fas fa-lightbulb me-1"></i>
-                                Savjeti za brži odgovor
-                            </h6>
-                        </div>
-                        <div class="card-body">
-                            <ul class="list-unstyled mb-0">
-                                <li class="mb-2">
-                                    <i class="fas fa-check text-success me-2"></i>
-                                    Opišite problem korak po korak
-                                </li>
-                                <li class="mb-2">
-                                    <i class="fas fa-check text-success me-2"></i>
-                                    Navedite poruku o grešci ako postoji
-                                </li>
-                                <li class="mb-2">
-                                    <i class="fas fa-check text-success me-2"></i>
-                                    Uključite broj rezervacije ako je relevantan
-                                </li>
-                                <li>
-                                    <i class="fas fa-check text-success me-2"></i>
-                                    Označite pravu hitnost problema
-                                </li>
-                            </ul>
+            <!-- Forma za kontakt - sa smooth emoji -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-4">
+                                <!-- Podrška smooth emoji krug -->
+                                <div class="d-inline-flex align-items-center justify-content-center rounded-circle me-3" 
+                                     style="width: 60px; height: 60px; background: linear-gradient(135deg, #ff66cc, #ff99dd);">
+                                    <span style="font-size: 1.8rem;">💬</span>
+                                </div>
+                                <div>
+                                    <h5 class="mb-1 text-dark">Kontaktirajte podršku</h5>
+                                    <p class="mb-0 text-muted small">Opišite problem detaljno, odgovoriće vam u najkraćem roku</p>
+                                </div>
+                            </div>
+
+                            <form asp-action="Create" method="post">
+                                @Html.AntiForgeryToken()
+                                
+                                <div asp-validation-summary="All" class="alert alert-danger d-none"></div>
+                                
+                                @* Polja za neregistrovane korisnike *@
+                                @if (!User.Identity.IsAuthenticated)
+                                {
+                                    <div class="alert alert-info border-0 bg-light">
+                                        <div class="d-flex">
+                                            <span class="me-3 mt-1" style="font-size: 1.2rem;">💡</span>
+                                            <div>
+                                                <strong>Kontakt podaci</strong>
+                                                <p class="mb-0 small text-muted mt-1">Unesite vaše podatke da možemo odgovoriti na zahtjev</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <label asp-for="ImePrezime" class="form-label fw-medium text-dark">
+                                                <span class="me-2">👨‍💼</span>Ime i prezime <span class="text-danger">*</span>
+                                            </label>
+                                            <input asp-for="ImePrezime" class="form-control form-control-lg border-0 bg-light" required />
+                                            <span asp-validation-for="ImePrezime" class="text-danger small"></span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label asp-for="Email" class="form-label fw-medium text-dark">
+                                                <span class="me-2">✉️</span>Email adresa <span class="text-danger">*</span>
+                                            </label>
+                                            <input asp-for="Email" type="email" class="form-control form-control-lg border-0 bg-light" required />
+                                            <span asp-validation-for="Email" class="text-danger small"></span>
+                                        </div>
+                                    </div>
+                                }
+
+                                <!-- Pitanje -->
+                                <div class="mb-4">
+                                    <label asp-for="Pitanje" class="form-label fw-medium text-dark">
+                                        <span class="me-2">📝</span>Opišite problem ili pitanje <span class="text-danger">*</span>
+                                    </label>
+                                    <textarea asp-for="Pitanje" 
+                                            class="form-control form-control-lg border-0 bg-light" 
+                                            rows="5" 
+                                            placeholder="Molimo detaljno opišite problem... Uključite relevantne detalje poput datuma, vremena, koraka koji su doveli do problema."
+                                            required></textarea>
+                                    <span asp-validation-for="Pitanje" class="text-danger small"></span>
+                                    <div class="d-flex justify-content-between align-items-center mt-2">
+                                        <small class="text-muted">Minimalno 20 karaktera</small>
+                                        <small class="text-muted"><span id="charCount">0</span>/2000</small>
+                                    </div>
+                                </div>
+
+                                <!-- Hitnost -->
+                                <div class="mb-5">
+                                    <label asp-for="Hitnost" class="form-label fw-medium text-dark">
+                                        <span class="me-2">🎯</span>Nivo hitnosti
+                                    </label>
+                                    <select asp-for="Hitnost" class="form-select form-select-lg border-0 bg-light">
+                                        <option value="@((int)Carisma.Models.NivoHitnosti.Niska)">
+                                            🌱 Niska - Općenito pitanje ili savjet
+                                        </option>
+                                        <option value="@((int)Carisma.Models.NivoHitnosti.Srednja)" selected>
+                                            ⏰ Srednja - Problem koji ne blokira korištenje
+                                        </option>
+                                        <option value="@((int)Carisma.Models.NivoHitnosti.Visoka)">
+                                            🟠 Visoka - Problem koji značajno utiče na korištenje
+                                        </option>
+                                        <option value="@((int)Carisma.Models.NivoHitnosti.Kriticna)">
+                                            🔴 Kritična - Sistem ne radi ili blokira važne funkcije
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- Dugmad -->
+                                <div class="d-flex justify-content-between align-items-center">
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <a asp-action="Index" class="btn btn-outline-secondary">
+                                            <span class="me-2">←</span>Nazad na listu
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+                                            <span class="me-2">🏠</span>Početna stranica
+                                        </a>
+                                    }
+                                    <button type="submit" class="btn btn-lg px-4" style="background-color: #ff66cc; color: white; border: none;" id="submitBtn">
+                                        <span class="me-2">🚀</span>Pošalji zahtjev
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="card border-info">
-                        <div class="card-header bg-info text-white">
-                            <h6 class="mb-0">
-                                <i class="fas fa-clock me-1"></i>
-                                Očekivano vrijeme odgovora
-                            </h6>
+
+                <!-- Sidebar sa informacijama - sa smooth emojijima -->
+                <div class="col-lg-4">
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <!-- Vrijeme odgovora smooth emoji krug -->
+                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center me-3" 
+                                     style="width: 50px; height: 50px; background: linear-gradient(135deg, #007bff, #0056b3);">
+                                    <span style="font-size: 1.2rem;">⏱️</span>
+                                </div>
+                                <h6 class="fw-bold text-dark mb-0">Vrijeme odgovora</h6>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="d-flex justify-content-between align-items-center py-2">
+                                    <span class="small fw-medium">🔴 Kritična</span>
+                                    <span class="badge bg-danger">Do 2h</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center py-2">
+                                    <span class="small fw-medium">🟠 Visoka</span>
+                                    <span class="badge bg-warning text-dark">Do 8h</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center py-2">
+                                    <span class="small fw-medium">⏰ Srednja</span>
+                                    <span class="badge bg-primary">Do 24h</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center py-2">
+                                    <span class="small fw-medium">🌱 Niska</span>
+                                    <span class="badge bg-success">Do 3 dana</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <ul class="list-unstyled mb-0">
-                                <li class="mb-2">
-                                    <span class="badge bg-danger me-2">Kritična</span>
-                                    Do 2 sata
+                    </div>
+
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <!-- Savjeti smooth emoji krug -->
+                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center me-3" 
+                                     style="width: 50px; height: 50px; background: linear-gradient(135deg, #ffc107, #e0a800);">
+                                    <span style="font-size: 1.2rem;">💡</span>
+                                </div>
+                                <h6 class="fw-bold text-dark mb-0">Savjeti</h6>
+                            </div>
+                            <ul class="list-unstyled space-y-2">
+                                <li class="d-flex align-items-start py-1">
+                                    <span class="me-2 mt-1" style="font-size: 0.8rem;">✅</span>
+                                    <span class="small">Opišite problem korak po korak</span>
                                 </li>
-                                <li class="mb-2">
-                                    <span class="badge bg-warning me-2">Visoka</span>
-                                    Do 8 sati
+                                <li class="d-flex align-items-start py-1">
+                                    <span class="me-2 mt-1" style="font-size: 0.8rem;">✅</span>
+                                    <span class="small">Navedite poruku o grešci ako postoji</span>
                                 </li>
-                                <li class="mb-2">
-                                    <span class="badge bg-primary me-2">Srednja</span>
-                                    Do 24 sata
+                                <li class="d-flex align-items-start py-1">
+                                    <span class="me-2 mt-1" style="font-size: 0.8rem;">✅</span>
+                                    <span class="small">Uključite broj rezervacije ako je relevantan</span>
                                 </li>
-                                <li>
-                                    <span class="badge bg-success me-2">Niska</span>
-                                    Do 3 dana
+                                <li class="d-flex align-items-start py-1">
+                                    <span class="me-2 mt-1" style="font-size: 0.8rem;">✅</span>
+                                    <span class="small">Odaberite pravu hitnost problema</span>
                                 </li>
                             </ul>
                         </div>
                     </div>
+
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <div class="card shadow-sm border-0 mt-4" style="border-left: 4px solid #007bff !important;">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-2">
+                                    <!-- Registracija smooth emoji krug -->
+                                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center me-3" 
+                                         style="width: 40px; height: 40px; background: linear-gradient(135deg, #007bff, #0056b3);">
+                                        <span style="font-size: 1rem;">👨‍💼</span>
+                                    </div>
+                                    <h6 class="fw-bold text-dark mb-0">Registrujte se</h6>
+                                </div>
+                                <p class="small text-muted mb-3">Za lakše praćenje vaših zahtjeva podrške i brži servis</p>
+                                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-outline-primary btn-sm">
+                                    <span class="me-1">⭐</span>Kreiraj nalog
+                                </a>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -176,7 +352,32 @@
             }
 
             textarea.addEventListener('input', updateCharCount);
-            updateCharCount(); // Initial check
+            updateCharCount();
         });
     </script>
 }
+
+<style>
+    .space-y-2 > * + * {
+        margin-top: 0.5rem;
+    }
+    .space-y-3 > * + * {
+        margin-top: 0.75rem;
+    }
+    
+    .card {
+        transition: transform 0.2s ease-in-out;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+    }
+    
+    .btn {
+        transition: all 0.2s ease-in-out;
+    }
+    
+    .btn:hover {
+        transform: translateY(-1px);
+    }
+</style>

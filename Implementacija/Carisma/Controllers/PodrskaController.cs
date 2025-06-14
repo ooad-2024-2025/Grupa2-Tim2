@@ -7,8 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Carisma.Controllers
 {
-    [Authorize]
-    public class PodrskaController : Controller
+    public class PodrskaController : Controller  // Uklanjam [Authorize] odavde
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
@@ -19,7 +18,8 @@ namespace Carisma.Controllers
             _userManager = userManager;
         }
 
-        // GET: Podrska
+        // GET: Podrska - samo za ulogovane korisnike
+        [Authorize]
         public async Task<IActionResult> Index(string statusFilter, string hitnostFilter)
         {
             ViewBag.StatusFilter = statusFilter;
@@ -52,7 +52,8 @@ namespace Carisma.Controllers
             return View(await zahtjevi.ToListAsync());
         }
 
-        // GET: Podrska/Details/5
+        // GET: Podrska/Details/5 - samo za ulogovane korisnike
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -72,10 +73,11 @@ namespace Carisma.Controllers
             return View(podrska);
         }
 
-        // GET: Podrska/Create
+        // GET: Podrska/Create - DOSTUPNO SVIMA (i neregistrovanim korisnicima)
         public IActionResult Create()
         {
-            if (User.IsInRole("Podrska") || User.IsInRole("Administrator"))
+            // Ako je korisnik ulogovan i admin/podrška, preusmjeri na Index
+            if (User.Identity.IsAuthenticated && (User.IsInRole("Podrska") || User.IsInRole("Administrator")))
             {
                 return RedirectToAction(nameof(Index));
             }
@@ -83,27 +85,40 @@ namespace Carisma.Controllers
             return View();
         }
 
-
-        // POST: Podrska/Create
+        // POST: Podrska/Create - DOSTUPNO SVIMA
+        // POST: Podrska/Create - DOSTUPNO SVIMA
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Pitanje,Hitnost")] Podrska podrska)
+        public async Task<IActionResult> Create([Bind("Pitanje,Hitnost,Email,ImePrezime")] Podrska podrska)
         {
             if (ModelState.IsValid)
             {
-                var currentUser = await _userManager.GetUserAsync(User);
-
                 podrska.DatumPostavljanja = DateTime.Now;
                 podrska.Status = statusZahtjeva.Otvoren;
-                podrska.KorisnikId = currentUser.Id;
+
+                // Ako je korisnik ulogovan, koristi njegov ID
+                if (User.Identity.IsAuthenticated)
+                {
+                    var currentUser = await _userManager.GetUserAsync(User);
+                    podrska.KorisnikId = currentUser.Id;
+                }
+                // Inače ostavi KorisnikId kao null (neregistrovani korisnik)
 
                 _context.Add(podrska);
                 await _context.SaveChangesAsync();
 
                 TempData["Success"] = "Vaš zahtjev je uspješno poslat! Odgovoriće vam u najkraćem roku.";
-                return RedirectToAction(nameof(Index));
+
+                // PROMJENA: Svi korisnici (i registrovani i neregistrovani) idu na CreateSuccess
+                return RedirectToAction("CreateSuccess");
             }
             return View(podrska);
+        }
+
+        // GET: Podrska/CreateSuccess - stranica zahvalnice za neregistrovane korisnike
+        public IActionResult CreateSuccess()
+        {
+            return View();
         }
 
         // GET: Podrska/Edit/5
@@ -159,6 +174,7 @@ namespace Carisma.Controllers
         // POST: Podrska/Ocijeni/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Ocijeni(int id, int ocjena, string komentar)
         {
             var podrska = await _context.Podrska.FindAsync(id);
