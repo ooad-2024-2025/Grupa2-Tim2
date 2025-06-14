@@ -31,14 +31,28 @@ namespace Carisma.Controllers
          }*/
 
         //novi za sortiranje
-        public async Task<IActionResult> Index(string? sortOrder = null)
+        public async Task<IActionResult> Index(string? sortOrder = null, string? pojam = null)
         {
             ViewData["CijenaSortParm"] = sortOrder == "cijena_asc" ? "cijena_desc" : "cijena_asc";
             ViewData["CurrentSort"] = sortOrder;
+            ViewData["SearchString"] = pojam; // Dodano za čuvanje pretrage u view-u
 
             var vozila = from v in _context.Vozila.Include(v => v.Osoba)
                          select v;
 
+            // Pretraga po marki ili modelu - poboljšana verzija
+            if (!string.IsNullOrEmpty(pojam))
+            {
+                // Uklanjamo whitespace i konvertujemo u lowercase za bolje poređenje
+                string searchTerm = pojam.Trim().ToLower();
+
+                vozila = vozila.Where(v =>
+                    v.Marka.ToLower().Contains(searchTerm) ||
+                    v.Model.ToLower().Contains(searchTerm) ||
+                    (v.Marka + " " + v.Model).ToLower().Contains(searchTerm));
+            }
+
+            // Sortiranje
             switch (sortOrder)
             {
                 case "cijena_desc":
@@ -52,7 +66,12 @@ namespace Carisma.Controllers
                     break;
             }
 
-            return View(await vozila.ToListAsync());
+            // Debug informacije - možete dodati breakpoint ovde ili logovanje
+            var rezultat = await vozila.ToListAsync();
+
+            
+
+            return View(rezultat);
         }
 
         // GET: Vozilo/Details/5

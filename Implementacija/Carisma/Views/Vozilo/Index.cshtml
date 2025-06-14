@@ -204,22 +204,22 @@
                         </div>
                         <div class="col-md-3">
                             <select name="sortOrder" class="form-select">
-                                <option value="">Sortiranje po ceni</option>
+                                <option value="">Sortiranje po cijeni</option>
                                 @if (ViewData["CurrentSort"]?.ToString() == "cijena_asc")
                                 {
-                                    <option value="cijena_asc" selected>Cena (najniža prvo)</option>
+                                    <option value="cijena_asc" selected>Cijena (najniža prvo)</option>
                                 }
                                 else
                                 {
-                                    <option value="cijena_asc">Cena (najniža prvo)</option>
+                                    <option value="cijena_asc">Cijena (najniža prvo)</option>
                                 }
                                 @if (ViewData["CurrentSort"]?.ToString() == "cijena_desc")
                                 {
-                                    <option value="cijena_desc" selected>Cena (najviša prvo)</option>
+                                    <option value="cijena_desc" selected>Cijena (najviša prvo)</option>
                                 }
                                 else
                                 {
-                                    <option value="cijena_desc">Cena (najviša prvo)</option>
+                                    <option value="cijena_desc">Cijena (najviša prvo)</option>
                                 }
                             </select>
                         </div>
