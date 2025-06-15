@@ -303,12 +303,13 @@
                                                         <small class="text-muted">/ dan</small>
                                                     </div>
 
-                                                    @if (item.Status == Dostupnost.Dostupno)
-                                                    {
-                                                        <a class="btn btn-success" asp-controller="Rezervacija" asp-action="Create" asp-route-voziloId="@item.Id" title="Rezerviši">
-                                                            <i class="fas fa-calendar-check me-2"></i>Rezerviši
-                                                        </a>
-                                                    }
+                                                    <!-- Umjesto postojećeg rezervisi dugmeta, koristite: -->
+@if (item.Status == Dostupnost.Dostupno)
+{
+    <a class="btn btn-success" asp-controller="Rezervacija" asp-action="Kreiraj" asp-route-id="@item.Id" title="Rezerviši">
+        <i class="fas fa-calendar-check me-2"></i>Rezerviši
+    </a>
+}
                                                 </div>
 
                                                 <div class="mt-auto">

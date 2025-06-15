@@ -1,4 +1,7 @@
-﻿
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +11,9 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Carisma.styles.css" asp-append-version="true" />
+    
+    <!-- Font Awesome za ikone -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
     <!-- Modern Pink Layout Styles -->
     <style>
@@ -139,20 +145,14 @@
                 background: radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
                 animation: footerFloat 8s ease-in-out infinite;
             }
-
-        @@keyframes footerFloat {
-            0%, 100%
-
-        {
-            transform: translateX(0px);
-        }
-
-        50% {
-            transform: translateX(20px);
-        }
-
-        }
-
+@@keyframes footerFloat {
+    0%, 100% {
+        transform: translateX(0px);
+    }
+    50% {
+        transform: translateX(20px);
+    }
+}
         .modern-footer .container {
             position: relative;
             z-index: 2;
@@ -174,22 +174,19 @@
 
         /* Responsive adjustments */
         @@media (max-width: 768px) {
-            .modern-navbar .nav-link
+            .modern-navbar .nav-link {
+                margin: 0.25rem 0;
+                text-align: center;
+            }
 
-        {
-            margin: 0.25rem 0;
-            text-align: center;
-        }
+            .content-wrapper {
+                margin: 0.5rem;
+                padding: 1.5rem;
+            }
 
-        .content-wrapper {
-            margin: 0.5rem;
-            padding: 1.5rem;
-        }
-
-        .main-container {
-            padding: 1rem 0;
-        }
-
+            .main-container {
+                padding: 1rem 0;
+            }
         }
 
         /* Custom scrollbar */
@@ -216,20 +213,16 @@
             animation: fadeInUp 0.6s ease-out;
         }
 
-        @@keyframes fadeInUp {
-            from
-
-        {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        }
+ @@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}       
 
         /* Login partial styles */
         .navbar-nav .nav-link.btn {
@@ -321,6 +314,63 @@
             background: linear-gradient(45deg, rgba(220, 20, 60, 0.1), rgba(255, 105, 180, 0.1)) !important;
             color: #dc143c !important;
         }
+
+        /* Badge styling za rezervacije */
+        .badge {
+            border-radius: 15px !important;
+            padding: 0.5rem 1rem !important;
+            font-size: 0.8rem !important;
+        }
+
+        .badge.bg-warning {
+            background: linear-gradient(45deg, #ffc107, #ff8c00) !important;
+        }
+
+        .badge.bg-primary {
+            background: linear-gradient(45deg, #0d6efd, #0056b3) !important;
+        }
+
+        .badge.bg-success {
+            background: linear-gradient(45deg, #198754, #146c43) !important;
+        }
+
+        .badge.bg-danger {
+            background: linear-gradient(45deg, #dc3545, #b02a37) !important;
+        }
+
+        /* Dropdown menu styling */
+.dropdown-menu {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 192, 203, 0.3) !important;
+    border-radius: 15px !important;
+    box-shadow: 0 10px 30px rgba(255, 105, 180, 0.2) !important;
+    padding: 0.5rem 0 !important;
+}
+
+.dropdown-item {
+    color: #c44569 !important;
+    padding: 0.75rem 1.5rem !important;
+    transition: all 0.3s ease !important;
+    border-radius: 10px !important;
+    margin: 0 0.5rem !important;
+}
+
+.dropdown-item:hover {
+    background: linear-gradient(45deg, rgba(255, 105, 180, 0.1), rgba(255, 192, 203, 0.1)) !important;
+    color: #ff1493 !important;
+    transform: translateX(5px) !important;
+}
+
+.dropdown-item.text-danger:hover {
+    background: linear-gradient(45deg, rgba(220, 20, 60, 0.1), rgba(255, 105, 180, 0.1)) !important;
+    color: #dc143c !important;
+}
+
+.dropdown-divider {
+    border-color: rgba(255, 192, 203, 0.3) !important;
+    margin: 0.5rem 1rem !important;
+}
     </style>
 </head>
 <body>
@@ -333,7 +383,9 @@
         <header>
             <nav class="navbar navbar-expand-sm navbar-toggleable-sm modern-navbar">
                 <div class="container-fluid">
-                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Carisma</a>
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                        <i class="fas fa-car me-2"></i>Carisma
+                    </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                             aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
@@ -341,19 +393,77 @@
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                         <ul class="navbar-nav flex-grow-1">
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">🏠 Home</a>
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                    <i class="fas fa-home me-1"></i>Home
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Vozilo" asp-action="Index">🚗 Vozila</a>
+                                <a class="nav-link" asp-area="" asp-controller="Vozilo" asp-action="Index">
+                                    <i class="fas fa-car me-1"></i>Vozila
+                                </a>
                             </li>
+                            
+                            @if (SignInManager.IsSignedIn(User))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Rezervacija" asp-action="Index">
+                                        <i class="fas fa-calendar-check me-1"></i>Moje rezervacije
+                                    </a>
+                                </li>
+                                
+                                @if (User.IsInRole("Administrator"))
+                                {
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-cog me-1"></i>Administracija
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                                            <li><a class="dropdown-item" asp-controller="Rezervacija" asp-action="AdminIndex">
+                                                <i class="fas fa-list me-2"></i>Sve rezervacije
+                                            </a></li>
+                                            <li><a class="dropdown-item" asp-controller="Osoba" asp-action="Index">
+                                                <i class="fas fa-users me-2"></i>Korisnici
+                                            </a></li>
+                                            <li><a class="dropdown-item" asp-controller="Vozilo" asp-action="Create">
+                                                <i class="fas fa-plus me-2"></i>Dodaj vozilo
+                                            </a></li>
+                                            <li><a class="dropdown-item" asp-controller="Placanje" asp-action="Index">
+                                                <i class="fas fa-money-bill me-2"></i>Plaćanja
+                                            </a></li>
+                                        </ul>
+                                    </li>
+                                }
+                                
+                                @if (User.IsInRole("Podrska") || User.IsInRole("Administrator"))
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="" asp-controller="Podrska" asp-action="Index">
+                                            <i class="fas fa-headset me-1"></i>Podrška
+                                        </a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="" asp-controller="Podrska" asp-action="Create">
+                                            <i class="fas fa-question-circle me-1"></i>Podrška
+                                        </a>
+                                    </li>
+                                }
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Podrska" asp-action="Create">
+                                        <i class="fas fa-question-circle me-1"></i>Podrška
+                                    </a>
+                                </li>
+                            }
+                            
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Rezervacija" asp-action="Index">⚡ Rezervacija</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Podrska" asp-action="Create">🛠️ Podrška</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">🔒 Privacy</a>
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">
+                                    <i class="fas fa-shield-alt me-1"></i>Privacy
+                                </a>
                             </li>
                         </ul>
                         <partial name="_LoginPartial" />
@@ -362,25 +472,6 @@
             </nav>
         </header>
     }
-    @*
-    @if (User.Identity.IsAuthenticated)
-    {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Rezervacija"
-               asp-action="Index">Rezervacije</a>
-        </li>
-    }
-
-
-    @if (User.Identity.IsAuthenticated)
-    {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Vozilo"
-               asp-action="Index">Vozila</a>
-        </li>
-    }
-
-    *@
 
     <div class="main-container">
         <div class="container d-flex flex-column h-100">
@@ -405,12 +496,19 @@
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-md-6">
-                        <p class="mb-0">&copy; 2025 - Carisma - Vaša pouzdana rent-a-car aplikacija</p>
+                        <p class="mb-0">
+                            <i class="fas fa-copyright me-1"></i>
+                            2025 - Carisma - Vaša pouzdana rent-a-car aplikacija
+                        </p>
                     </div>
                     <div class="col-md-6 text-md-end">
-                        <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
+                        <a asp-area="" asp-controller="Home" asp-action="Privacy">
+                            <i class="fas fa-shield-alt me-1"></i>Privacy Policy
+                        </a>
                         <span class="mx-2">|</span>
-                        <a asp-area="" asp-controller="Podrska" asp-action="Create">Kontakt</a>
+                        <a asp-area="" asp-controller="Podrska" asp-action="Create">
+                            <i class="fas fa-envelope me-1"></i>Kontakt
+                        </a>
                     </div>
                 </div>
             </div>
@@ -449,9 +547,16 @@
             const navLinks = document.querySelectorAll('.nav-link');
             navLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
-                    if (this.getAttribute('href') !== '#') {
+                    if (this.getAttribute('href') !== '#' && !this.classList.contains('dropdown-toggle')) {
                         this.style.opacity = '0.7';
+                        const originalHTML = this.innerHTML;
                         this.innerHTML += ' <span class="spinner-border spinner-border-sm ms-1" role="status"></span>';
+                        
+                        // Restore original content after navigation starts
+                        setTimeout(() => {
+                            this.innerHTML = originalHTML;
+                            this.style.opacity = '1';
+                        }, 1000);
                     }
                 });
             });
@@ -459,29 +564,31 @@
             // Add ripple effect to nav links
             navLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
-                    const ripple = document.createElement('span');
-                    const rect = this.getBoundingClientRect();
-                    const size = Math.max(rect.width, rect.height);
-                    const x = e.clientX - rect.left - size / 2;
-                    const y = e.clientY - rect.top - size / 2;
+                    if (!this.classList.contains('dropdown-toggle')) {
+                        const ripple = document.createElement('span');
+                        const rect = this.getBoundingClientRect();
+                        const size = Math.max(rect.width, rect.height);
+                        const x = e.clientX - rect.left - size / 2;
+                        const y = e.clientY - rect.top - size / 2;
 
-                    ripple.style.width = ripple.style.height = size + 'px';
-                    ripple.style.left = x + 'px';
-                    ripple.style.top = y + 'px';
-                    ripple.style.position = 'absolute';
-                    ripple.style.borderRadius = '50%';
-                    ripple.style.background = 'rgba(255, 255, 255, 0.6)';
-                    ripple.style.transform = 'scale(0)';
-                    ripple.style.animation = 'ripple 0.6s linear';
-                    ripple.style.pointerEvents = 'none';
+                        ripple.style.width = ripple.style.height = size + 'px';
+                        ripple.style.left = x + 'px';
+                        ripple.style.top = y + 'px';
+                        ripple.style.position = 'absolute';
+                        ripple.style.borderRadius = '50%';
+                        ripple.style.background = 'rgba(255, 255, 255, 0.6)';
+                        ripple.style.transform = 'scale(0)';
+                        ripple.style.animation = 'ripple 0.6s linear';
+                        ripple.style.pointerEvents = 'none';
 
-                    this.style.position = 'relative';
-                    this.style.overflow = 'hidden';
-                    this.appendChild(ripple);
+                        this.style.position = 'relative';
+                        this.style.overflow = 'hidden';
+                        this.appendChild(ripple);
 
-                    setTimeout(() => {
-                        ripple.remove();
-                    }, 600);
+                        setTimeout(() => {
+                            ripple.remove();
+                        }, 600);
+                    }
                 });
             });
         });
@@ -489,7 +596,7 @@
         // Ripple animation
         const style = document.createElement('style');
         style.textContent = `
-        @@keyframes ripple {
+           @@keyframes ripple {
                 to {
                     transform: scale(4);
                     opacity: 0;

@@ -1,60 +1,170 @@
 ﻿@model Carisma.Models.Rezervacija
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalji rezervacije";
 }
 
-<h1>Details</h1>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Detalji rezervacije #@Model.Id
+                    </h4>
+                </div>
 
-<div>
-    <h4>Rezervacija</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.datumPocetka)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.datumPocetka)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.datumZavrsetka)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.datumZavrsetka)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.datumRezervacije)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.datumRezervacije)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.korisnik)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.korisnik.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.cijena)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.cijena)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.vozilo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.vozilo.Marka)
-        </dd>
-    </dl>
+                <div class="card-body">
+                    <!-- Status rezervacije -->
+                    <div class="alert @(GetStatusClass(Model.Status))" role="alert">
+                        <i class="fas @(GetStatusIcon(Model.Status)) me-2"></i>
+                        <strong>Status rezervacije:</strong> @Model.Status.ToString()
+                    </div>
+
+                    <!-- Vozilo -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <img src="~/images/vozila/@(GetVoziloImage(Model.vozilo.Marka, Model.vozilo.Model))"
+                                 class="img-fluid rounded"
+                                 alt="@Model.vozilo.Marka @Model.vozilo.Model" />
+                        </div>
+                        <div class="col-md-8">
+                            <h5 class="text-primary">@Model.vozilo.Marka @Model.vozilo.Model</h5>
+                            <p class="text-muted">Godina: @Model.vozilo.Godina</p>
+                            <p class="text-muted">Cijena po danu: @Model.vozilo.CijenaPoDanu KM</p>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <!-- Detalji rezervacije -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-calendar-alt me-2"></i>Datumi rezervacije</h6>
+                            <dl class="row">
+                                <dt class="col-sm-5">Početak:</dt>
+                                <dd class="col-sm-7">@Model.datumPocetka.ToString("dddd, dd.MM.yyyy")</dd>
+                                
+                                <dt class="col-sm-5">Završetak:</dt>
+                                <dd class="col-sm-7">@Model.datumZavrsetka.ToString("dddd, dd.MM.yyyy")</dd>
+                                
+                                <dt class="col-sm-5">Broj dana:</dt>
+                                <dd class="col-sm-7">@((Model.datumZavrsetka.Date - Model.datumPocetka.Date).Days + 1)</dd>
+                            </dl>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-info me-2"></i>Informacije</h6>
+                            <dl class="row">
+                                <dt class="col-sm-5">Kreirana:</dt>
+                                <dd class="col-sm-7">@Model.datumRezervacije.ToString("dd.MM.yyyy HH:mm")</dd>
+                                
+                                <dt class="col-sm-5">Ukupna cijena:</dt>
+                                <dd class="col-sm-7"><strong class="text-success">@Model.cijena.ToString("F2") KM</strong></dd>
+                                
+                                @if (User.IsInRole("Administrator"))
+                                {
+                                    <dt class="col-sm-5">Korisnik ID:</dt>
+                                    <dd class="col-sm-7">@Model.korisnikId</dd>
+                                    
+                                    <dt class="col-sm-5">Vozilo ID:</dt>
+                                    <dd class="col-sm-7">@Model.voziloId</dd>
+                                }
+                            </dl>
+                        </div>
+                    </div>
+
+                    @if (User.IsInRole("Administrator") && Model.korisnik != null)
+                    {
+                        <hr />
+                        <!-- Korisničke informacije (samo za admin) -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6><i class="fas fa-user me-2"></i>Informacije o korisniku</h6>
+                                <dl class="row">
+                                    <dt class="col-sm-2">Ime:</dt>
+                                    <dd class="col-sm-4">@Model.korisnik.PunoIme</dd>
+                                    
+                                    <dt class="col-sm-2">Email:</dt>
+                                    <dd class="col-sm-4">@Model.korisnik.email</dd>
+                                    
+                                    <dt class="col-sm-2">Telefon:</dt>
+                                    <dd class="col-sm-4">@Model.korisnik.broj_telefona</dd>
+                                    
+                                    <dt class="col-sm-2">Korisničko ime:</dt>
+                                    <dd class="col-sm-4">@Model.korisnik.korisnicko_ime</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Dugmad -->
+                    <div class="d-flex justify-content-between">
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <a asp-action="AdminIndex" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Nazad na sve rezervacije
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Nazad na moje rezervacije
+                            </a>
+                        }
+                        
+                        <div>
+                            @if (Model.Status == StatusRezervacije.Kreirana || Model.Status == StatusRezervacije.UToku)
+                            {
+                                var razlika = Model.datumPocetka - DateTime.Now;
+                                if (razlika.TotalHours >= 48 || User.IsInRole("Administrator"))
+                                {
+                                    <form asp-action="Otkazi" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@Model.Id" />
+                                        <button type="submit" class="btn btn-danger" 
+                                                onclick="return confirm('Jeste li sigurni da želite otkazati rezervaciju?')">
+                                            <i class="fas fa-times me-2"></i>Otkazi rezervaciju
+                                        </button>
+                                    </form>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+@functions {
+    string GetVoziloImage(string marka, string model)
+    {
+        string fileName = $"{marka.ToLower()}-{model.ToLower().Replace(" ", "-")}.jpg";
+        return fileName;
+    }
+    
+    string GetStatusClass(StatusRezervacije status)
+    {
+        return status switch
+        {
+            StatusRezervacije.Kreirana => "alert-warning",
+            StatusRezervacije.UToku => "alert-primary",
+            StatusRezervacije.Zavrsena => "alert-success",
+            StatusRezervacije.Otkazana => "alert-danger",
+            _ => "alert-secondary"
+        };
+    }
+    
+    string GetStatusIcon(StatusRezervacije status)
+    {
+        return status switch
+        {
+            StatusRezervacije.Kreirana => "fa-clock",
+            StatusRezervacije.UToku => "fa-play",
+            StatusRezervacije.Zavrsena => "fa-check",
+            StatusRezervacije.Otkazana => "fa-times",
+            _ => "fa-question"
+        };
+    }
+}

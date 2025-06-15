@@ -1,0 +1,202 @@
+﻿@model Carisma.Controllers.RezervacijaViewModel
+
+@{
+    ViewData["Title"] = "Kreiranje rezervacije";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-calendar-plus me-2"></i>
+                        Kreiranje rezervacije
+                    </h4>
+                </div>
+
+                <div class="card-body">
+                    <!-- Prikaz vozila -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <img src="~/images/vozila/@(GetVoziloImage(Model.Vozilo.Marka, Model.Vozilo.Model))"
+                                 class="img-fluid rounded"
+                                 alt="@Model.Vozilo.Marka @Model.Vozilo.Model" />
+                        </div>
+                        <div class="col-md-8">
+                            <h5 class="text-primary">@Model.Vozilo.Marka @Model.Vozilo.Model</h5>
+                            <p class="text-muted">Godina: @Model.Vozilo.Godina</p>
+                            <div class="d-flex align-items-center">
+                                <h3 class="text-success me-2">@Model.Vozilo.CijenaPoDanu KM</h3>
+                                <span class="text-muted">po danu</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <form asp-action="Kreiraj" method="post" id="rezervacijaForm">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        <input type="hidden" asp-for="VoziloId" value="@Model.Vozilo.Id" />
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="DatumPocetka" class="form-label">
+                                    <i class="fas fa-calendar-alt me-1"></i>Datum početka rezervacije
+                                </label>
+                                <input asp-for="DatumPocetka" type="date" class="form-control" id="datumPocetka" />
+                                <span asp-validation-for="DatumPocetka" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="DatumZavrsetka" class="form-label">
+                                    <i class="fas fa-calendar-alt me-1"></i>Datum završetka rezervacije
+                                </label>
+                                <input asp-for="DatumZavrsetka" type="date" class="form-control" id="datumZavrsetka" />
+                                <span asp-validation-for="DatumZavrsetka" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Izračun cijene -->
+                        <div class="card bg-light mb-4">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-calculator me-2"></i>Kalkulacija cijene
+                                </h6>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <strong>Broj dana:</strong>
+                                        <span id="brojDana">-</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <strong>Cijena po danu:</strong>
+                                        @Model.Vozilo.CijenaPoDanu KM
+                                    </div>
+                                    <div class="col-md-4">
+                                        <strong class="text-primary">Ukupna cijena:</strong>
+                                        <span id="ukupnaCijena" class="text-primary h5">0.00 KM</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Uvjeti -->
+                        <div class="card border-warning mb-4">
+                            <div class="card-header bg-warning text-dark">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>Važne napomene
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <ul class="mb-0">
+                                    <li>Rezervacija se može otkazati najkasnije 48 sati prije početka.</li>
+                                    <li>Prilikom preuzimanja vozila potrebno je imati važeću vozačku dozvolu.</li>
+                                    <li>Depozit se plaća prilikom preuzimanja vozila.</li>
+                                    <li>Vozilo se mora vratiti u istom stanju u kojem je preuzeto.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Potvrda odgovornosti -->
+                        <div class="card border-danger mb-4">
+                            <div class="card-header bg-danger text-white">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-shield-alt me-2"></i>Odgovornost za štetu
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-check">
+                                    <input asp-for="PrihvatamOdgovornost" class="form-check-input" type="checkbox" id="prihvatamOdgovornost" required />
+                                    <label class="form-check-label" for="prihvatamOdgovornost">
+                                        <strong>Prihvatam punu odgovornost</strong> za sve štete koje se mogu desiti na vozilu tokom perioda iznajmljivanja.
+                                        Obavezujem se da ću nadoknaditi svu štetu nastalu mojom krivicom ili nehatom.
+                                    </label>
+                                </div>
+                                <span asp-validation-for="PrihvatamOdgovornost" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Dugmad -->
+                        <div class="d-flex justify-content-between">
+                            <a asp-controller="Vozilo" asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Vrati se na pregled vozila
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg" id="dugmePlacanje" disabled>
+                                <i class="fas fa-credit-card me-2"></i>Nastavi na plaćanje
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetVoziloImage(string marka, string model)
+    {
+        string fileName = $"{marka.ToLower()}-{model.ToLower().Replace(" ", "-")}.jpg";
+        return fileName;
+    }
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            const cijenaPoDanu = @Model.Vozilo.CijenaPoDanu;
+            
+            // Postavi minimum datume
+            const today = new Date().toISOString().split('T')[0];
+            $('#datumPocetka').attr('min', today);
+            
+            function calculatePrice() {
+                const startDate = $('#datumPocetka').val();
+                const endDate = $('#datumZavrsetka').val();
+                
+                if (startDate && endDate) {
+                    const start = new Date(startDate);
+                    const end = new Date(endDate);
+                    
+                    if (end > start) {
+                        const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+                        const totalPrice = days * cijenaPoDanu;
+                        
+                        $('#brojDana').text(days);
+                        $('#ukupnaCijena').text(totalPrice.toFixed(2) + ' KM');
+                        
+                        // Postavi minimum za datum završetka
+                        const nextDay = new Date(start);
+                        nextDay.setDate(nextDay.getDate() + 1);
+                        $('#datumZavrsetka').attr('min', nextDay.toISOString().split('T')[0]);
+                    } else {
+                        $('#brojDana').text('-');
+                        $('#ukupnaCijena').text('0.00 KM');
+                    }
+                } else {
+                    $('#brojDana').text('-');
+                    $('#ukupnaCijena').text('0.00 KM');
+                }
+                
+                checkFormValidity();
+            }
+            
+            function checkFormValidity() {
+                const startDate = $('#datumPocetka').val();
+                const endDate = $('#datumZavrsetka').val();
+                const responsibility = $('#prihvatamOdgovornost').is(':checked');
+                
+                const isValid = startDate && endDate && responsibility && 
+                               new Date(endDate) > new Date(startDate);
+                
+                $('#dugmePlacanje').prop('disabled', !isValid);
+            }
+            
+            $('#datumPocetka, #datumZavrsetka').on('change', calculatePrice);
+            $('#prihvatamOdgovornost').on('change', checkFormValidity);
+            
+            // Inicijalno izračunavanje
+            calculatePrice();
+        });
+    </script>
+}

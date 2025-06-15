@@ -1,71 +1,183 @@
 ﻿@model IEnumerable<Carisma.Models.Rezervacija>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Moje rezervacije";
 }
 
-<h1>Index</h1>
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header pb-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">
+                            <i class="fas fa-calendar-check me-2"></i>Moje rezervacije
+                        </h6>
+                        <div>
+                            <a class="btn btn-primary btn-sm" asp-controller="Vozilo" asp-action="Index">
+                                <i class="fas fa-car me-2"></i>Pogledaj vozila
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.datumPocetka)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.datumZavrsetka)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.datumRezervacije)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.korisnik)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.cijena)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.vozilo)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.datumPocetka)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.datumZavrsetka)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.datumRezervacije)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.korisnik.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.cijena)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.vozilo.Marka)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                <div class="card-body">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>@TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th><i class="fas fa-car me-1"></i>Vozilo</th>
+                                        <th><i class="fas fa-calendar-alt me-1"></i>Period rezervacije</th>
+                                        <th><i class="fas fa-calendar me-1"></i>Datum kreiranja</th>
+                                        <th><i class="fas fa-info-circle me-1"></i>Status</th>
+                                        <th><i class="fas fa-money-bill me-1"></i>Cijena</th>
+                                        <th><i class="fas fa-cogs me-1"></i>Akcije</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var rezervacija in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@rezervacija.vozilo?.Marka @rezervacija.vozilo?.Model</strong>
+                                                <br />
+                                                <small class="text-muted">Godina: @rezervacija.vozilo?.Godina</small>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <i class="fas fa-play text-success me-1"></i>
+                                                    @rezervacija.datumPocetka.ToString("dd.MM.yyyy")
+                                                </div>
+                                                <div>
+                                                    <i class="fas fa-stop text-danger me-1"></i>
+                                                    @rezervacija.datumZavrsetka.ToString("dd.MM.yyyy")
+                                                </div>
+                                                <small class="text-muted">
+                                                    (@((rezervacija.datumZavrsetka.Date - rezervacija.datumPocetka.Date).Days + 1) dana)
+                                                </small>
+                                            </td>
+                                            <td>
+                                                @rezervacija.datumRezervacije.ToString("dd.MM.yyyy HH:mm")
+                                            </td>
+                                            <td>
+                                                @switch (rezervacija.Status)
+                                                {
+                                                    case StatusRezervacije.Kreirana:
+                                                        <span class="badge bg-warning">
+                                                            <i class="fas fa-clock me-1"></i>Kreirana
+                                                        </span>
+                                                        break;
+                                                    case StatusRezervacije.UToku:
+                                                        <span class="badge bg-primary">
+                                                            <i class="fas fa-play me-1"></i>U toku
+                                                        </span>
+                                                        break;
+                                                    case StatusRezervacije.Zavrsena:
+                                                        <span class="badge bg-success">
+                                                            <i class="fas fa-check me-1"></i>Završena
+                                                        </span>
+                                                        break;
+                                                    case StatusRezervacije.Otkazana:
+                                                        <span class="badge bg-danger">
+                                                            <i class="fas fa-times me-1"></i>Otkazana
+                                                        </span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>
+                                                <strong class="text-primary">@rezervacija.cijena.ToString("F2") KM</strong>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a class="btn btn-outline-info btn-sm" asp-action="Details" asp-route-id="@rezervacija.Id" title="Detalji">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    
+                                                    @if (rezervacija.Status == StatusRezervacije.Kreirana || rezervacija.Status == StatusRezervacije.UToku)
+                                                    {
+                                                        var razlika = rezervacija.datumPocetka - DateTime.Now;
+                                                        if (razlika.TotalHours >= 48)
+                                                        {
+                                                            <form asp-action="Otkazi" method="post" class="d-inline">
+                                                                <input type="hidden" name="id" value="@rezervacija.Id" />
+                                                                <button type="submit" class="btn btn-outline-danger btn-sm" 
+                                                                        onclick="return confirm('Jeste li sigurni da želite otkazati rezervaciju?')" 
+                                                                        title="Otkazi rezervaciju">
+                                                                    <i class="fas fa-times"></i>
+                                                                </button>
+                                                            </form>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="btn btn-outline-secondary btn-sm disabled" title="Ne možete otkazati rezervaciju manje od 48h prije početka">
+                                                                <i class="fas fa-lock"></i>
+                                                            </span>
+                                                        }
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-calendar-times fa-4x text-muted mb-4"></i>
+                            <h4 class="text-muted mb-3">Nemate aktivnih rezervacija</h4>
+                            
+                            @if (ViewBag.Message != null)
+                            {
+                                <p class="text-muted mb-4">@ViewBag.Message</p>
+                                
+                                @if (ViewBag.PredloziVozila != null)
+                                {
+                                    <div class="row justify-content-center">
+                                        @foreach (var vozilo in (IEnumerable<Carisma.Models.Vozilo>)ViewBag.PredloziVozila)
+                                        {
+                                            <div class="col-md-4 col-lg-3 mb-3">
+                                                <div class="card h-100 shadow-sm">
+                                                    <div class="card-body text-center">
+                                                        <h6 class="card-title">@vozilo.Marka @vozilo.Model</h6>
+                                                        <p class="card-text text-primary">@vozilo.CijenaPoDanu KM/dan</p>
+                                                        <a class="btn btn-primary btn-sm" asp-controller="Rezervacija" asp-action="Kreiraj" asp-route-id="@vozilo.Id">
+                                                            <i class="fas fa-calendar-plus me-1"></i>Rezerviši
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            }
+                            
+                            <a class="btn btn-primary" asp-controller="Vozilo" asp-action="Index">
+                                <i class="fas fa-search me-2"></i>Pronađi vozilo za rezervaciju
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

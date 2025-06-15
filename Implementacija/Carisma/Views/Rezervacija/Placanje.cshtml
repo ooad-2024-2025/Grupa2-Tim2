@@ -1,0 +1,152 @@
+﻿@model Carisma.Models.Rezervacija
+
+@{
+    ViewData["Title"] = "Potvrda i plaćanje";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-credit-card me-2"></i>
+                        Potvrda i plaćanje rezervacije
+                    </h4>
+                </div>
+
+                <div class="card-body">
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>@TempData["Error"]
+                        </div>
+                    }
+
+                    <!-- Pregled rezervacije -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <img src="~/images/vozila/@(GetVoziloImage(Model.vozilo.Marka, Model.vozilo.Model))"
+                                 class="img-fluid rounded"
+                                 alt="@Model.vozilo.Marka @Model.vozilo.Model" />
+                        </div>
+                        <div class="col-md-8">
+                            <h5 class="text-primary">@Model.vozilo.Marka @Model.vozilo.Model</h5>
+                            <p class="text-muted">Godina: @Model.vozilo.Godina</p>
+                            
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <strong>Datum početka:</strong><br />
+                                    @Model.datumPocetka.ToString("dd.MM.yyyy")
+                                </div>
+                                <div class="col-sm-6">
+                                    <strong>Datum završetka:</strong><br />
+                                    @Model.datumZavrsetka.ToString("dd.MM.yyyy")
+                                </div>
+                            </div>
+                            
+                            <div class="mt-2">
+                                <strong>Broj dana:</strong> @((Model.datumZavrsetka.Date - Model.datumPocetka.Date).Days + 1)
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <!-- Izračun cijene -->
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="fas fa-receipt me-2"></i>Specifikacija cijene
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Cijena po danu:</span>
+                                        <span>@Model.vozilo.CijenaPoDanu.ToString("F2") KM</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Broj dana:</span>
+                                        <span>@((Model.datumZavrsetka.Date - Model.datumPocetka.Date).Days + 1)</span>
+                                    </div>
+                                    <hr />
+                                    <div class="d-flex justify-content-between">
+                                        <strong>Ukupna cijena:</strong>
+                                        <strong class="text-success h5">@Model.cijena.ToString("F2") KM</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Uvjeti plaćanja -->
+                    <div class="card border-info mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h6 class="mb-0">
+                                <i class="fas fa-info-circle me-2"></i>Uvjeti plaćanja
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Plaćanje se vrši online karticom.</li>
+                                <li>Rezervacija je aktivna odmah nakon uspješnog plaćanja.</li>
+                                <li>Vozilo možete preuzeti na dan početka rezervacije.</li>
+                                <li>U slučaju problema, kontaktirajte našu podršku.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Potvrda odgovornosti -->
+                    <form asp-action="PotvrdiPlacanje" method="post">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        
+                        <div class="card border-warning mb-4">
+                            <div class="card-header bg-warning text-dark">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-shield-alt me-2"></i>Finalna potvrda
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="prihvatamOdgovornost" id="prihvatamOdgovornost" required />
+                                    <label class="form-check-label" for="prihvatamOdgovornost">
+                                        <strong>Potvrđujem</strong> da sam pročitao/la sve uvjete i da prihvatam punu odgovornost 
+                                        za vozilo tokom perioda iznajmljivanja. Slažem se da ću platiti svu štetu nastalu mojom krivicom.
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dugmad -->
+                        <div class="d-flex justify-content-between">
+                            <a asp-controller="Vozilo" asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Vrati se na vozila
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg" id="dugmePotvrdi" disabled>
+                                <i class="fas fa-check me-2"></i>Potvrdi i završi rezervaciju
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetVoziloImage(string marka, string model)
+    {
+        string fileName = $"{marka.ToLower()}-{model.ToLower().Replace(" ", "-")}.jpg";
+        return fileName;
+    }
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#prihvatamOdgovornost').on('change', function() {
+                $('#dugmePotvrdi').prop('disabled', !this.checked);
+            });
+        });
+    </script>
+}

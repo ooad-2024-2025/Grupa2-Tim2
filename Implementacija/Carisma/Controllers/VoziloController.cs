@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Carisma.Data;
 using Carisma.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace Carisma.Controllers
@@ -16,10 +17,12 @@ namespace Carisma.Controllers
     public class VoziloController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public VoziloController(ApplicationDbContext context)
+        public VoziloController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager; // DODAJTE OVO
         }
 
         // GET: Vozilo
@@ -255,10 +258,16 @@ namespace Carisma.Controllers
             if (vozilo == null)
                 return NotFound();
 
-            return View(new Rezervacija { vozilo = vozilo });
+            if (vozilo.Status != Dostupnost.Dostupno)
+            {
+                TempData["Error"] = "Ovo vozilo trenutno nije dostupno za rezervaciju.";
+                return RedirectToAction("Details", new { id });
+            }
+
+            return RedirectToAction("Kreiraj", "Rezervacija", new { id });
         }
 
-        [HttpPost]
+       /* [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Rezervisi(int id, DateTime datumRezervacije)
         {
@@ -283,7 +292,7 @@ namespace Carisma.Controllers
 
             TempData["Poruka"] = "Vozilo uspešno rezervisano.";
             return RedirectToAction("Index", "Vozilo");
-        }
+        }*/
 
         // PUT ili POST: Vozilo/AzurirajVozilo/5
         [HttpPost]
@@ -337,6 +346,8 @@ namespace Carisma.Controllers
         }*/
 
         //
+
+
 
         private bool VoziloExists(int id)
         {
