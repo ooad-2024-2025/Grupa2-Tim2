@@ -30,7 +30,7 @@ namespace Carisma.Controllers
             _configuration = configuration;
 
             // Postavi Stripe konfiguraciju
-            StripeConfiguration.ApiKey = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
+            StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"];
         }
 
         // GET: Rezervacija - Korisničke rezervacije
