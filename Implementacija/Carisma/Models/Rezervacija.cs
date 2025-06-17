@@ -32,15 +32,16 @@ namespace Carisma.Models
 
 
 
-        public double izracunajCijenu(double cijenaPoDanu)
-        {
-            // Računa broj dana (uključujući i dan završetka)
-            int brojDana = (datumZavrsetka.Date - datumPocetka.Date).Days + 1;
-            if (brojDana < 1) brojDana = 1; // minimalno jedan dan
+        public double izracunajCijenu()
+{
+    // Calculate the number of days (including the end date)
+    int brojDana = (datumZavrsetka.Date - datumPocetka.Date).Days + 1;
+    if (brojDana < 1) brojDana = 1; // Minimum one day
 
-            cijena = brojDana * cijenaPoDanu;
-            return cijena;
-        }
+    // Use the daily price from the related Vozilo
+    cijena = brojDana * (vozilo?.CijenaPoDanu ?? 0);
+    return cijena;
+}
 
         public bool potvrdiRezervaciju()
         {

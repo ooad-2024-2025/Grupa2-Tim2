@@ -1,0 +1,221 @@
+﻿
+@model IEnumerable<Carisma.Models.Rezervacija>
+
+
+
+@{
+    ViewData["Title"] = "Sve rezervacije - Admin panel";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="text-primary">
+                    <i class="fas fa-calendar-alt me-2"></i>Sve rezervacije
+                </h2>
+                <div class="badge bg-info fs-6">
+                    Ukupno: @Model.Count() rezervacija
+                </div>
+            </div>
+
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-info-circle fa-2x mb-3"></i>
+                    <h5>Nema rezervacija u sistemu</h5>
+                    <p class="mb-0">Trenutno nema kreiranih rezervacija.</p>
+                </div>
+            }
+            else
+            {
+                <div class="card shadow">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th><i class="fas fa-hashtag me-1"></i>ID</th>
+                                        <th><i class="fas fa-user me-1"></i>Korisnik</th>
+                                        <th><i class="fas fa-car me-1"></i>Vozilo</th>
+                                        <th><i class="fas fa-calendar-check me-1"></i>Datum početka</th>
+                                        <th><i class="fas fa-calendar-times me-1"></i>Datum završetka</th>
+                                        <th><i class="fas fa-calendar-plus me-1"></i>Datum rezervacije</th>
+                                        <th><i class="fas fa-info-circle me-1"></i>Status</th>
+                                        <th><i class="fas fa-money-bill me-1"></i>Cijena</th>
+                                        <th><i class="fas fa-cogs me-1"></i>Akcije</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var rezervacija in Model)
+                                    {
+                                        <tr>
+                                            <td class="fw-bold">@rezervacija.Id</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-user-circle text-muted me-2"></i>
+                                                    <div>
+                                                        <div class="fw-semibold">@rezervacija.korisnik.Ime @rezervacija.korisnik.Prezime</div>
+                                                        <small class="text-muted">@rezervacija.korisnik.email</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-car text-primary me-2"></i>
+                                                    <div>
+                                                        <div class="fw-semibold">@rezervacija.vozilo.Marka @rezervacija.vozilo.Model</div>
+                                                        <small class="text-muted">@rezervacija.vozilo.Godina</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success">
+                                                    @rezervacija.datumPocetka.ToString("dd.MM.yyyy")
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-danger">
+                                                    @rezervacija.datumZavrsetka.ToString("dd.MM.yyyy")
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    @rezervacija.datumRezervacije.ToString("dd.MM.yyyy HH:mm")
+                                                </small>
+                                            </td>
+                                            <td>
+                                                @switch (rezervacija.Status)
+                                                {
+                                                    case StatusRezervacije.Kreirana:
+                                                        <span class="badge bg-warning text-dark">
+                                                            <i class="fas fa-clock me-1"></i>Kreirana
+                                                        </span>
+                                                        break;
+                                                    case StatusRezervacije.UToku:
+                                                        <span class="badge bg-primary">
+                                                            <i class="fas fa-play me-1"></i>U toku
+                                                        </span>
+                                                        break;
+                                                    case StatusRezervacije.Zavrsena:
+                                                        <span class="badge bg-success">
+                                                            <i class="fas fa-check me-1"></i>Završena
+                                                        </span>
+                                                        break;
+                                                    case StatusRezervacije.Otkazana:
+                                                        <span class="badge bg-secondary">
+                                                            <i class="fas fa-times me-1"></i>Otkazana
+                                                        </span>
+                                                        break;
+                                                    default:
+                                                        <span class="badge bg-secondary">Nepoznato</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold text-success">
+                                                    @rezervacija.izracunajCijenu().ToString("F2") KM
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a asp-action="Details" asp-route-id="@rezervacija.Id" 
+                                                       class="btn btn-sm btn-outline-primary" 
+                                                       title="Detalji">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    @if (rezervacija.Status != StatusRezervacije.Otkazana && 
+                                                         rezervacija.Status != StatusRezervacije.Zavrsena)
+                                                    {
+                                                        <form asp-action="Otkazi" asp-route-id="@rezervacija.Id" 
+                                                              method="post" class="d-inline"
+                                                              onsubmit="return confirm('Da li ste sigurni da želite otkazati ovu rezervaciju?')">
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                                    title="Otkaži rezervaciju">
+                                                                <i class="fas fa-times"></i>
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistike -->
+                <div class="row mt-4">
+                    <div class="col-md-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body text-center">
+                                <i class="fas fa-clock fa-2x mb-2"></i>
+                                <h5>@Model.Count(r => r.Status == StatusRezervacije.Kreirana)</h5>
+                                <small>Kreirane</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body text-center">
+                                <i class="fas fa-play fa-2x mb-2"></i>
+                                <h5>@Model.Count(r => r.Status == StatusRezervacije.UToku)</h5>
+                                <small>U toku</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center">
+                                <i class="fas fa-check fa-2x mb-2"></i>
+                                <h5>@Model.Count(r => r.Status == StatusRezervacije.Zavrsena)</h5>
+                                <small>Završene</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-secondary text-white">
+                            <div class="card-body text-center">
+                                <i class="fas fa-times fa-2x mb-2"></i>
+                                <h5>@Model.Count(r => r.Status == StatusRezervacije.Otkazana)</h5>
+                                <small>Otkazane</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ukupna zarada -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="card bg-info text-white">
+                            <div class="card-body text-center">
+                                <i class="fas fa-money-bill-wave fa-2x mb-2"></i>
+                                <h4>@Model.Where(r => r.Status != StatusRezervacije.Otkazana).Sum(r => r.izracunajCijenu()).ToString("F2") KM</h4>
+                                <small>Ukupna zarada od rezervacija</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Dodaj tooltip za dugmad
+            $('[title]').tooltip();
+            
+            // Dodaj potvrdu za otkazivanje
+            $('.btn-outline-danger').click(function(e) {
+                if (!confirm('Da li ste sigurni da želite otkazati ovu rezervaciju?')) {
+                    e.0preventDefault();
+                }
+            });
+        });
+    </script>
+}

@@ -11,6 +11,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Stripe;
+using Stripe.Checkout;
+using System.Configuration;
 
 namespace Carisma.Controllers
 {
@@ -18,11 +21,16 @@ namespace Carisma.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IConfiguration _configuration;
 
-        public RezervacijaController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public RezervacijaController(ApplicationDbContext context, UserManager<IdentityUser> userManager, IConfiguration configuration)
         {
             _context = context;
             _userManager = userManager;
+            _configuration = configuration;
+
+            // Postavi Stripe konfiguraciju
+            StripeConfiguration.ApiKey = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
         }
 
         // GET: Rezervacija - Korisničke rezervacije
@@ -98,6 +106,7 @@ namespace Carisma.Controllers
             var model = new RezervacijaViewModel
             {
                 Vozilo = vozilo,
+                VoziloId = vozilo.Id, // DODATO: Postavi VoziloId
                 DatumPocetka = DateTime.Today.AddDays(1),
                 DatumZavrsetka = DateTime.Today.AddDays(2)
             };
@@ -105,65 +114,137 @@ namespace Carisma.Controllers
             return View(model);
         }
 
-        // POST: Rezervacija/Kreiraj
+        // POST: Rezervacija/Kreiraj - DIREKTNO KREIRA STRIPE SESIJU
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> Kreiraj(RezervacijaViewModel model)
         {
-            if (!ModelState.IsValid)
+            System.IO.File.AppendAllText("debug.txt", $"AKCIJA POZVANA: {DateTime.Now}\n");
+            Console.WriteLine("=== KREIRANJE REZERVACIJE ===");
+            Console.WriteLine("=== KREIRANJE REZERVACIJE ===");
+            Console.WriteLine($"ModelState.IsValid: {ModelState.IsValid}");
+            Console.WriteLine($"VoziloId: {model.VoziloId}");
+            Console.WriteLine($"DatumPocetka: {model.DatumPocetka}");
+            Console.WriteLine($"DatumZavrsetka: {model.DatumZavrsetka}");
+            Console.WriteLine($"PrihvatamOdgovornost: {model.PrihvatamOdgovornost}");
+
+            // Učitaj vozilo ako nije učitano
+            if (model.Vozilo == null)
             {
                 model.Vozilo = await _context.Vozila.FindAsync(model.VoziloId);
-                return View(model);
             }
+
+          
 
             // Validacija datuma
             if (model.DatumPocetka < DateTime.Today)
             {
                 ModelState.AddModelError("DatumPocetka", "Datum početka ne može biti u prošlosti.");
-                model.Vozilo = await _context.Vozila.FindAsync(model.VoziloId);
                 return View(model);
             }
 
             if (model.DatumZavrsetka <= model.DatumPocetka)
             {
                 ModelState.AddModelError("DatumZavrsetka", "Datum završetka mora biti nakon datuma početka.");
-                model.Vozilo = await _context.Vozila.FindAsync(model.VoziloId);
                 return View(model);
             }
 
-            var currentUser = await _userManager.GetUserAsync(User);
-            var osoba = await _context.Osoba.FirstOrDefaultAsync(o => o.IdentityUserId == currentUser.Id);
-            var vozilo = await _context.Vozila.FindAsync(model.VoziloId);
-
-            if (osoba == null || vozilo == null)
+            // Provjeri da li je prihvaćena odgovornost
+            if (!model.PrihvatamOdgovornost)
             {
-                return NotFound();
+                ModelState.AddModelError("PrihvatamOdgovornost", "Morate prihvatiti odgovornost za štete.");
+                return View(model);
             }
 
-            var rezervacija = new Rezervacija
+            try
             {
-                datumPocetka = model.DatumPocetka,
-                datumZavrsetka = model.DatumZavrsetka,
-                datumRezervacije = DateTime.Now,
-                Status = StatusRezervacije.Kreirana,
-                korisnikId = osoba.Id,
-                voziloId = vozilo.Id,
-                vozilo = vozilo,
-                korisnik = osoba
-            };
+                var currentUser = await _userManager.GetUserAsync(User);
+                var osoba = await _context.Osoba.FirstOrDefaultAsync(o => o.IdentityUserId == currentUser.Id);
+                var vozilo = await _context.Vozila.FindAsync(model.VoziloId);
 
-            // Izračunaj cijenu
-            rezervacija.izracunajCijenu(vozilo.CijenaPoDanu);
+                if (osoba == null || vozilo == null)
+                {
+                    Console.WriteLine($"Osoba: {osoba?.Id}, Vozilo: {vozilo?.Id}");
+                    return NotFound();
+                }
 
-            _context.Rezervacija.Add(rezervacija);
-            await _context.SaveChangesAsync();
+                // Kreiraj rezervaciju
+                var rezervacija = new Rezervacija
+                {
+                    datumPocetka = model.DatumPocetka,
+                    datumZavrsetka = model.DatumZavrsetka,
+                    datumRezervacije = DateTime.Now,
+                    Status = StatusRezervacije.UToku, // Postavi na UToku dok se ne završi plaćanje
+                    korisnikId = osoba.Id,
+                    voziloId = vozilo.Id,
+                    vozilo = vozilo,
+                    korisnik = osoba
+                };
 
-            TempData["Success"] = "Rezervacija je uspješno kreirana!";
-            return RedirectToAction("Placanje", new { id = rezervacija.Id });
+                // Izračunaj cijenu
+                rezervacija.izracunajCijenu();
+                Console.WriteLine($"Ukupna cijena: {rezervacija.izracunajCijenu()}");
+
+                _context.Rezervacija.Add(rezervacija);
+                await _context.SaveChangesAsync();
+
+                Console.WriteLine($"Rezervacija kreirana sa ID: {rezervacija.Id}");
+
+                // KREIRAJ STRIPE SESIJU DIREKTNO
+                var domain = $"{Request.Scheme}://{Request.Host}";
+                Console.WriteLine($"Domain: {domain}");
+
+                var options = new SessionCreateOptions
+                {
+                    PaymentMethodTypes = new List<string> { "card" },
+                    LineItems = new List<SessionLineItemOptions>
+                    {
+                        new SessionLineItemOptions
+                        {
+                            PriceData = new SessionLineItemPriceDataOptions
+                            {
+                                UnitAmount = (long)(rezervacija.izracunajCijenu() * 100), // Stripe koristi cente
+                                Currency = "eur", // Ili "usd" - provjerite šta podržava vaš Stripe account
+                                ProductData = new SessionLineItemPriceDataProductDataOptions
+                                {
+                                    Name = $"Rezervacija - {vozilo.Marka} {vozilo.Model}",
+                                    Description = $"Od {model.DatumPocetka:dd.MM.yyyy} do {model.DatumZavrsetka:dd.MM.yyyy}"
+                                }
+                            },
+                            Quantity = 1
+                        }
+                    },
+                    Mode = "payment",
+                    SuccessUrl = $"{domain}/Rezervacija/StripeSuccess?session_id={{CHECKOUT_SESSION_ID}}&rezervacija_id={rezervacija.Id}",
+                    CancelUrl = $"{domain}/Rezervacija/StripeCancel?rezervacija_id={rezervacija.Id}",
+                    Metadata = new Dictionary<string, string>
+                    {
+                        { "rezervacija_id", rezervacija.Id.ToString() },
+                        { "user_id", osoba.Id.ToString() }
+                    }
+                };
+
+                Console.WriteLine("Kreiranje Stripe sesije...");
+                var service = new SessionService();
+                var session = await service.CreateAsync(options);
+
+                Console.WriteLine($"Stripe sesija kreirana: {session.Id}");
+                Console.WriteLine($"Preusmjeravanje na: {session.Url}");
+
+                return Redirect(session.Url);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"GREŠKA: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+
+                ModelState.AddModelError("", $"Došlo je do greške: {ex.Message}");
+                return View(model);
+            }
         }
 
-        // GET: Rezervacija/Placanje/5
+        // GET: Rezervacija/Placanje/5 - MOŽDA VIŠE NEĆE BITI POTREBNO
         [Authorize]
         public async Task<IActionResult> Placanje(int? id)
         {
@@ -193,33 +274,109 @@ namespace Carisma.Controllers
             return View(rezervacija);
         }
 
-        // POST: Rezervacija/PotvrdiPlacanje/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        // Uspješno plaćanje
         [Authorize]
-        public async Task<IActionResult> PotvrdiPlacanje(int id, bool prihvatamOdgovornost)
+public async Task<IActionResult> StripeSuccess(string session_id, int rezervacija_id)
         {
-            if (!prihvatamOdgovornost)
-            {
-                TempData["Error"] = "Morate prihvatiti odgovornost za štetu da biste završili rezervaciju.";
-                return RedirectToAction("Placanje", new { id });
-            }
+            Console.WriteLine($"=== STRIPE SUCCESS ===");
+            Console.WriteLine($"Session ID: {session_id}");
+            Console.WriteLine($"Rezervacija ID: {rezervacija_id}");
 
-            var rezervacija = await _context.Rezervacija.FindAsync(id);
+            var rezervacija = await _context.Rezervacija
+                .Include(r => r.vozilo)
+                .Include(r => r.korisnik)
+                .FirstOrDefaultAsync(r => r.Id == rezervacija_id);
+
             if (rezervacija == null)
             {
+                Console.WriteLine("Rezervacija nije pronađena");
                 return NotFound();
             }
 
-            rezervacija.Status = StatusRezervacije.UToku;
+            try
+            {
+                var service = new SessionService();
+                var session = await service.GetAsync(session_id);
+                Console.WriteLine($"Stripe session status: {session.PaymentStatus}");
+
+                if (session.PaymentStatus == "paid")
+                {
+                    // Kreiraj plaćanje record
+                    var placanje = new Placanje
+                    {
+                        iznos = rezervacija.izracunajCijenu(),
+                        datumPlacanja = DateTime.Now,
+                        statusPlacanja = StatusPlacanja.Uspjesno,
+                        korisnikId = rezervacija.korisnik.Id, // Foreign key za korisnika
+                        //brojKartice = GetMaskedCardNumber(session), // Broj kartice (nullable)
+                        RezervacijaId = rezervacija.Id, // Foreign key za rezervaciju (nullable)
+                        StripeSessionId = session_id, // Stripe session ID
+                        StripePaymentIntentId = session.PaymentIntentId // Stripe payment intent ID
+                    };
+
+                    _context.Placanje.Add(placanje);
+
+                    // Ažuriraj rezervaciju na potvrđenu
+                    rezervacija.Status = StatusRezervacije.Kreirana;
+                    _context.Update(rezervacija);
+
+                    await _context.SaveChangesAsync();
+
+                    Console.WriteLine("Plaćanje uspješno zabilježeno");
+                    TempData["Success"] = "Plaćanje je uspješno završeno! Rezervacija je potvrđena.";
+                    ViewBag.SessionId = session_id;
+                    ViewBag.Amount = rezervacija.izracunajCijenu();
+                }
+                else
+                {
+                    Console.WriteLine("Plaćanje nije uspješno");
+                    TempData["Error"] = "Plaćanje nije uspješno završeno.";
+
+                    // Otkažite rezervaciju ako plaćanje nije uspješno
+                    rezervacija.Status = StatusRezervacije.Otkazana;
+                    _context.Update(rezervacija);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (StripeException ex)
+            {
+                Console.WriteLine($"Stripe greška: {ex.Message}");
+                TempData["Error"] = $"Greška pri obradi plaćanja: {ex.Message}";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Općenita greška: {ex.Message}");
+                TempData["Error"] = "Došlo je do greške pri obradi zahtjeva.";
+            }
+
+            return View(rezervacija);
+        }
+
+       
+
+        // Otkazano plaćanje
+        [Authorize]
+        public async Task<IActionResult> StripeCancel(int rezervacija_id)
+        {
+            Console.WriteLine($"=== STRIPE CANCEL ===");
+            Console.WriteLine($"Rezervacija ID: {rezervacija_id}");
+
+            var rezervacija = await _context.Rezervacija
+                .Include(r => r.vozilo)
+                .FirstOrDefaultAsync(r => r.Id == rezervacija_id);
+
+            if (rezervacija == null) return NotFound();
+
+            // Otkažite rezervaciju
+            rezervacija.Status = StatusRezervacije.Otkazana;
             _context.Update(rezervacija);
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Rezervacija je uspješno potvrđena! Možete preuzeti vozilo na dan početka rezervacije.";
+            TempData["Error"] = "Plaćanje je otkazano. Rezervacija je otkazana.";
             return RedirectToAction("Index");
         }
 
-        // POST: Rezervacija/Otkazi/5
+        // Ostatak metoda ostaje isti...
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -255,7 +412,16 @@ namespace Carisma.Controllers
             await _context.SaveChangesAsync();
 
             TempData["Success"] = "Rezervacija je uspješno otkazana.";
-            return RedirectToAction("Index");
+
+            // Preusmjerenje zavisno od uloge
+            if (User.IsInRole("Administrator"))
+            {
+                return RedirectToAction("AdminIndex");
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
         }
 
         // GET: Rezervacija/Details/5
@@ -313,6 +479,7 @@ namespace Carisma.Controllers
         [Display(Name = "Datum završetka")]
         public DateTime DatumZavrsetka { get; set; }
 
+        [Required(ErrorMessage = "Morate prihvatiti odgovornost.")]
         public bool PrihvatamOdgovornost { get; set; }
 
         public double UkupnaCijena

@@ -1,18 +1,24 @@
 using Carisma.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
+using DotNetEnv;
 
+DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Connection string
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
+// Database context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+// Identity configuration
 builder.Services.AddDefaultIdentity<IdentityUser>(options => {
     options.SignIn.RequireConfirmedAccount = false; // Za lakše testiranje
     options.Password.RequireDigit = true;
@@ -24,8 +30,13 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => {
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+// MVC services
 builder.Services.AddControllersWithViews();
 
+// Stripe configuration - OVDJE, NE U FUNKCIJI!
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
+// Build aplikacije
 var app = builder.Build();
 
 // Kreiranje defaultnih uloga i korisnika
@@ -35,7 +46,7 @@ using (var scope = app.Services.CreateScope())
     await CreateDefaultRolesAndUsers(services);
 }
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -48,18 +59,17 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.MapRazorPages();
 
-app.Run();
+app.Run(); 
 
 // Funkcija za kreiranje defaultnih uloga i korisnika
 async Task CreateDefaultRolesAndUsers(IServiceProvider serviceProvider)
@@ -88,7 +98,6 @@ async Task CreateDefaultRolesAndUsers(IServiceProvider serviceProvider)
             Email = "podrska@gmail.com",
             EmailConfirmed = true
         };
-
         var createResult = await userManager.CreateAsync(newUser, "Ooad2025!");
         if (createResult.Succeeded)
         {

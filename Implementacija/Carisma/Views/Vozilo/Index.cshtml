@@ -1,168 +1,4 @@
 ﻿@model IEnumerable<Carisma.Models.Vozilo>
-@*
-@{
-    ViewData["Title"] = "Vozila";
-}
-
-<div class="container-fluid py-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="card mb-4">
-                <div class="card-header pb-0">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0">Dostupna vozila</h6>
-                        <div>
-                            <a class="btn btn-primary btn-sm" asp-action="Create">
-                                <i class="fas fa-plus me-2"></i>Dodaj vozilo
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Search Form -->
-                <div class="card-body px-4 pt-2 pb-2">
-                    <form asp-action="Pretrazi" method="get" class="row g-3">
-                        <div class="col-md-8">
-                            <input type="text" name="pojam" class="form-control" placeholder="Pretražite po marki ili modelu..." />
-                        </div>
-                        <div class="col-md-4">
-                            <button type="submit" class="btn btn-outline-primary">
-                                <i class="fas fa-search me-2"></i>Pretraži
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="card-body px-0 pt-0 pb-2">
-                    @if (TempData["Poruka"] != null)
-                    {
-                        <div class="alert alert-success alert-dismissible fade show mx-4" role="alert">
-                            @TempData["Poruka"]
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    }
-
-                    <div class="table-responsive p-0">
-                        @if (Model != null && Model.Any())
-                        {
-                            <div class="row px-4">
-                                @foreach (var item in Model)
-                                {
-                                    <div class="col-xl-3 col-md-6 mb-4">
-                                        <div class="card h-100 shadow-sm">
-                                            <div class="position-relative">
-                                                <img src="~/images/vozila/@(GetVoziloImage(item.Marka, item.Model))"
-                                                     class="card-img-top"
-                                                     alt="@item.Marka @item.Model"
-                                                     style="width: 100%; height: auto;" />
-
-                                                <!-- Status Badge -->
-                                                <span class="position-absolute top-0 end-0 m-2">
-                                                    @if (item.Status == Dostupnost.Dostupno)
-                                                    {
-                                                        <span class="badge bg-success">Dostupno</span>
-                                                    }
-                                                    else if (item.Status == Dostupnost.NijeDostupno)
-                                                    {
-                                                        <span class="badge bg-warning">Rezervisano</span>
-                                                    }
-                                                    else
-                                                    {
-                                                        <span class="badge bg-danger">Nedostupno</span>
-                                                    }
-                                                </span>
-
-                                                <!-- Rezervacija Button na slici -->
-                                                @if (item.Status == Dostupnost.Dostupno)
-                                                {
-                                                    <div class="position-absolute end-0 m-3" style="top: 80px;">
-                                                        <a class="btn btn-success" asp-controller="Rezervacija" asp-action="Create" asp-route-voziloId="@item.Id" title="Rezerviši">
-                                                            <i class="fas fa-calendar-check me-2"></i>Rezerviši
-                                                        </a>
-                                                    </div>
-                                                }
-                                            </div>
-
-                                            <div class="card-body d-flex flex-column">
-                                                <h5 class="card-title text-dark">@item.Marka @item.Model</h5>
-                                                <div class="mb-2">
-                                                    <small class="text-muted">
-                                                        <i class="fas fa-calendar me-1"></i>Godina: @item.Godina
-                                                    </small>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <span class="h5 text-primary">@item.CijenaPoDanu KM</span>
-                                                    <small class="text-muted">/ dan</small>
-                                                </div>
-
-                                                <div class="mt-auto">
-                                                    <div class="btn-group w-100" role="group">
-                                                        <a class="btn btn-outline-info btn-sm" asp-action="Details" asp-route-id="@item.Id" title="Detalji">
-                                                            <i class="fas fa-eye"></i>
-                                                        </a>
-                                                        <a class="btn btn-outline-warning btn-sm" asp-action="Edit" asp-route-id="@item.Id" title="Izmijeni">
-                                                            <i class="fas fa-edit"></i>
-                                                        </a>
-                                                        <a class="btn btn-outline-danger btn-sm" asp-action="Delete" asp-route-id="@item.Id" title="Obriši">
-                                                            <i class="fas fa-trash"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="text-center py-5">
-                                <i class="fas fa-car fa-3x text-muted mb-3"></i>
-                                <h5 class="text-muted">Nema vozila za prikaz</h5>
-                                <p class="text-muted">Dodajte novo vozilo klikom na dugme "Dodaj vozilo"</p>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-
-@foreach (var item in Model)
-{
-    <tr>
-        <td>@item.Marka</td>
-        <td>@item.Model</td>
-        <td>
-            @if (User.IsInRole("Administrator"))
-            {
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                <nobr>|</nobr>
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                <nobr>|</nobr>
-            }
-            <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-        </td>
-    </tr>
-}
-
-@functions {
-    string GetVoziloImage(string marka, string model)
-    {
-        // Ime fajla koje tražiš
-        string fileName = $"{marka.ToLower()}-{model.ToLower().Replace(" ", "-")}.jpg";
-
-        // Jednostavno vrati ime fajla - ako ne postoji, browser će pokazati broken image
-        return fileName;
-    }
-}
-
-*@
-
 
 @{
     ViewData["Title"] = "Vozila";
@@ -176,26 +12,17 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h6 class="mb-0">Dostupna vozila</h6>
                         <div>
-                            <a class="btn btn-primary btn-sm" asp-action="Create">
-                                <i class="fas fa-plus me-2"></i>Dodaj vozilo
-                            </a>
+                            @* Dugme "Dodaj vozilo" vide samo administratori *@
+                            @if (User.IsInRole("Administrator"))
+                            {
+                                <a class="btn btn-primary btn-sm" asp-action="Create">
+                                    <i class="fas fa-plus me-2"></i>Dodaj vozilo
+                                </a>
+                            }
                         </div>
                     </div>
                 </div>
 
-               <!--  <!-- Search Form -->
-                <!--  <div class="card-body px-4 pt-2 pb-2">
-                    <form asp-action="Pretrazi" method="get" class="row g-3">
-                        <div class="col-md-8">
-                            <input type="text" name="pojam" class="form-control" placeholder="Pretražite po marki ili modelu..." />
-                        </div>
-                        <div class="col-md-4">
-                            <button type="submit" class="btn btn-outline-primary">
-                                <i class="fas fa-search me-2"></i>Pretraži
-                            </button>
-                        </div>
-                    </form>
-                </div> -->
                 <!-- Search and Sort Form -->
                 <div class="card-body px-4 pt-2 pb-2">
                     <form asp-action="Index" method="get" class="row g-3">
@@ -303,27 +130,41 @@
                                                         <small class="text-muted">/ dan</small>
                                                     </div>
 
-                                                    <!-- Umjesto postojećeg rezervisi dugmeta, koristite: -->
-@if (item.Status == Dostupnost.Dostupno)
-{
-    <a class="btn btn-success" asp-controller="Rezervacija" asp-action="Kreiraj" asp-route-id="@item.Id" title="Rezerviši">
-        <i class="fas fa-calendar-check me-2"></i>Rezerviši
-    </a>
-}
+                                                    @* Dugme za rezervaciju - vide svi logovani korisnici koji nisu administratori *@
+                                                    @if (item.Status == Dostupnost.Dostupno && User.Identity.IsAuthenticated && !User.IsInRole("Administrator"))
+                                                    {
+                                                        <a class="btn btn-success" asp-controller="Rezervacija" asp-action="Kreiraj" asp-route-id="@item.Id" title="Rezerviši">
+                                                            <i class="fas fa-calendar-check me-2"></i>Rezerviši
+                                                        </a>
+                                                    }
                                                 </div>
 
                                                 <div class="mt-auto">
-                                                    <div class="btn-group w-100" role="group">
-                                                        <a class="btn btn-outline-info btn-sm" asp-action="Details" asp-route-id="@item.Id" title="Detalji">
-                                                            <i class="fas fa-eye"></i>
-                                                        </a>
-                                                        <a class="btn btn-outline-warning btn-sm" asp-action="Edit" asp-route-id="@item.Id" title="Izmijeni">
-                                                            <i class="fas fa-edit"></i>
-                                                        </a>
-                                                        <a class="btn btn-outline-danger btn-sm" asp-action="Delete" asp-route-id="@item.Id" title="Obriši">
-                                                            <i class="fas fa-trash"></i>
-                                                        </a>
-                                                    </div>
+                                                    @* Admin dugmad - vide samo administratori *@
+                                                    @if (User.IsInRole("Administrator"))
+                                                    {
+                                                        <div class="btn-group w-100 mb-2" role="group">
+                                                            <a class="btn btn-outline-info btn-sm" asp-action="Details" asp-route-id="@item.Id" title="Detalji">
+                                                                <i class="fas fa-eye"></i> Details
+                                                            </a>
+                                                            <a class="btn btn-outline-warning btn-sm" asp-action="Edit" asp-route-id="@item.Id" title="Izmijeni">
+                                                                <i class="fas fa-edit"></i> Edit
+                                                            </a>
+                                                            <a class="btn btn-outline-danger btn-sm" asp-action="Delete" asp-route-id="@item.Id" title="Obriši">
+                                                                <i class="fas fa-trash"></i> Delete
+                                                            </a>
+                                                        </div>
+                                                    }
+
+                                                    @* Dugme za detalje - vide svi korisnici *@
+                                                    @if (!User.IsInRole("Administrator"))
+                                                    {
+                                                        <div class="w-100">
+                                                            <a class="btn btn-outline-info w-100" asp-action="Details" asp-route-id="@item.Id" title="Pogledaj detalje">
+                                                                <i class="fas fa-eye me-2"></i>Pogledaj detalje
+                                                            </a>
+                                                        </div>
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
@@ -336,7 +177,11 @@
                             <div class="text-center py-5">
                                 <i class="fas fa-car fa-3x text-muted mb-3"></i>
                                 <h5 class="text-muted">Nema vozila za prikaz</h5>
-                                <p class="text-muted">Dodajte novo vozilo klikom na dugme "Dodaj vozilo"</p>
+                                @* Poruku o dodavanju vozila vide samo administratori *@
+                                @if (User.IsInRole("Administrator"))
+                                {
+                                    <p class="text-muted">Dodajte novo vozilo klikom na dugme "Dodaj vozilo"</p>
+                                }
                             </div>
                         }
                     </div>
@@ -345,28 +190,6 @@
         </div>
     </div>
 </div>
-
-
-
-@*
-//@foreach (var item in Model)
-{
-    <tr>
-        <td>@item.Marka</td>
-        <td>@item.Model</td>
-        <td>
-            @if (User.IsInRole("Administrator"))
-            {
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                <nobr>|</nobr>
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                <nobr>|</nobr>
-            }
-            <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-        </td>
-    </tr>
-}
-*@
 
 @functions {
     string GetVoziloImage(string marka, string model)

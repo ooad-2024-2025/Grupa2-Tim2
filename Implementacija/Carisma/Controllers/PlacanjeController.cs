@@ -7,25 +7,32 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Carisma.Data;
 using Carisma.Models;
+using Stripe;
+using Microsoft.Extensions.Configuration;
+using Stripe.Checkout;
 
 namespace Carisma.Controllers
 {
     public class PlacanjeController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IConfiguration _configuration;
 
-        public PlacanjeController(ApplicationDbContext context)
+        public PlacanjeController(ApplicationDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
+
+            // Postavi Stripe konfiguraciju
+            StripeConfiguration.ApiKey = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
         }
 
-        // GET: Placanje
+        // Postojeći kod...
         public async Task<IActionResult> Index()
         {
             return View(await _context.Placanje.ToListAsync());
         }
 
-        // GET: Placanje/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -43,29 +50,169 @@ namespace Carisma.Controllers
             return View(placanje);
         }
 
-        // GET: Placanje/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Placanje/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,iznos,datumPlacanja,statusPlacanja,brojKartice")] Placanje placanje)
         {
             if (ModelState.IsValid)
             {
+                // Postavi datum i status
+                placanje.datumPlacanja = DateTime.Now;
+                placanje.statusPlacanja = StatusPlacanja.NaCekanju;
+
                 _context.Add(placanje);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                // Preusmeri na Stripe plaćanje
+                return RedirectToAction(nameof(StripeCheckout), new { id = placanje.Id });
             }
             return View(placanje);
         }
 
-        // GET: Placanje/Edit/5
+        // NOVE STRIPE METODE
+
+        // Kreira Stripe checkout session
+        public async Task<IActionResult> StripeCheckout(int id)
+        {
+            var placanje = await _context.Placanje.FindAsync(id);
+            if (placanje == null) return NotFound();
+
+            var domain = $"{Request.Scheme}://{Request.Host}";
+
+            var options = new SessionCreateOptions
+            {
+                PaymentMethodTypes = new List<string> { "card" },
+                LineItems = new List<SessionLineItemOptions>
+                {
+                    new SessionLineItemOptions
+                    {
+                        PriceData = new SessionLineItemPriceDataOptions
+                        {
+                            UnitAmount = (long)(placanje.iznos * 100), // Stripe koristi cente
+                            Currency = "usd", // ili "eur", "bam" itd.
+                            ProductData = new SessionLineItemPriceDataProductDataOptions
+                            {
+                                Name = $"Plaćanje #{placanje.Id}",
+                                Description = $"Plaćanje za iznos {placanje.iznos:C}"
+                            }
+                        },
+                        Quantity = 1
+                    }
+                },
+                Mode = "payment",
+                SuccessUrl = $"{domain}/Placanje/StripeSuccess?session_id={{CHECKOUT_SESSION_ID}}&placanje_id={id}",
+                CancelUrl = $"{domain}/Placanje/StripeCancel?placanje_id={id}",
+                Metadata = new Dictionary<string, string>
+                {
+                    { "placanje_id", id.ToString() }
+                }
+            };
+
+            var service = new SessionService();
+            var session = await service.CreateAsync(options);
+
+            // Sačuvaj session ID
+            placanje.statusPlacanja = StatusPlacanja.NaCekanju;
+            _context.Update(placanje);
+            await _context.SaveChangesAsync();
+
+            return Redirect(session.Url);
+        }
+
+        // Uspešno plaćanje
+        public async Task<IActionResult> StripeSuccess(string session_id, int placanje_id)
+        {
+            var placanje = await _context.Placanje.FindAsync(placanje_id);
+            if (placanje == null) return NotFound();
+
+            try
+            {
+                var service = new SessionService();
+                var session = await service.GetAsync(session_id);
+
+                if (session.PaymentStatus == "paid")
+                {
+                    placanje.statusPlacanja = StatusPlacanja.Uspjesno;
+                    placanje.datumPlacanja = DateTime.Now;
+                    _context.Update(placanje);
+                    await _context.SaveChangesAsync();
+
+                    ViewBag.Message = "Plaćanje je uspešno završeno!";
+                    ViewBag.SessionId = session_id;
+                    ViewBag.Amount = placanje.iznos;
+                }
+                else
+                {
+                    ViewBag.Message = "Plaćanje nije uspešno završeno.";
+                }
+            }
+            catch (StripeException ex)
+            {
+                ViewBag.Message = $"Greška: {ex.Message}";
+            }
+
+            return View(placanje);
+        }
+
+        // Otkazano plaćanje
+        public async Task<IActionResult> StripeCancel(int placanje_id)
+        {
+            var placanje = await _context.Placanje.FindAsync(placanje_id);
+            if (placanje == null) return NotFound();
+
+            placanje.statusPlacanja = StatusPlacanja.Neuspjesno;
+            _context.Update(placanje);
+            await _context.SaveChangesAsync();
+
+            ViewBag.Message = "Plaćanje je otkazano.";
+            return View(placanje);
+        }
+
+        // Webhook za Stripe eventi (opcionalno)
+        [HttpPost]
+        public async Task<IActionResult> StripeWebhook()
+        {
+            var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+
+            try
+            {
+                var stripeEvent = EventUtility.ConstructEvent(
+                    json,
+                    Request.Headers["Stripe-Signature"],
+                    _configuration["Stripe:WebhookSecret"] // Dodaj ovo u appsettings
+                );
+
+                if (stripeEvent.Type == "checkout.session.completed")
+                {
+                    var session = stripeEvent.Data.Object as Session;
+                    if (session.Metadata.TryGetValue("placanje_id", out var placanjeIdStr) &&
+                        int.TryParse(placanjeIdStr, out var placanjeId))
+                    {
+                        var placanje = await _context.Placanje.FindAsync(placanjeId);
+                        if (placanje != null)
+                        {
+                            placanje.statusPlacanja = StatusPlacanja.Uspjesno;
+                            placanje.datumPlacanja = DateTime.Now;
+                            _context.Update(placanje);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+                }
+
+                return Ok();
+            }
+            catch (StripeException)
+            {
+                return BadRequest();
+            }
+        }
+
+        // Postojeći kod...
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -81,9 +228,6 @@ namespace Carisma.Controllers
             return View(placanje);
         }
 
-        // POST: Placanje/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,iznos,datumPlacanja,statusPlacanja,brojKartice")] Placanje placanje)
@@ -116,7 +260,6 @@ namespace Carisma.Controllers
             return View(placanje);
         }
 
-        // GET: Placanje/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -134,7 +277,6 @@ namespace Carisma.Controllers
             return View(placanje);
         }
 
-        // POST: Placanje/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -149,7 +291,7 @@ namespace Carisma.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Placanje/ValidirajKarticu/5
+        // Postojeće validacije - možeš ih zadržati ili izbaciti
         public IActionResult ValidirajKarticu(int id)
         {
             var placanje = _context.Placanje.FirstOrDefault(p => p.Id == id);
@@ -160,18 +302,13 @@ namespace Carisma.Controllers
             return View("RezultatValidacije");
         }
 
-        // GET: Placanje/ProcesirajPlacanje/5
+        // Zameniti sa Stripe integracijom
         public IActionResult ProcesirajPlacanje(int id)
         {
-            var placanje = _context.Placanje.FirstOrDefault(p => p.Id == id);
-            if (placanje == null) return NotFound();
-
-            var status = placanje.procesirajPlacanje();
-            ViewBag.Rezultat = $"Status plaćanja: {status}";
-            return View("RezultatObrade");
+            // Preusmeri na Stripe checkout umesto lokalne obrade
+            return RedirectToAction(nameof(StripeCheckout), new { id = id });
         }
 
-        // GET: Placanje/GenerisiPotvrdu/5
         public IActionResult GenerisiPotvrdu(int id)
         {
             var placanje = _context.Placanje.FirstOrDefault(p => p.Id == id);
@@ -182,17 +319,12 @@ namespace Carisma.Controllers
             return View("PotvrdaPlacanja");
         }
 
-        // GET: Placanje/PlatiOnline/5
+        // Zameniti sa Stripe integracijom
         public IActionResult PlatiOnline(int id)
         {
-            var placanje = _context.Placanje.FirstOrDefault(p => p.Id == id);
-            if (placanje == null) return NotFound();
-
-            bool uspjesno = placanje.platiOnline(placanje.iznos);
-            ViewBag.Rezultat = uspjesno ? "Plaćanje je uspješno obavljeno." : "Plaćanje nije uspjelo.";
-            return View("RezultatPlacanja");
+            // Preusmeri na Stripe checkout
+            return RedirectToAction(nameof(StripeCheckout), new { id = id });
         }
-
 
         private bool PlacanjeExists(int id)
         {
