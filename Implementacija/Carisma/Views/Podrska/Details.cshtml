@@ -66,6 +66,26 @@
                 </div>
             </div>
 
+            <!-- NOVA NOTIFIKACIJA ZA NOVI ODGOVOR -->
+            @if (Model.ImaNoviOdgovor && !User.IsInRole("Podrska") && !User.IsInRole("Administrator"))
+            {
+                <div class="alert alert-success alert-dismissible fade show shadow-sm mb-4" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-bell fa-2x text-success me-3 pulse"></i>
+                        <div>
+                            <h5 class="alert-heading mb-1">
+                                <i class="fas fa-star me-1"></i>
+                                Imate novi odgovor!
+                            </h5>
+                            <p class="mb-0">
+                                Naš tim je odgovorio na vaš zahtjev. Molimo vas da procijenite kvalitet odgovora nakon što ga pročitate.
+                            </p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
             <!-- Glavni sadržaj -->
             <div class="row">
                 <div class="col-lg-8">
@@ -89,18 +109,25 @@
                     <!-- Odgovor podrške -->
                     @if (!string.IsNullOrEmpty(Model.Odgovor))
                     {
-                        <div class="card mb-4 shadow-sm border-success">
+                        <div class="card mb-4 shadow-sm border-success @(Model.ImaNoviOdgovor && !User.IsInRole("Podrska") && !User.IsInRole("Administrator") ? "border-3 glow-success" : "")">
                             <div class="card-header bg-success text-white">
                                 <h5 class="mb-0">
                                     <i class="fas fa-headset me-2"></i>
                                     Odgovor podrške
+                                    @if (Model.ImaNoviOdgovor && !User.IsInRole("Podrska") && !User.IsInRole("Administrator"))
+                                    {
+                                        <span class="badge bg-light text-success ms-2 pulse">
+                                            <i class="fas fa-bell me-1"></i>
+                                            NOVO!
+                                        </span>
+                                    }
                                 </h5>
                                 <small>
                                     <i class="fas fa-calendar me-1"></i>
                                     Odgovoreno: @Model.DatumOdgovora?.ToString("dd.MM.yyyy")
                                 </small>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body @(Model.ImaNoviOdgovor && !User.IsInRole("Podrska") && !User.IsInRole("Administrator") ? "bg-light" : "")">
                                 <p class="mb-0">@Model.Odgovor</p>
                             </div>
                         </div>
@@ -108,25 +135,32 @@
                         <!-- Ocjena (samo za korisnika koji je poslao zahtjev) -->
                         @if (!User.IsInRole("Podrska") && !User.IsInRole("Administrator") && Model.OcjenaKorisnika == null && Model.Status != Carisma.Models.statusZahtjeva.Zatvoren)
                         {
-                            <div class="card mb-4 shadow-sm border-info">
+                            <div class="card mb-4 shadow-sm border-info @(Model.ImaNoviOdgovor ? "border-3 glow-info" : "")">
                                 <div class="card-header bg-info text-white">
                                     <h6 class="mb-0">
                                         <i class="fas fa-star me-2"></i>
                                         Ocijenite naš odgovor
+                                        @if (Model.ImaNoviOdgovor)
+                                        {
+                                            <span class="badge bg-warning text-dark ms-2 pulse">
+                                                <i class="fas fa-hand-point-down me-1"></i>
+                                                Molimo ocijeni!
+                                            </span>
+                                        }
                                     </h6>
                                 </div>
                                 <div class="card-body">
-                                    <form asp-action="Ocijeni" method="post">
+                                    <form asp-action="Ocijeni" method="post" id="ratingForm">
                                         <input type="hidden" name="id" value="@Model.Id" />
                                         @Html.AntiForgeryToken()
                                         
                                         <div class="mb-3">
                                             <label class="form-label">Ocjena (1-5 zvjezdica):</label>
-                                            <div class="rating">
+                                            <div class="rating" id="starRating">
                                                 @for (int i = 1; i <= 5; i++)
                                                 {
-                                                    <input type="radio" name="ocjena" value="@i" id="star@i" />
-                                                    <label for="star@i" class="star">
+                                                    <input type="radio" name="ocjena" value="@i" id="star@i" required />
+                                                    <label for="star@i" class="star" data-value="@i">
                                                         <i class="fas fa-star"></i>
                                                     </label>
                                                 }
@@ -139,7 +173,7 @@
                                         </div>
                                         
                                         <div class="d-flex gap-2">
-                                            <button type="submit" class="btn btn-success">
+                                            <button type="submit" class="btn btn-success @(Model.ImaNoviOdgovor ? "pulse" : "")">
                                                 <i class="fas fa-check me-1"></i>
                                                 Pošalji ocjenu
                                             </button>
@@ -290,34 +324,153 @@
 </form>
 
 <style>
-    /* Stil za ocjenjivanje */
+    /* ISPRAVKA ZA ZVJEZDICE - NOVI PRISTUP */
     .rating {
         display: flex;
-        flex-direction: row-reverse;
-        justify-content: flex-end;
+        justify-content: flex-start;
+        gap: 5px;
+        margin: 10px 0;
     }
     
     .rating input {
         display: none;
     }
     
-    .rating label {
+    .rating .star {
         cursor: pointer;
-        margin: 0 5px;
-        font-size: 1.5rem;
+        font-size: 2rem;
         color: #ddd;
-        transition: color 0.3s;
+        transition: all 0.3s ease;
+        transform: scale(1);
     }
     
-    .rating label:hover,
-    .rating label:hover ~ label,
-    .rating input:checked ~ label {
+    .rating .star:hover {
+        transform: scale(1.1);
         color: #ffc107;
+    }
+    
+    .rating .star.active {
+        color: #ffc107;
+    }
+    
+    .rating .star.hover {
+        color: #ffc107;
+    }
+
+    /* Animacije za notifikacije */
+    @@keyframes pulse {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: scale(1.05);
+            opacity: 0.8;
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    @@keyframes glow {
+        0%, 100% {
+            box-shadow: 0 0 5px rgba(25, 135, 84, 0.5);
+        }
+        50% {
+            box-shadow: 0 0 20px rgba(25, 135, 84, 0.8), 0 0 30px rgba(25, 135, 84, 0.6);
+        }
+    }
+
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+
+    .glow-success {
+        animation: glow 3s infinite;
+    }
+
+    .glow-info {
+        animation: glow 3s infinite;
+        box-shadow: 0 0 10px rgba(13, 202, 240, 0.5);
+    }
+
+    /* Dodatni stilovi za notifikacije */
+    .badge.pulse {
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    .btn.pulse {
+        box-shadow: 0 0 15px rgba(25, 135, 84, 0.3);
     }
 </style>
 
 @section Scripts {
     <script>
+        // NOVA LOGIKA ZA ZVJEZDICE
+        document.addEventListener('DOMContentLoaded', function() {
+            const rating = document.getElementById('starRating');
+            if (rating) {
+                const stars = rating.querySelectorAll('.star');
+                const inputs = rating.querySelectorAll('input[type="radio"]');
+                let selectedRating = 0;
+
+                // Funkcija za ažuriranje prikaza zvjezdica
+                function updateStars(rating) {
+                    stars.forEach((star, index) => {
+                        const starValue = parseInt(star.getAttribute('data-value'));
+                        if (starValue <= rating) {
+                            star.classList.add('active');
+                        } else {
+                            star.classList.remove('active');
+                        }
+                    });
+                }
+
+                // Hover efekat
+                stars.forEach((star, index) => {
+                    star.addEventListener('mouseenter', function() {
+                        const hoverValue = parseInt(this.getAttribute('data-value'));
+                        stars.forEach((s, i) => {
+                            const starValue = parseInt(s.getAttribute('data-value'));
+                            if (starValue <= hoverValue) {
+                                s.classList.add('hover');
+                            } else {
+                                s.classList.remove('hover');
+                            }
+                        });
+                    });
+
+                    star.addEventListener('mouseleave', function() {
+                        stars.forEach(s => s.classList.remove('hover'));
+                        updateStars(selectedRating);
+                    });
+
+                    // Klik na zvjezdicu
+                    star.addEventListener('click', function() {
+                        selectedRating = parseInt(this.getAttribute('data-value'));
+                        
+                        // Postavi odgovarajući radio button
+                        const input = document.getElementById('star' + selectedRating);
+                        if (input) {
+                            input.checked = true;
+                        }
+                        
+                        updateStars(selectedRating);
+                        
+                        // Dodaj mali efekat
+                        this.style.transform = 'scale(1.3)';
+                        setTimeout(() => {
+                            this.style.transform = 'scale(1)';
+                        }, 200);
+                    });
+                });
+
+                // Inicijalno stanje
+                updateStars(0);
+            }
+        });
+
         function zatvoriZahtjev(id) {
             Swal.fire({
                 title: 'Zatvaranje zahtjeva',
@@ -334,6 +487,21 @@
                 }
             });
         }
+
+        // Validacija forme za ocjenjivanje
+        document.getElementById('ratingForm')?.addEventListener('submit', function(e) {
+            const selectedRating = document.querySelector('input[name="ocjena"]:checked');
+            if (!selectedRating) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Nedostaje ocjena',
+                    text: 'Molimo vas da odaberete ocjenu (1-5 zvjezdica) prije slanja.',
+                    confirmButtonText: 'U redu'
+                });
+                return false;
+            }
+        });
 
         // Prikaži poruke o uspjehu
         @if (TempData["Success"] != null)
@@ -360,4 +528,4 @@
             </text>
         }
     </script>
-} 
+}

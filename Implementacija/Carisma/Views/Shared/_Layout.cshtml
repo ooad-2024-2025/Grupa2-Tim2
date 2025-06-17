@@ -14,6 +14,8 @@
     
     <!-- Font Awesome za ikone -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Modern Pink Layout Styles -->
     <style>
@@ -145,14 +147,16 @@
                 background: radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
                 animation: footerFloat 8s ease-in-out infinite;
             }
-@@keyframes footerFloat {
-    0%, 100% {
-        transform: translateX(0px);
-    }
-    50% {
-        transform: translateX(20px);
-    }
-}
+
+        @@keyframes footerFloat {
+            0%, 100% {
+                transform: translateX(0px);
+            }
+            50% {
+                transform: translateX(20px);
+            }
+        }
+
         .modern-footer .container {
             position: relative;
             z-index: 2;
@@ -213,16 +217,16 @@
             animation: fadeInUp 0.6s ease-out;
         }
 
- @@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}       
+        @@keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
         /* Login partial styles */
         .navbar-nav .nav-link.btn {
@@ -339,38 +343,122 @@
         }
 
         /* Dropdown menu styling */
-.dropdown-menu {
-    background: rgba(255, 255, 255, 0.95) !important;
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 192, 203, 0.3) !important;
-    border-radius: 15px !important;
-    box-shadow: 0 10px 30px rgba(255, 105, 180, 0.2) !important;
-    padding: 0.5rem 0 !important;
-}
+        .dropdown-menu {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 192, 203, 0.3) !important;
+            border-radius: 15px !important;
+            box-shadow: 0 10px 30px rgba(255, 105, 180, 0.2) !important;
+            padding: 0.5rem 0 !important;
+            min-width: 280px !important;
+        }
 
-.dropdown-item {
-    color: #c44569 !important;
-    padding: 0.75rem 1.5rem !important;
-    transition: all 0.3s ease !important;
-    border-radius: 10px !important;
-    margin: 0 0.5rem !important;
-}
+        .dropdown-item {
+            color: #c44569 !important;
+            padding: 0.75rem 1.5rem !important;
+            transition: all 0.3s ease !important;
+            border-radius: 10px !important;
+            margin: 0 0.5rem !important;
+        }
 
-.dropdown-item:hover {
-    background: linear-gradient(45deg, rgba(255, 105, 180, 0.1), rgba(255, 192, 203, 0.1)) !important;
-    color: #ff1493 !important;
-    transform: translateX(5px) !important;
-}
+        .dropdown-item:hover {
+            background: linear-gradient(45deg, rgba(255, 105, 180, 0.1), rgba(255, 192, 203, 0.1)) !important;
+            color: #ff1493 !important;
+            transform: translateX(5px) !important;
+        }
 
-.dropdown-item.text-danger:hover {
-    background: linear-gradient(45deg, rgba(220, 20, 60, 0.1), rgba(255, 105, 180, 0.1)) !important;
-    color: #dc143c !important;
-}
+        .dropdown-item.text-danger:hover {
+            background: linear-gradient(45deg, rgba(220, 20, 60, 0.1), rgba(255, 105, 180, 0.1)) !important;
+            color: #dc143c !important;
+        }
 
-.dropdown-divider {
-    border-color: rgba(255, 192, 203, 0.3) !important;
-    margin: 0.5rem 1rem !important;
-}
+        .dropdown-divider {
+            border-color: rgba(255, 192, 203, 0.3) !important;
+            margin: 0.5rem 1rem !important;
+        }
+
+        /* NOTIFIKACIJE STILOVI */
+        .notification-bell {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .notification-bell:hover {
+            transform: scale(1.1);
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #dc3545, #b02a37) !important;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+        }
+
+        .notification-bell .fa-bell {
+            animation: swing 2s infinite ease-in-out;
+            color: #ff69b4 !important;
+            font-size: 1.2rem;
+        }
+
+        @@keyframes swing {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(15deg); }
+            75% { transform: rotate(-15deg); }
+        }
+
+        @@keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .notification-dropdown .dropdown-item {
+            border-bottom: 1px solid rgba(255, 192, 203, 0.2);
+            padding: 1rem 1.5rem !important;
+        }
+
+        .notification-dropdown .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item-title {
+            font-weight: 600;
+            color: #ff1493 !important;
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-item-text {
+            color: #666 !important;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-item-date {
+            color: #999 !important;
+            font-size: 0.75rem;
+        }
+
+        .notification-dropdown .dropdown-header {
+            background: linear-gradient(45deg, #ff69b4, #ff1493);
+            color: white !important;
+            font-weight: 600;
+            text-align: center;
+            border-radius: 10px;
+            margin: 0.5rem;
+            padding: 0.75rem;
+        }
     </style>
 </head>
 <body>
@@ -466,6 +554,33 @@
                                 </a>
                             </li>
                         </ul>
+
+                        <!-- NOTIFIKACIJE - samo za ulogovane korisnike koji nisu podrška -->
+                        @if (SignInManager.IsSignedIn(User) && !User.IsInRole("Podrska") && !User.IsInRole("Administrator"))
+                        {
+                            <ul class="navbar-nav me-3">
+                                <li class="nav-item dropdown notification-bell" id="notificationDropdown" style="display: none;">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-bell"></i>
+                                        <span class="notification-count" id="notificationCount">0</span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end notification-dropdown">
+                                        <li><h6 class="dropdown-header">🔔 Nova obavještenja</h6></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li id="notificationList">
+                                            <!-- Ovdje će se dodavati notifikacije -->
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <a class="dropdown-item text-center" asp-controller="Podrska" asp-action="Index">
+                                                <i class="fas fa-eye me-1"></i>Vidi sve zahtjeve
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        }
+
                         <partial name="_LoginPartial" />
                     </div>
                 </div>
@@ -521,6 +636,8 @@
 
     <!-- Enhanced interactions -->
     <script>
+        let notificationInterval;
+
         document.addEventListener('DOMContentLoaded', function() {
             // Add smooth scroll behavior
             document.documentElement.style.scrollBehavior = 'smooth';
@@ -591,6 +708,18 @@
                     }
                 });
             });
+
+            // NOTIFIKACIJE FUNKCIONALNOST
+            @if (SignInManager.IsSignedIn(User) && !User.IsInRole("Podrska") && !User.IsInRole("Administrator"))
+            {
+                <text>
+                // Provjeri notifikacije odmah
+                checkNotifications();
+                
+                // Provjeri notifikacije svakih 30 sekundi
+                notificationInterval = setInterval(checkNotifications, 30000);
+                </text>
+            }
         });
 
         // Ripple animation
@@ -604,6 +733,80 @@
             }
         `;
         document.head.appendChild(style);
+
+        // NOTIFIKACIJE FUNKCIJE
+        function checkNotifications() {
+            fetch('/Podrska/GetNotifications')
+                .then(response => response.json())
+                .then(data => {
+                    updateNotificationUI(data);
+                })
+                .catch(error => {
+                    console.log('Greška pri dohvatanju notifikacija:', error);
+                });
+        }
+
+        function updateNotificationUI(data) {
+            const dropdown = document.getElementById('notificationDropdown');
+            const count = document.getElementById('notificationCount');
+            const list = document.getElementById('notificationList');
+            
+            if (data.count > 0) {
+                // Prikaži notification dropdown
+                dropdown.style.display = 'block';
+                count.textContent = data.count;
+                
+                // Očisti postojeće notifikacije
+                list.innerHTML = '';
+                
+                // Dodaj nove notifikacije
+                data.notifications.forEach(function(notification) {
+                    const item = document.createElement('li');
+                    item.innerHTML = `
+                        <a class="dropdown-item" href="/Podrska/Details/${notification.id}">
+                            <div class="notification-item-title">${notification.title}</div>
+                            <div class="notification-item-text">${notification.message}</div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-warning">${notification.priority}</span>
+                                <span class="notification-item-date">${notification.date}</span>
+                            </div>
+                        </a>
+                    `;
+                    list.appendChild(item);
+                });
+                
+                // Dodaj zvuk notifikacije (opcionalno)
+                playNotificationSound();
+                
+            } else {
+                dropdown.style.display = 'none';
+            }
+        }
+
+        function playNotificationSound() {
+            // Provjeri da li je prethodno reproducovan zvuk u posljednjih 5 sekundi
+            const now = Date.now();
+            if (window.lastNotificationSound && (now - window.lastNotificationSound) < 5000) {
+                return; // Ne reprodukuj zvuk previše često
+            }
+            
+            try {
+                // Jednostavan notification zvuk
+                const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMdBjqY2/LDciQALYbO8tiKNQgYZbzs4JpMEAxOqOPv');
+                audio.volume = 0.3; // Tiši zvuk
+                audio.play().catch(e => console.log('Audio ne može da se reprodukuje'));
+                window.lastNotificationSound = now;
+            } catch (e) {
+                console.log('Greška pri reprodukciji zvuka:', e);
+            }
+        }
+
+        // Cleanup interval kada se stranica zatvarija
+        window.addEventListener('beforeunload', function() {
+            if (notificationInterval) {
+                clearInterval(notificationInterval);
+            }
+        });
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)

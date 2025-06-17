@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Carisma.Controllers
 {
-    public class PodrskaController : Controller  // Uklanjam [Authorize] odavde
+    public class PodrskaController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
@@ -52,22 +52,26 @@ namespace Carisma.Controllers
             return View(await zahtjevi.ToListAsync());
         }
 
-        // GET: Podrska/Details/5 - samo za ulogovane korisnike
         [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
 
-            var podrska = await _context.Podrska
-                .FirstOrDefaultAsync(m => m.Id == id);
-
+            var podrska = await _context.Podrska.FirstOrDefaultAsync(m => m.Id == id);
             if (podrska == null) return NotFound();
 
-            // Provjeri da li korisnik može vidjeti ovaj zahtjev
             var currentUser = await _userManager.GetUserAsync(User);
             if (!User.IsInRole("Podrska") && !User.IsInRole("Administrator") && podrska.KorisnikId != currentUser.Id)
             {
                 return Forbid();
+            }
+
+            // Ako je korisnik vlasnik zahtjeva i ima novi odgovor, označi kao pročitano
+            if (podrska.KorisnikId == currentUser.Id && podrska.ImaNoviOdgovor)
+            {
+                podrska.ImaNoviOdgovor = false;
+                _context.Update(podrska);
+                await _context.SaveChangesAsync();
             }
 
             return View(podrska);
@@ -85,8 +89,6 @@ namespace Carisma.Controllers
             return View();
         }
 
-        // POST: Podrska/Create - DOSTUPNO SVIMA
-        // POST: Podrska/Create - DOSTUPNO SVIMA
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Pitanje,Hitnost,Email,ImePrezime")] Podrska podrska)
@@ -107,10 +109,10 @@ namespace Carisma.Controllers
                 _context.Add(podrska);
                 await _context.SaveChangesAsync();
 
-                TempData["Success"] = "Vaš zahtjev je uspješno poslat! Odgovoriće vam u najkraćem roku.";
+                TempData["Success"] = "Vas zahtjev je uspjesno poslat! Odgovor cete dobiti u najkracem roku.";
 
                 // PROMJENA: Svi korisnici (i registrovani i neregistrovani) idu na CreateSuccess
-                return RedirectToAction("CreateSuccess");
+                return RedirectToAction("Create");
             }
             return View(podrska);
         }
@@ -133,11 +135,10 @@ namespace Carisma.Controllers
             return View(podrska);
         }
 
-        // POST: Podrska/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Podrska,Administrator")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Pitanje,DatumPostavljanja,Odgovor,Status,Hitnost,KorisnikId,DatumOdgovora")] Podrska podrska)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Pitanje,DatumPostavljanja,Odgovor,Status,Hitnost,KorisnikId,DatumOdgovora,ImaNoviOdgovor")] Podrska podrska)
         {
             if (id != podrska.Id) return NotFound();
 
@@ -146,18 +147,30 @@ namespace Carisma.Controllers
                 try
                 {
                     var currentUser = await _userManager.GetUserAsync(User);
+                    var originalPodrska = await _context.Podrska.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
 
-                    // Ako je dodan odgovor, postavi datum odgovora i korisnika koji je odgovorio
-                    if (!string.IsNullOrEmpty(podrska.Odgovor) && podrska.DatumOdgovora == null)
+                    // Provjeri da li je dodan novi odgovor
+                    bool newResponseAdded = !string.IsNullOrEmpty(podrska.Odgovor) &&
+                                           (originalPodrska == null || string.IsNullOrEmpty(originalPodrska.Odgovor));
+
+                    if (newResponseAdded)
                     {
                         podrska.DatumOdgovora = DateOnly.FromDateTime(DateTime.Now);
                         podrska.PodrskaKorisnikId = currentUser.Id;
+                        podrska.ImaNoviOdgovor = true; // NOVO: označi da ima novi odgovor
+                    }
+                    else
+                    {
+                        // Zadrži postojeće vrijednosti ako nije novi odgovor
+                        podrska.DatumOdgovora = originalPodrska?.DatumOdgovora;
+                        podrska.PodrskaKorisnikId = originalPodrska?.PodrskaKorisnikId;
+                        podrska.ImaNoviOdgovor = originalPodrska?.ImaNoviOdgovor ?? false;
                     }
 
                     _context.Update(podrska);
                     await _context.SaveChangesAsync();
 
-                    TempData["Success"] = "Odgovor je uspješno poslat korisniku!";
+                    TempData["Success"] = "Odgovor je uspjesno poslat korisniku!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -190,7 +203,7 @@ namespace Carisma.Controllers
             _context.Update(podrska);
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Hvala vam na ocjeni! Vaša povratna informacija nam je važna.";
+            TempData["Success"] = "Hvala vam na ocjeni! Vasa povratna informacija nam je vazna.";
             return RedirectToAction(nameof(Details), new { id });
         }
 
@@ -220,7 +233,7 @@ namespace Carisma.Controllers
             }
 
             await _context.SaveChangesAsync();
-            TempData["Success"] = "Zahtjev je uspješno obrisan.";
+            TempData["Success"] = "Zahtjev je uspjesno obrisan.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -244,6 +257,28 @@ namespace Carisma.Controllers
             };
 
             return View(stats);
+        }
+
+        // API endpoint za provjeru novih notifikacija
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetNotifications()
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Json(new { count = 0, notifications = new List<object>() });
+
+            var newResponses = await _context.Podrska
+                .Where(p => p.KorisnikId == currentUser.Id && p.ImaNoviOdgovor)
+                .Select(p => new {
+                    id = p.Id,
+                    title = $"Novi odgovor na zahtjev #{p.Id}",
+                    message = p.Pitanje.Length > 50 ? p.Pitanje.Substring(0, 50) + "..." : p.Pitanje,
+                    date = p.DatumOdgovora != null ? p.DatumOdgovora.Value.ToString("dd.MM.yyyy") : "",
+                    priority = p.Hitnost.ToString()
+                })
+                .ToListAsync();
+
+            return Json(new { count = newResponses.Count, notifications = newResponses });
         }
     }
 }

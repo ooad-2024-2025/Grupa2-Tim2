@@ -19,6 +19,9 @@ namespace Carisma.Models
         [Display(Name = "Status zahtjeva")]
         public statusZahtjeva? Status { get; set; }
 
+        [Display(Name = "Ima novi odgovor")]
+        public bool ImaNoviOdgovor { get; set; } = false;
+
         [Required]
         [Display(Name = "Nivo hitnosti")]
         public NivoHitnosti Hitnost { get; set; } = NivoHitnosti.Srednja;

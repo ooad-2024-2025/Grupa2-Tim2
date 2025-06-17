@@ -1,54 +1,207 @@
 ﻿@model Carisma.Models.Podrska
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = $"Odgovori na zahtjev #{Model.Id}";
 }
 
-<h1>Edit</h1>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="text-primary">
+                        <i class="fas fa-reply me-2"></i>
+                        Odgovori na zahtjev #@Model.Id
+                    </h2>
+                    <p class="text-muted mb-0">
+                        Kreiran: @Model.DatumPostavljanja?.ToString("dd.MM.yyyy HH:mm") | 
+                        Prioritet: <span class="@Model.PrioritetniBadge">@Model.Hitnost</span>
+                    </p>
+                </div>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>
+                    Nazad na listu
+                </a>
+            </div>
 
-<h4>Podrska</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Pitanje" class="control-label"></label>
-                <input asp-for="Pitanje" class="form-control" />
-                <span asp-validation-for="Pitanje" class="text-danger"></span>
+            <!-- Pitanje korisnika -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user me-2 text-primary"></i>
+                        Pitanje korisnika
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">@Model.Pitanje</p>
+                    @if (!string.IsNullOrEmpty(Model.Email))
+                    {
+                        <hr>
+                        <small class="text-muted">
+                            <strong>Kontakt:</strong> @Model.Email
+                            @if (!string.IsNullOrEmpty(Model.ImePrezime))
+                            {
+                                <span> | <strong>Ime:</strong> @Model.ImePrezime</span>
+                            }
+                        </small>
+                    }
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="DatumPostavljanja" class="control-label"></label>
-                <input asp-for="DatumPostavljanja" class="form-control" />
-                <span asp-validation-for="DatumPostavljanja" class="text-danger"></span>
+
+            <!-- Form za odgovor -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-headset me-2"></i>
+                        Vaš odgovor
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="Pitanje" />
+                        <input type="hidden" asp-for="DatumPostavljanja" />
+                        <input type="hidden" asp-for="KorisnikId" />
+                        <input type="hidden" asp-for="Hitnost" />
+                        <input type="hidden" asp-for="Email" />
+                        <input type="hidden" asp-for="ImePrezime" />
+                        <input type="hidden" asp-for="PodrskaKorisnikId" />
+                        <input type="hidden" asp-for="DatumOdgovora" />
+                        <input type="hidden" asp-for="ImaNoviOdgovor" />
+                        <input type="hidden" asp-for="OcjenaKorisnika" />
+                        <input type="hidden" asp-for="KomentarOcjene" />
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Odgovor" class="form-label">
+                                <i class="fas fa-comment me-1"></i>
+                                Vaš odgovor korisniku *
+                            </label>
+                            <textarea asp-for="Odgovor" class="form-control" rows="6" 
+                                      placeholder="Unesite detaljan odgovor koji će pomoći korisniku..."></textarea>
+                            <span asp-validation-for="Odgovor" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Status" class="form-label">
+                                <i class="fas fa-flag me-1"></i>
+                                Status zahtjeva *
+                            </label>
+                            <select asp-for="Status" class="form-select">
+                                <option value="0">🔵 Otvoren</option>
+                                <option value="1">🟡 U obradi</option>
+                                <option value="2">⏳ Čeka odgovor</option>
+                                <option value="3">✅ Zatvoren</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                            <div class="form-text">
+                                Postavite status na "Čeka odgovor" ako očekujete povratnu informaciju od korisnika.
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(Model.Odgovor))
+                        {
+                            <div class="alert alert-info">
+                                <h6><i class="fas fa-info-circle me-1"></i> Postojeći odgovor:</h6>
+                                <p class="mb-0">@Model.Odgovor</p>
+                                @if (Model.DatumOdgovora.HasValue)
+                                {
+                                    <small class="text-muted">Odgovoreno: @Model.DatumOdgovora?.ToString("dd.MM.yyyy")</small>
+                                }
+                            </div>
+                        }
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-paper-plane me-1"></i>
+                                Pošalji odgovor
+                            </button>
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-info">
+                                <i class="fas fa-eye me-1"></i>
+                                Pregled
+                            </a>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-1"></i>
+                                Odustani
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Odgovor" class="control-label"></label>
-                <input asp-for="Odgovor" class="form-control" />
-                <span asp-validation-for="Odgovor" class="text-danger"></span>
+
+            <!-- Dodatne informacije -->
+            <div class="card mt-4 shadow-sm">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Informacije o zahtjevu
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Tip korisnika:</strong>
+                            @if (Model.IsRegisteredUser)
+                            {
+                                <span class="badge bg-primary">Registrovani korisnik</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Neregistrovani korisnik</span>
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Prioritet:</strong>
+                            <span class="@Model.PrioritetniBadge">
+                                @Model.Hitnost.ToString()
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-control"></select>
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DatumOdgovora" class="control-label"></label>
-                <input asp-for="DatumOdgovora" class="form-control" />
-                <span asp-validation-for="DatumOdgovora" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<style>
+    .form-control:focus, .form-select:focus {
+        border-color: #198754;
+        box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+    }
+    
+    .btn-success:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(25, 135, 84, 0.3);
+    }
+</style>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Auto-resize textarea
+        const textarea = document.querySelector('textarea');
+        if (textarea) {
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+        }
+
+        // Prikaži poruke o uspjehu
+        @if (TempData["Success"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'success',
+                title: 'Uspjeh!',
+                text: '@TempData["Success"]',
+                confirmButtonText: 'U redu'
+            });
+            </text>
+        }
+    </script>
 }

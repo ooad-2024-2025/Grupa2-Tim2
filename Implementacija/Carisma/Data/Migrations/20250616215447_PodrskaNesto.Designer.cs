@@ -4,6 +4,7 @@ using Carisma.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Carisma.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250616215447_PodrskaNesto")]
+    partial class PodrskaNesto
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -114,6 +117,9 @@ namespace Carisma.Data.Migrations
                     b.Property<DateOnly?>("DatumOdgovora")
                         .HasColumnType("date");
 
+                    b.Property<DateTime?>("DatumOdgovoraKorisnika")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("DatumPostavljanja")
                         .HasColumnType("datetime2");
 
@@ -122,9 +128,6 @@ namespace Carisma.Data.Migrations
 
                     b.Property<int>("Hitnost")
                         .HasColumnType("int");
-
-                    b.Property<bool>("ImaNoviOdgovor")
-                        .HasColumnType("bit");
 
                     b.Property<string>("ImePrezime")
                         .HasMaxLength(100)
@@ -142,6 +145,10 @@ namespace Carisma.Data.Migrations
 
                     b.Property<string>("Odgovor")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OdgovorKorisnika")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<int?>("OsobaId")
                         .HasColumnType("int");
