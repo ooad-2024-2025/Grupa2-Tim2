@@ -3,71 +3,31 @@
     ViewData["Title"] = "Detalji vozila";
 }
 
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h3 class="card-title mb-0">
-                        <i class="fas fa-car me-2"></i>
-                        Detalji vozila
-                    </h3>
-                </div>
-                <div class="card-body">
-                    <div class="bg-light p-4 rounded">
-                        <div class="row mb-3">
-                            <div class="col-sm-4">
-                                <strong class="text-muted">Marka:</strong>
-                            </div>
-                            <div class="col-sm-8">
-                                <span class="badge bg-primary fs-6">@Html.DisplayFor(model => model.Marka)</span>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-sm-4">
-                                <strong class="text-muted">Model:</strong>
-                            </div>
-                            <div class="col-sm-8">
-                                <span class="text-dark">@Html.DisplayFor(model => model.Model)</span>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-sm-4">
-                                <strong class="text-muted">Godina:</strong>
-                            </div>
-                            <div class="col-sm-8">
-                                <span class="badge bg-secondary">@Html.DisplayFor(model => model.Godina)</span>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-sm-4">
-                                <strong class="text-muted">Cijena po danu:</strong>
-                            </div>
-                            <div class="col-sm-8">
-                                <span class="text-success fw-bold fs-5">
-                                    @Html.DisplayFor(model => model.CijenaPoDanu) KM
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-sm-4">
-                                <strong class="text-muted">Status:</strong>
-                            </div>
-                            <div class="col-sm-8">
+<div class="vehicle-details-wrapper">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Header Section -->
+                <div class="details-header">
+                    <div class="header-content">
+                        <div class="brand-badge">@Model.Marka</div>
+                        <h1 class="vehicle-title">@Model.Model</h1>
+                        <div class="vehicle-meta">
+                            <span class="year-badge">@Model.Godina</span>
+                            <span class="price-main">@Model.CijenaPoDanu KM <small>po danu</small></span>
+                            <div class="status-badge-inline">
                                 @if (Model.Status == Dostupnost.Dostupno)
                                 {
-                                    <span class="badge bg-success fs-6">
-                                        <i class="fas fa-check-circle me-1"></i>Dostupno
+                                    <span class="status available">
+                                        <i class="fas fa-check-circle"></i>
+                                        Dostupno
                                     </span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-danger fs-6">
-                                        <i class="fas fa-times-circle me-1"></i>Nije dostupno
+                                    <span class="status unavailable">
+                                        <i class="fas fa-times-circle"></i>
+                                        Nedostupno
                                     </span>
                                 }
                             </div>
@@ -75,44 +35,156 @@
                     </div>
                 </div>
 
-                <div class="card-footer bg-light">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <a asp-action="Index" class="btn btn-secondary btn-lg">
-                                <i class="fas fa-arrow-left me-2"></i>
-                                Nazad na listu
+                <!-- Main Content -->
+                <div class="vehicle-card">
+                    <!-- Compact Image Section -->
+                    <div class="vehicle-image-section">
+                        <div class="image-container">
+                            <img src="~/images/vozila/@(GetVoziloImage(Model.Marka, Model.Model))" 
+                                 alt="@Model.Marka @Model.Model" 
+                                 class="vehicle-image"
+                                 onerror="this.style.display='none'; this.parentElement.querySelector('.placeholder-image').style.display='flex';">
+                            
+                            <div class="placeholder-image" style="display: none;">
+                                <div class="placeholder-content">
+                                    <i class="fas fa-car"></i>
+                                    <h5>@Model.Marka @Model.Model</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Info Section -->
+                    <div class="vehicle-info-section">
+                        <!-- Quick Specs -->
+                        <div class="quick-specs">
+                            <div class="spec-item">
+                                <i class="fas fa-car"></i>
+                                <span>@Model.Marka @Model.Model</span>
+                            </div>
+                            <div class="spec-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>@Model.Godina godina</span>
+                            </div>
+                            <div class="spec-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Osiguranje uključeno</span>
+                            </div>
+                            <div class="spec-item">
+                                <i class="fas fa-tools"></i>
+                                <span>24/7 Podrška</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Grid -->
+                <div class="info-grid">
+                    <!-- Rental Information -->
+                    <div class="info-card">
+                        <h4 class="card-title">
+                            <i class="fas fa-info-circle"></i>
+                            Informacije o najmu
+                        </h4>
+                        <div class="card-content">
+                            <div class="info-item">
+                                <i class="fas fa-clock"></i>
+                                <span>Minimalno 1 dan najma</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-gas-pump"></i>
+                                <span>Pun rezervoar prilikom preuzimanja</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-id-card"></i>
+                                <span>Potrebna važeća vozačka dozvola</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Family Section -->
+                    <div class="info-card family-card">
+                        <h4 class="card-title">
+                            <i class="fas fa-baby"></i>
+                            Za naše najmlađe
+                        </h4>
+                        <div class="card-content">
+                            <div class="family-highlight">
+                                <strong>Besplatne auto-sjedalice!</strong>
+                                <p>Obezbijeđujemo sigurne auto-sjedalice za djecu svih uzrasta. Potrebno je samo naglasiti tokom preuzimanja vozila.</p>
+                            </div>
+                            <div class="family-features">
+                                <div class="feature-item">
+                                    <i class="fas fa-heart"></i>
+                                    <span>Sigurnost na prvom mjestu</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-gift"></i>
+                                    <span>Besplatno za svu djecu</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Important Notes -->
+                    <div class="info-card">
+                        <h4 class="card-title">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Važne napomene
+                        </h4>
+                        <div class="card-content">
+                            <div class="info-item">
+                                <i class="fas fa-credit-card"></i>
+                                <span>Depozit se naplaćuje kartično</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-user-check"></i>
+                                <span>Minimum 21 godina za najam</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-handshake"></i>
+                                <span>Pomoć pri instalaciji sjedalica</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-section">
+                    <div class="action-left">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i>
+                            Nazad na pregled
+                        </a>
+                    </div>
+
+                    <div class="action-right">
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                                <i class="fas fa-edit"></i>
+                                Izmijeni
                             </a>
-                        </div>
+                            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                                <i class="fas fa-trash-alt"></i>
+                                Obriši
+                            </a>
+                        }
 
-                        <div class="d-flex gap-2">
-                            @if (User.IsInRole("Administrator"))
-                            {
-                                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-lg">
-                                    <i class="fas fa-edit me-2"></i>
-                                    Izmijeni
-                                </a>
-
-                                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger btn-lg">
-                                    <i class="fas fa-trash-alt me-2"></i>
-                                    Obriši
-                                </a>
-                            }
-
-                            @if (Model.Status == Dostupnost.Dostupno)
-                            {
-                                <a asp-controller="Rezervacija" asp-action="Kreiraj" asp-route-id="@Model.Id" class="btn btn-success btn-lg">
-                                    <i class="fas fa-calendar-plus me-2"></i>
-                                    Rezerviši vozilo
-                                </a>
-                            }
-                            else
-                            {
-                                <button class="btn btn-secondary btn-lg" disabled>
-                                    <i class="fas fa-ban me-2"></i>
-                                    Nije dostupno
-                                </button>
-                            }
-                        </div>
+                        @if (Model.Status == Dostupnost.Dostupno && User.Identity.IsAuthenticated)
+                        {
+                            <a asp-controller="Rezervacija" asp-action="Kreiraj" asp-route-id="@Model.Id" class="btn btn-primary">
+                                <i class="fas fa-calendar-check"></i>
+                                Rezerviši sada
+                            </a>
+                        }
+                        else if (Model.Status != Dostupnost.Dostupno)
+                        {
+                            <span class="btn btn-disabled">
+                                <i class="fas fa-ban"></i>
+                                Nedostupno
+                            </span>
+                        }
                     </div>
                 </div>
             </div>
@@ -120,35 +192,457 @@
     </div>
 </div>
 
-<!-- Dodajte postojeći CSS iz originalnog fajla -->
+@functions {
+    string GetVoziloImage(string marka, string model)
+    {
+        string fileName = $"{marka.ToLower()}-{model.ToLower().Replace(" ", "-")}.jpg";
+        return fileName;
+    }
+}
+
 <style>
-    .card {
-        border: none;
-        border-radius: 10px;
+    .vehicle-details-wrapper {
+        background: linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #f8b500 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+        padding-bottom: 100px;
     }
 
-    .card-header {
-        border-radius: 10px 10px 0 0 !important;
+    .container {
+        max-width: 1200px;
     }
 
-    .btn-lg {
-        padding: 12px 24px;
-        font-size: 1.1rem;
+    /* Compact Header */
+    .details-header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 1.5rem 2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 10px 40px rgba(255, 105, 180, 0.2);
     }
 
-    .badge {
+    .brand-badge {
+        display: inline-block;
+        background: linear-gradient(45deg, #ff69b4, #ff1493);
+        color: white;
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .vehicle-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin: 0 0 0.75rem 0;
+        line-height: 1.2;
+    }
+
+    .vehicle-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .year-badge {
+        background: #f7fafc;
+        color: #4a5568;
+        padding: 0.4rem 0.8rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border: 2px solid #e2e8f0;
+    }
+
+    .price-main {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #48bb78;
+    }
+
+    .price-main small {
+        font-size: 0.8rem;
+        color: #718096;
+        font-weight: 400;
+    }
+
+    .status-badge-inline {
+        margin-left: auto;
+    }
+
+    .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+        font-weight: 600;
         font-size: 0.9rem;
     }
 
-    .bg-light {
-        background-color: #f8f9fa !important;
+    .status.available {
+        background: linear-gradient(45deg, #48bb78, #38a169);
+        color: white;
     }
 
-    .text-muted {
-        color: #6c757d !important;
+    .status.unavailable {
+        background: linear-gradient(45deg, #f56565, #e53e3e);
+        color: white;
     }
 
-    .shadow {
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    /* Compact Main Card */
+    .vehicle-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 15px 40px rgba(255, 105, 180, 0.2);
+        margin-bottom: 1.5rem;
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        min-height: 220px;
+    }
+
+    /* Compact Image */
+    .vehicle-image-section {
+        background: linear-gradient(135deg, #f7fafc, #edf2f7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    .image-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .vehicle-image {
+        width: 100%;
+        height: 180px;
+        object-fit: contain;
+        border-radius: 12px;
+        transition: transform 0.3s ease;
+        background: white;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .vehicle-image:hover {
+        transform: scale(1.02);
+    }
+
+    .placeholder-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 180px;
+        background: linear-gradient(135deg, #e2e8f0, #cbd5e0);
+        border-radius: 12px;
+        color: #4a5568;
+        text-align: center;
+    }
+
+    .placeholder-content i {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        opacity: 0.6;
+    }
+
+    .placeholder-content h5 {
+        font-size: 1rem;
+        margin: 0;
+        font-weight: 600;
+    }
+
+    /* Compact Info Section */
+    .vehicle-info-section {
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .quick-specs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .quick-specs .spec-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #4a5568;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .quick-specs .spec-item i {
+        color: #ff69b4;
+        width: 16px;
+        text-align: center;
+    }
+
+    /* Info Grid */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 30px rgba(255, 105, 180, 0.15);
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .card-title i {
+        color: #ff69b4;
+    }
+
+    .card-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: #4a5568;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .info-item i {
+        color: #48bb78;
+        width: 16px;
+        text-align: center;
+    }
+
+    /* Family Card */
+    .family-card {
+        border: 2px solid rgba(255, 105, 180, 0.2);
+    }
+
+    .family-highlight {
+        background: rgba(255, 105, 180, 0.08);
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    }
+
+    .family-highlight strong {
+        color: #c44569;
+        font-size: 1rem;
+    }
+
+    .family-highlight p {
+        margin: 0.5rem 0 0 0;
+        color: #6c757d;
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+
+    .family-features {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #c44569;
+        font-weight: 500;
+        font-size: 0.85rem;
+    }
+
+    .feature-item i {
+        color: #ff69b4;
+        width: 14px;
+        text-align: center;
+    }
+
+    /* Action Section */
+    .action-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 15px;
+        padding: 1.25rem 1.5rem;
+        box-shadow: 0 10px 30px rgba(255, 105, 180, 0.2);
+    }
+
+    .action-right {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 0.9rem;
+    }
+
+    .btn-secondary {
+        background: linear-gradient(45deg, #718096, #4a5568);
+        color: white;
+        box-shadow: 0 5px 15px rgba(113, 128, 150, 0.3);
+    }
+
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(113, 128, 150, 0.4);
+        color: white;
+    }
+
+    .btn-warning {
+        background: linear-gradient(45deg, #ed8936, #dd6b20);
+        color: white;
+        box-shadow: 0 5px 15px rgba(237, 137, 54, 0.3);
+    }
+
+    .btn-warning:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(237, 137, 54, 0.4);
+        color: white;
+    }
+
+    .btn-danger {
+        background: linear-gradient(45deg, #f56565, #e53e3e);
+        color: white;
+        box-shadow: 0 5px 15px rgba(245, 101, 101, 0.3);
+    }
+
+    .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(245, 101, 101, 0.4);
+        color: white;
+    }
+
+    .btn-primary {
+        background: linear-gradient(45deg, #ff69b4, #ff1493);
+        color: white;
+        box-shadow: 0 5px 15px rgba(255, 105, 180, 0.4);
+        font-size: 1rem;
+        padding: 1rem 2rem;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 10px 30px rgba(255, 105, 180, 0.5);
+        color: white;
+    }
+
+    .btn-disabled {
+        background: #e2e8f0;
+        color: #a0aec0;
+        cursor: not-allowed;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 992px) {
+        .vehicle-card {
+            grid-template-columns: 1fr;
+        }
+
+        .vehicle-image-section {
+            height: 200px;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .action-section {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .action-right {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .vehicle-details-wrapper {
+            padding: 1rem 0;
+            padding-bottom: 100px;
+        }
+
+        .vehicle-title {
+            font-size: 1.5rem;
+        }
+
+        .price-main {
+            font-size: 1.3rem;
+        }
+
+        .vehicle-meta {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .status-badge-inline {
+            margin-left: 0;
+        }
+
+        .quick-specs {
+            grid-template-columns: 1fr;
+        }
+
+        .details-header,
+        .action-section {
+            padding: 1rem;
+            margin: 0 1rem;
+        }
+
+        .vehicle-card,
+        .info-card {
+            margin: 0 1rem 1rem;
+        }
+
+        .info-grid {
+            margin: 0 1rem 1.5rem;
+        }
     }
 </style>

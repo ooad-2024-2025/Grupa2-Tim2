@@ -4,180 +4,974 @@
     ViewData["Title"] = "Moje rezervacije";
 }
 
-<div class="container-fluid py-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="card mb-4">
-                <div class="card-header pb-0">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0">
-                            <i class="fas fa-calendar-check me-2"></i>Moje rezervacije
-                        </h6>
-                        <div>
-                            <a class="btn btn-primary btn-sm" asp-controller="Vozilo" asp-action="Index">
-                                <i class="fas fa-car me-2"></i>Pogledaj vozila
-                            </a>
-                        </div>
+<div class="reservations-wrapper">
+    <div class="container">
+        <!-- Moderni Header -->
+        <div class="page-header">
+            <div class="header-left">
+                <div class="breadcrumb">
+                    <span class="breadcrumb-item">Nadzorna ploča</span>
+                    <i class="fas fa-chevron-right"></i>
+                    <span class="breadcrumb-item active">Moje rezervacije</span>
+                </div>
+                <h1 class="page-title">
+                    <span class="title-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </span>
+                    Moje rezervacije
+                </h1>
+                <p class="page-description">Upravljajte svojim rezervacijama vozila na jednom mjestu</p>
+            </div>
+            <div class="header-right">
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">@(Model?.Count() ?? 0)</span>
+                        <span class="stat-label">Ukupno</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">@(Model?.Count(r => r.Status == StatusRezervacije.UToku) ?? 0)</span>
+                        <span class="stat-label">Aktivne</span>
                     </div>
                 </div>
+                <a class="btn btn-primary" asp-controller="Vozilo" asp-action="Index">
+                    <i class="fas fa-plus"></i>
+                    <span>Nova rezervacija</span>
+                </a>
+            </div>
+        </div>
 
-                <div class="card-body">
-                    @if (TempData["Success"] != null)
-                    {
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    }
+        <!-- Alerts -->
+        @if (TempData["Success"] != null)
+        {
+            <div class="modern-alert success">
+                <div class="alert-content">
+                    <div class="alert-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="alert-text">
+                        <strong>Uspjeh!</strong>
+                        <span>@TempData["Success"]</span>
+                    </div>
+                </div>
+                <button class="alert-dismiss" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        }
 
-                    @if (TempData["Error"] != null)
-                    {
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-triangle me-2"></i>@TempData["Error"]
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    }
+        @if (TempData["Error"] != null)
+        {
+            <div class="modern-alert error">
+                <div class="alert-content">
+                    <div class="alert-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="alert-text">
+                        <strong>Greška!</strong>
+                        <span>@TempData["Error"]</span>
+                    </div>
+                </div>
+                <button class="alert-dismiss" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        }
 
-                    @if (Model != null && Model.Any())
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th><i class="fas fa-car me-1"></i>Vozilo</th>
-                                        <th><i class="fas fa-calendar-alt me-1"></i>Period rezervacije</th>
-                                        <th><i class="fas fa-calendar me-1"></i>Datum kreiranja</th>
-                                        <th><i class="fas fa-info-circle me-1"></i>Status</th>
-                                        <th><i class="fas fa-money-bill me-1"></i>Cijena</th>
-                                        <th><i class="fas fa-cogs me-1"></i>Akcije</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var rezervacija in Model)
-                                    {
-                                        <tr>
-                                            <td>
-                                                <strong>@rezervacija.vozilo?.Marka @rezervacija.vozilo?.Model</strong>
-                                                <br />
-                                                <small class="text-muted">Godina: @rezervacija.vozilo?.Godina</small>
-                                            </td>
-                                            <td>
-                                                <div>
-                                                    <i class="fas fa-play text-success me-1"></i>
-                                                    @rezervacija.datumPocetka.ToString("dd.MM.yyyy")
-                                                </div>
-                                                <div>
-                                                    <i class="fas fa-stop text-danger me-1"></i>
-                                                    @rezervacija.datumZavrsetka.ToString("dd.MM.yyyy")
-                                                </div>
-                                                <small class="text-muted">
-                                                    (@((rezervacija.datumZavrsetka.Date - rezervacija.datumPocetka.Date).Days + 1) dana)
-                                                </small>
-                                            </td>
-                                            <td>
-                                                @rezervacija.datumRezervacije.ToString("dd.MM.yyyy HH:mm")
-                                            </td>
-                                            <td>
-                                                @switch (rezervacija.Status)
-                                                {
-                                                    case StatusRezervacije.Kreirana:
-                                                        <span class="badge bg-warning">
-                                                            <i class="fas fa-clock me-1"></i>Kreirana
-                                                        </span>
-                                                        break;
-                                                    case StatusRezervacije.UToku:
-                                                        <span class="badge bg-primary">
-                                                            <i class="fas fa-play me-1"></i>U toku
-                                                        </span>
-                                                        break;
-                                                    case StatusRezervacije.Zavrsena:
-                                                        <span class="badge bg-success">
-                                                            <i class="fas fa-check me-1"></i>Završena
-                                                        </span>
-                                                        break;
-                                                    case StatusRezervacije.Otkazana:
-                                                        <span class="badge bg-danger">
-                                                            <i class="fas fa-times me-1"></i>Otkazana
-                                                        </span>
-                                                        break;
-                                                }
-                                            </td>
-                                            <td>
-                                                <strong class="text-primary">@rezervacija.cijena.ToString("F2") KM</strong>
-                                            </td>
-                                            <td>
-                                                <div class="btn-group" role="group">
-                                                    <a class="btn btn-outline-info btn-sm" asp-action="Details" asp-route-id="@rezervacija.Id" title="Detalji">
-                                                        <i class="fas fa-eye"></i>
-                                                    </a>
-                                                    
-                                                    @if (rezervacija.Status == StatusRezervacije.Kreirana || rezervacija.Status == StatusRezervacije.UToku)
-                                                    {
-                                                        var razlika = rezervacija.datumPocetka - DateTime.Now;
-                                                        if (razlika.TotalHours >= 48)
-                                                        {
-                                                            <form asp-action="Otkazi" method="post" class="d-inline">
-                                                                <input type="hidden" name="id" value="@rezervacija.Id" />
-                                                                <button type="submit" class="btn btn-outline-danger btn-sm" 
-                                                                        onclick="return confirm('Jeste li sigurni da želite otkazati rezervaciju?')" 
-                                                                        title="Otkazi rezervaciju">
-                                                                    <i class="fas fa-times"></i>
-                                                                </button>
-                                                            </form>
-                                                        }
-                                                        else
-                                                        {
-                                                            <span class="btn btn-outline-secondary btn-sm disabled" title="Ne možete otkazati rezervaciju manje od 48h prije početka">
-                                                                <i class="fas fa-lock"></i>
-                                                            </span>
-                                                        }
-                                                    }
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+        <!-- Glavni sadržaj -->
+        @if (Model != null && Model.Any())
+        {
+            <div class="reservations-container">
+                @foreach (var rezervacija in Model)
+                {
+                    <div class="reservation-card">
+                        <!-- Zaglavlje kartice -->
+                        <div class="card-header">
+                            <div class="reservation-id">
+                                <span class="id-label">REZ</span>
+                                <span class="id-number">#@rezervacija.Id.ToString().PadLeft(4, '0')</span>
+                            </div>
+                            <div class="status-indicator @GetStatusClass(rezervacija.Status)">
+                                <div class="status-dot"></div>
+                                <span class="status-text">@GetStatusText(rezervacija.Status)</span>
+                            </div>
                         </div>
-                    }
-                    else
-                    {
-                        <div class="text-center py-5">
-                            <i class="fas fa-calendar-times fa-4x text-muted mb-4"></i>
-                            <h4 class="text-muted mb-3">Nemate aktivnih rezervacija</h4>
+
+                        <!-- Sekcija vozila -->
+                        <div class="vehicle-section">
+                            <div class="vehicle-avatar">
+                                <img src="~/images/vozila/@(GetVoziloImage(rezervacija.vozilo?.Marka, rezervacija.vozilo?.Model))" 
+                                     alt="@rezervacija.vozilo?.Marka @rezervacija.vozilo?.Model"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="vehicle-placeholder" style="display: none;">
+                                    <i class="fas fa-car"></i>
+                                </div>
+                            </div>
+                            <div class="vehicle-info">
+                                <h3 class="vehicle-name">@rezervacija.vozilo?.Marka @rezervacija.vozilo?.Model</h3>
+                                <p class="vehicle-year">@rezervacija.vozilo?.Godina • Rent-a-Car</p>
+                            </div>
+                            <div class="price-badge">
+                                <span class="price-amount">@rezervacija.cijena.ToString("F0")</span>
+                                <span class="price-currency">KM</span>
+                            </div>
+                        </div>
+
+                        <!-- Vremenska linija -->
+                        <div class="timeline-section">
+                            <div class="timeline-item">
+                                <div class="timeline-icon pickup">
+                                    <i class="fas fa-play"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <span class="timeline-label">Preuzimanje</span>
+                                    <span class="timeline-date">@rezervacija.datumPocetka.ToString("dd.MM.yyyy")</span>
+                                </div>
+                            </div>
+                            <div class="timeline-line"></div>
+                            <div class="timeline-item">
+                                <div class="timeline-icon dropoff">
+                                    <i class="fas fa-stop"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <span class="timeline-label">Vraćanje</span>
+                                    <span class="timeline-date">@rezervacija.datumZavrsetka.ToString("dd.MM.yyyy")</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Metapodaci -->
+                        <div class="card-metadata">
+                            <div class="metadata-item">
+                                <i class="fas fa-calendar-plus"></i>
+                                <span>Kreirana @rezervacija.datumRezervacije.ToString("dd.MM.yyyy")</span>
+                            </div>
+                            <div class="metadata-item">
+                                <i class="fas fa-clock"></i>
+                                <span>@((rezervacija.datumZavrsetka.Date - rezervacija.datumPocetka.Date).Days + 1) dana</span>
+                            </div>
+                        </div>
+
+                        <!-- Akcije kartice -->
+                        <div class="card-actions">
+                            <a class="action-btn secondary" asp-action="Details" asp-route-id="@rezervacija.Id">
+                                <i class="fas fa-eye"></i>
+                                <span>Pregledaj detalje</span>
+                            </a>
                             
-                            @if (ViewBag.Message != null)
+                            @if (rezervacija.Status == StatusRezervacije.Kreirana || rezervacija.Status == StatusRezervacije.UToku)
                             {
-                                <p class="text-muted mb-4">@ViewBag.Message</p>
-                                
-                                @if (ViewBag.PredloziVozila != null)
+                                var razlika = rezervacija.datumPocetka - DateTime.Now;
+                                if (razlika.TotalHours >= 48)
                                 {
-                                    <div class="row justify-content-center">
-                                        @foreach (var vozilo in (IEnumerable<Carisma.Models.Vozilo>)ViewBag.PredloziVozila)
-                                        {
-                                            <div class="col-md-4 col-lg-3 mb-3">
-                                                <div class="card h-100 shadow-sm">
-                                                    <div class="card-body text-center">
-                                                        <h6 class="card-title">@vozilo.Marka @vozilo.Model</h6>
-                                                        <p class="card-text text-primary">@vozilo.CijenaPoDanu KM/dan</p>
-                                                        <a class="btn btn-primary btn-sm" asp-controller="Rezervacija" asp-action="Kreiraj" asp-route-id="@vozilo.Id">
-                                                            <i class="fas fa-calendar-plus me-1"></i>Rezerviši
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        }
-                                    </div>
+                                    <form asp-action="Otkazi" method="post" class="action-form">
+                                        <input type="hidden" name="id" value="@rezervacija.Id" />
+                                        <button type="submit" class="action-btn danger" 
+                                                onclick="return confirm('Jeste li sigurni da želite otkazati rezervaciju?')">
+                                            <i class="fas fa-times"></i>
+                                            <span>Otkazi</span>
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <button class="action-btn disabled" disabled title="Ne možete otkazati rezervaciju manje od 48h prije početka">
+                                        <i class="fas fa-lock"></i>
+                                        <span>Zaključano</span>
+                                    </button>
                                 }
                             }
-                            
-                            <a class="btn btn-primary" asp-controller="Vozilo" asp-action="Index">
-                                <i class="fas fa-search me-2"></i>Pronađi vozilo za rezervaciju
-                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-illustration">
+                    <div class="empty-icon">
+                        <i class="fas fa-calendar-times"></i>
+                    </div>
+                    <div class="empty-pattern"></div>
+                </div>
+                
+                <div class="empty-content">
+                    <h2>Nemate rezervacija</h2>
+                    <p>Započnite svoju avanturu rezervacijom vozila već danas!</p>
+                    
+                    @if (ViewBag.Message != null)
+                    {
+                        <div class="info-message">
+                            <i class="fas fa-info-circle"></i>
+                            <span>@ViewBag.Message</span>
                         </div>
                     }
                 </div>
+
+                @if (ViewBag.PredloziVozila != null)
+                {
+                    <div class="suggested-section">
+                        <h3>Preporučeno za vas</h3>
+                        <div class="suggested-grid">
+                            @foreach (var vozilo in (IEnumerable<Carisma.Models.Vozilo>)ViewBag.PredloziVozila)
+                            {
+                                <div class="suggested-card">
+                                    <div class="suggested-image">
+                                        <i class="fas fa-car"></i>
+                                    </div>
+                                    <div class="suggested-info">
+                                        <h4>@vozilo.Marka @vozilo.Model</h4>
+                                        <p>@vozilo.CijenaPoDanu KM/dan</p>
+                                    </div>
+                                    <a class="suggested-btn" asp-controller="Rezervacija" asp-action="Kreiraj" asp-route-id="@vozilo.Id">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                
+                <div class="empty-actions">
+                    <a class="btn btn-primary large" asp-controller="Vozilo" asp-action="Index">
+                        <i class="fas fa-search"></i>
+                        <span>Pretražite vozila</span>
+                    </a>
+                </div>
             </div>
-        </div>
+        }
     </div>
 </div>
+
+@functions {
+    string GetStatusClass(StatusRezervacije status)
+    {
+        return status switch
+        {
+            StatusRezervacije.Kreirana => "pending",
+            StatusRezervacije.UToku => "active",
+            StatusRezervacije.Zavrsena => "completed",
+            StatusRezervacije.Otkazana => "cancelled",
+            _ => "unknown"
+        };
+    }
+
+    string GetStatusText(StatusRezervacije status)
+    {
+        return status switch
+        {
+            StatusRezervacije.Kreirana => "Kreirana",
+            StatusRezervacije.UToku => "U toku",
+            StatusRezervacije.Zavrsena => "Završena",
+            StatusRezervacije.Otkazana => "Otkazana",
+            _ => "Nepoznato"
+        };
+    }
+
+    string GetVoziloImage(string marka, string model)
+    {
+        if (string.IsNullOrEmpty(marka) || string.IsNullOrEmpty(model)) return "";
+        string fileName = $"{marka.ToLower()}-{model.ToLower().Replace(" ", "-")}.jpg";
+        return fileName;
+    }
+}
+
+<style>
+    .reservations-wrapper {
+        background: linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #f8b500 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+        padding-bottom: 100px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    /* Moderni Header */
+    .page-header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 32px rgba(255, 105, 180, 0.15);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        color: #64748b;
+        margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb-item.active {
+        color: #ff69b4;
+        font-weight: 500;
+    }
+
+    .breadcrumb i {
+        font-size: 0.75rem;
+    }
+
+    .page-title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0 0 0.5rem 0;
+        letter-spacing: -0.025em;
+    }
+
+    .title-icon {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, #ff69b4, #ff1493);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+    }
+
+    .page-description {
+        color: #64748b;
+        font-size: 1rem;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .header-stats {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-number {
+        display: block;
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: #ff69b4;
+        line-height: 1;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    /* Moderni Alertovi */
+    .modern-alert {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        border-left: 4px solid;
+    }
+
+    .modern-alert.success {
+        border-left-color: #10b981;
+    }
+
+    .modern-alert.error {
+        border-left-color: #ef4444;
+    }
+
+    .alert-content {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .alert-icon {
+        font-size: 1.25rem;
+    }
+
+    .modern-alert.success .alert-icon {
+        color: #10b981;
+    }
+
+    .modern-alert.error .alert-icon {
+        color: #ef4444;
+    }
+
+    .alert-text strong {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.125rem;
+    }
+
+    .alert-dismiss {
+        background: none;
+        border: none;
+        color: #94a3b8;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .alert-dismiss:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: #64748b;
+    }
+
+    /* Grid rezervacija */
+    .reservations-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .reservation-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 0;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(255, 105, 180, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .reservation-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 16px 48px rgba(255, 105, 180, 0.2);
+    }
+
+    /* Zaglavlje kartice */
+    .card-header {
+        padding: 1.5rem 1.5rem 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .reservation-id {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+    }
+
+    .id-label {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+
+    .id-number {
+        font-size: 0.875rem;
+        color: #1e293b;
+        font-weight: 600;
+    }
+
+    .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .status-indicator.pending {
+        background: rgba(245, 158, 11, 0.1);
+        color: #d97706;
+    }
+
+    .status-indicator.active {
+        background: rgba(59, 130, 246, 0.1);
+        color: #2563eb;
+    }
+
+    .status-indicator.completed {
+        background: rgba(16, 185, 129, 0.1);
+        color: #059669;
+    }
+
+    .status-indicator.cancelled {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    /* Sekcija vozila */
+    .vehicle-section {
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .vehicle-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        overflow: hidden;
+        flex-shrink: 0;
+        position: relative;
+    }
+
+    .vehicle-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .vehicle-placeholder {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #ff69b4, #ff1493);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+    }
+
+    .vehicle-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .vehicle-name {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0 0 0.25rem 0;
+        line-height: 1.4;
+    }
+
+    .vehicle-year {
+        font-size: 0.875rem;
+        color: #64748b;
+        margin: 0;
+    }
+
+    .price-badge {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        text-align: right;
+    }
+
+    .price-amount {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #10b981;
+        line-height: 1;
+    }
+
+    .price-currency {
+        font-size: 0.875rem;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    /* Vremenska linija */
+    .timeline-section {
+        padding: 1rem 1.5rem;
+        background: #f8fafc;
+        margin: 0 1.5rem;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        position: relative;
+    }
+
+    .timeline-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex: 1;
+    }
+
+    .timeline-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .timeline-icon.pickup {
+        background: linear-gradient(135deg, #10b981, #059669);
+    }
+
+    .timeline-icon.dropoff {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    .timeline-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .timeline-label {
+        font-size: 0.75rem;
+        color: #64748b;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+
+    .timeline-date {
+        font-size: 0.875rem;
+        color: #1e293b;
+        font-weight: 600;
+    }
+
+    .timeline-line {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 24px;
+        height: 2px;
+        background: #e2e8f0;
+    }
+
+    /* Metapodaci */
+    .card-metadata {
+        padding: 1rem 1.5rem;
+        display: flex;
+        gap: 1.5rem;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .metadata-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        color: #64748b;
+    }
+
+    .metadata-item i {
+        color: #94a3b8;
+    }
+
+    /* Akcije kartice */
+    .card-actions {
+        padding: 1rem 1.5rem 1.5rem;
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .action-btn {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .action-btn.secondary {
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+    }
+
+    .action-btn.secondary:hover {
+        background: #e2e8f0;
+        color: #334155;
+    }
+
+    .action-btn.danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .action-btn.danger:hover {
+        background: rgba(239, 68, 68, 0.15);
+    }
+
+    .action-btn.disabled {
+        background: #f8fafc;
+        color: #cbd5e1;
+        cursor: not-allowed;
+        border: 1px solid #f1f5f9;
+    }
+
+    .action-form {
+        flex: 1;
+    }
+
+    /* Dugmad */
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 0.875rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #ff69b4, #ff1493);
+        color: white;
+        box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(255, 105, 180, 0.4);
+        color: white;
+    }
+
+    .btn.large {
+        padding: 1rem 2rem;
+        font-size: 1rem;
+    }
+
+    /* Prazno stanje */
+    .empty-state {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 4rem 2rem;
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(255, 105, 180, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .empty-illustration {
+        position: relative;
+        margin-bottom: 2rem;
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        color: #cbd5e1;
+        margin-bottom: 1rem;
+    }
+
+    .empty-pattern {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, rgba(255, 105, 180, 0.1) 1px, transparent 1px);
+        background-size: 12px 12px;
+        border-radius: 50%;
+        z-index: -1;
+    }
+
+    .empty-content h2 {
+        font-size: 1.875rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 0.75rem;
+    }
+
+    .empty-content p {
+        font-size: 1.125rem;
+        color: #64748b;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    .info-message {
+        background: rgba(255, 105, 180, 0.1);
+        border: 1px solid rgba(255, 105, 180, 0.2);
+        border-radius: 12px;
+        padding: 1rem;
+        margin: 1.5rem 0;
+        color: #c44569;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        justify-content: center;
+    }
+
+    /* Preporučena sekcija */
+    .suggested-section {
+        margin: 2rem 0;
+    }
+
+    .suggested-section h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 1rem;
+    }
+
+    .suggested-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .suggested-card {
+        background: rgba(255, 105, 180, 0.05);
+        border: 1px solid rgba(255, 105, 180, 0.1);
+        border-radius: 16px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: all 0.2s ease;
+    }
+
+    .suggested-card:hover {
+        background: rgba(255, 105, 180, 0.08);
+        transform: translateY(-2px);
+    }
+
+    .suggested-image {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, #ff69b4, #ff1493);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+
+    .suggested-info {
+        flex: 1;
+    }
+
+    .suggested-info h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0 0 0.25rem 0;
+    }
+
+    .suggested-info p {
+        font-size: 0.875rem;
+        color: #10b981;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    .suggested-btn {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, #ff69b4, #ff1493);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .suggested-btn:hover {
+        transform: scale(1.1);
+        color: white;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 1024px) {
+        .page-header {
+            flex-direction: column;
+            gap: 1.5rem;
+            align-items: stretch;
+        }
+
+        .header-stats {
+            justify-content: center;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .container {
+            padding: 0 1rem;
+        }
+
+        .reservations-wrapper {
+            padding: 1rem 0;
+            padding-bottom: 100px;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+        }
+
+        .reservations-container {
+            grid-template-columns: 1fr;
+        }
+
+        .timeline-section {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .timeline-item {
+            justify-content: center;
+        }
+
+        .timeline-line {
+            display: none;
+        }
+
+        .card-metadata {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .suggested-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
