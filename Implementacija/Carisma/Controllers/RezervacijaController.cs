@@ -376,7 +376,7 @@ public async Task<IActionResult> StripeSuccess(string session_id, int rezervacij
             return RedirectToAction("Index");
         }
 
-        // Ostatak metoda ostaje isti...
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]

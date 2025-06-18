@@ -8,7 +8,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-10">
-                <!-- Header Section -->
+                
                 <div class="details-header">
                     <div class="header-content">
                         <div class="breadcrumb">
@@ -46,9 +46,8 @@
                     </div>
                 </div>
 
-                <!-- Main Content -->
-                <div class="content-grid">
-                    <!-- Vehicle Card -->
+                
+                <div class="content-grid">                  
                     <div class="vehicle-card">
                         <div class="card-header">
                             <h3 class="card-title">
@@ -83,7 +82,7 @@
                         </div>
                     </div>
 
-                    <!-- Reservation Timeline -->
+                   
                     <div class="timeline-card">
                         <div class="card-header">
                             <h3 class="card-title">
@@ -129,7 +128,7 @@
                         </div>
                     </div>
 
-                    <!-- Pricing Breakdown -->
+                    
                     <div class="pricing-card">
                         <div class="card-header">
                             <h3 class="card-title">
@@ -161,7 +160,7 @@
 
                     @if (User.IsInRole("Administrator") && Model.korisnik != null)
                     {
-                        <!-- Customer Information (Admin Only) -->
+                        
                         <div class="customer-card">
                             <div class="card-header">
                                 <h3 class="card-title">
@@ -194,7 +193,7 @@
                         </div>
                     }
 
-                    <!-- Important Information -->
+                    
                     <div class="info-card">
                         <div class="card-header">
                             <h3 class="card-title">
@@ -236,7 +235,7 @@
                     </div>
                 </div>
 
-                <!-- Action Section -->
+                
                 <div class="action-section">
                     <div class="action-left">
                         @if (User.IsInRole("Administrator"))
@@ -472,7 +471,7 @@
         font-weight: 600;
     }
 
-    /* Content Grid */
+    
     .content-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -480,7 +479,7 @@
         margin-bottom: 2rem;
     }
 
-    /* Cards */
+   
     .vehicle-card,
     .timeline-card,
     .pricing-card,
@@ -585,7 +584,7 @@
         color: #ff69b4;
     }
 
-    /* Timeline - Uprošćena verzija */
+    
     .timeline {
         position: relative;
         padding-left: 1.5rem;
@@ -668,7 +667,7 @@
         color: #94a3b8;
     }
 
-    /* Pricing */
+    
     .pricing-details {
         display: flex;
         flex-direction: column;
@@ -712,7 +711,7 @@
         color: #ff1493;
     }
 
-    /* Customer Info */
+    
     .info-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -739,7 +738,7 @@
         font-weight: 500;
     }
 
-    /* Info List */
+   
     .info-list {
         display: flex;
         flex-direction: column;
@@ -777,7 +776,7 @@
         line-height: 1.5;
     }
 
-    /* Action Section */
+    
     .action-section {
         background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(20px);
@@ -850,7 +849,7 @@
         color: white;
     }
 
-    /* Responsive Design */
+   
     @@media (max-width: 1024px) {
         .details-header {
             flex-direction: column;
@@ -921,7 +920,7 @@
         }
     }
 
-    /* Print Styles */
+    
     @@media print {
         .reservation-details-wrapper {
             background: white;

@@ -22,16 +22,10 @@ namespace Carisma.Controllers
         public VoziloController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
-            _userManager = userManager; // DODAJTE OVO
+            _userManager = userManager;
         }
 
-        // GET: Vozilo
-
-        /* public async Task<IActionResult> Index()
-         {
-             var applicationDbContext = _context.Vozila.Include(v => v.Osoba);
-             return View(await applicationDbContext.ToListAsync());
-         }*/
+       
 
         //novi za sortiranje
         public async Task<IActionResult> Index(string? sortOrder = null, string? pojam = null)
@@ -43,10 +37,10 @@ namespace Carisma.Controllers
             var vozila = from v in _context.Vozila.Include(v => v.Osoba)
                          select v;
 
-            // Pretraga po marki ili modelu - poboljšana verzija
+            // Pretraga po marki ili modelu
             if (!string.IsNullOrEmpty(pojam))
             {
-                // Uklanjamo whitespace i konvertujemo u lowercase za bolje poređenje
+                
                 string searchTerm = pojam.Trim().ToLower();
 
                 vozila = vozila.Where(v =>
@@ -69,7 +63,7 @@ namespace Carisma.Controllers
                     break;
             }
 
-            // Debug informacije - možete dodati breakpoint ovde ili logovanje
+            // Debug informacije
             var rezultat = await vozila.ToListAsync();
 
             
@@ -78,14 +72,12 @@ namespace Carisma.Controllers
         }
 
         // GET: Vozilo/Details/5
-        //
+        
         //[Authorize(Roles = "Administrator, Korisnik")]
-        //
+        
         public async Task<IActionResult> Details(int? id)
         {
-            //
-           // return View(await _context.Vozila.ToListAsync());
-            //
+
 
             if (id == null)
             {
@@ -115,8 +107,7 @@ namespace Carisma.Controllers
         }
 
         // POST: Vozilo/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Marka,Model,Godina,CijenaPoDanu,OsobaId,Status")] Vozilo vozilo)
@@ -185,7 +176,7 @@ namespace Carisma.Controllers
                 return RedirectToAction(nameof(Index));
            // }
 
-            // Ako ModelState nije valjan, ponovo postaviti SelectList
+            
             ViewData["OsobaId"] = new SelectList(_context.Osoba, "Id", "Id", vozilo.OsobaId);
 
             return View(vozilo);
@@ -244,7 +235,7 @@ namespace Carisma.Controllers
             // Ovde bi trebalo proveriti kriterijum dostupnosti (npr. da li je blokiran)
             bool dostupna = !osoba.blokiran;
 
-            // Vrati kao JSON (za AJAX), ili kao View ako praviš poseban ekran
+            
             return Json(new { dostupna = dostupna });
         }
 
@@ -267,32 +258,7 @@ namespace Carisma.Controllers
             return RedirectToAction("Kreiraj", "Rezervacija", new { id });
         }
 
-       /* [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Rezervisi(int id, DateTime datumRezervacije)
-        {
-            var vozilo = await _context.Vozila.FindAsync(id);
-            if (vozilo == null)
-                return NotFound();
-
-            // Pronađi trenutno ulogovanog korisnika (ili privremeno hardkodiraj ako nemaš autentikaciju)
-            var korisnik = await _context.Osoba.FirstOrDefaultAsync(); // ← zameni sa pravim korisnikom!
-
-            var novaRezervacija = new Rezervacija
-            {
-                vozilo = vozilo,
-                korisnik = korisnik,
-                datumRezervacije = datumRezervacije,
-                Status = StatusRezervacije.UToku, // ili tvoj default status
-                cijena = vozilo.CijenaPoDanu
-            };
-
-            _context.Rezervacija.Add(novaRezervacija);
-            await _context.SaveChangesAsync();
-
-            TempData["Poruka"] = "Vozilo uspešno rezervisano.";
-            return RedirectToAction("Index", "Vozilo");
-        }*/
+     
 
         // PUT ili POST: Vozilo/AzurirajVozilo/5
         [HttpPost]
@@ -322,30 +288,10 @@ namespace Carisma.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index)); // ili gde treba
+                return RedirectToAction(nameof(Index)); 
             }
             return View(novoVozilo);
         }
-
-
-        // GET: Vozilo/Pretrazi?pojam=nekiTekst
-        /*public async Task<IActionResult> Pretrazi(string pojam)
-        {
-            if (string.IsNullOrEmpty(pojam))
-            {
-                // Ako nema pojma, vrati sve ili prazan rezultat
-                return View(await _context.Vozila.ToListAsync());
-            }
-
-            // Pretraga po marki ili modelu, delimično podudaranje (Contains)
-            var rezultat = await _context.Vozila
-                .Where(v => v.Marka.Contains(pojam) || v.Model.Contains(pojam))
-                .ToListAsync();
-
-            return View(rezultat);
-        }*/
-
-        //
 
 
 

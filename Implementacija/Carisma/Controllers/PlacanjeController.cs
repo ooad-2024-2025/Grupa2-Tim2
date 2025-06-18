@@ -27,7 +27,7 @@ namespace Carisma.Controllers
             StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"];
         }
 
-        // Postojeći kod...
+        
         public async Task<IActionResult> Index()
         {
             return View(await _context.Placanje.ToListAsync());
@@ -61,7 +61,7 @@ namespace Carisma.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Postavi datum i status
+                
                 placanje.datumPlacanja = DateTime.Now;
                 placanje.statusPlacanja = StatusPlacanja.NaCekanju;
 
@@ -212,7 +212,7 @@ namespace Carisma.Controllers
             }
         }
 
-        // Postojeći kod...
+       
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -291,7 +291,7 @@ namespace Carisma.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Postojeće validacije - možeš ih zadržati ili izbaciti
+        
         public IActionResult ValidirajKarticu(int id)
         {
             var placanje = _context.Placanje.FirstOrDefault(p => p.Id == id);
@@ -305,7 +305,7 @@ namespace Carisma.Controllers
         // Zameniti sa Stripe integracijom
         public IActionResult ProcesirajPlacanje(int id)
         {
-            // Preusmeri na Stripe checkout umesto lokalne obrade
+            
             return RedirectToAction(nameof(StripeCheckout), new { id = id });
         }
 
@@ -322,7 +322,7 @@ namespace Carisma.Controllers
         // Zameniti sa Stripe integracijom
         public IActionResult PlatiOnline(int id)
         {
-            // Preusmeri na Stripe checkout
+            
             return RedirectToAction(nameof(StripeCheckout), new { id = id });
         }
 

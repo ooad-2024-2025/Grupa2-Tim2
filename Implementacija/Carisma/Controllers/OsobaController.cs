@@ -66,7 +66,7 @@ namespace Carisma.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Pripremi dropdown za uloge s trenutno odabranom vrijednošću
+            
             ViewBag.Uloge = new SelectList(Enum.GetValues(typeof(Uloga)), osoba.uloga);
 
             return View(osoba);
@@ -92,7 +92,7 @@ namespace Carisma.Controllers
                     var postojeciKorisnik = await _context.Osoba.FindAsync(id);
                     if (postojeciKorisnik != null)
                     {
-                        // Ažuriraj samo polja koja admin može mijenjati
+                        
                         postojeciKorisnik.email = osoba.email;
                         postojeciKorisnik.broj_telefona = osoba.broj_telefona;
                         postojeciKorisnik.korisnicko_ime = osoba.korisnicko_ime;
@@ -132,7 +132,7 @@ namespace Carisma.Controllers
                 }
             //}
 
-            // Ako ModelState nije valjan, ponovno postavi ViewBag i vrati view
+            
             ViewBag.Uloge = new SelectList(Enum.GetValues(typeof(Uloga)), osoba.uloga);
             return View(osoba);
         }

@@ -137,7 +137,7 @@
                         <div class="card-body">
                             <form id="payment-form">
                                 <div id="payment-element">
-                                    <!-- Stripe Elements će se učitati ovdje -->
+                                    
                                 </div>
                                 <div id="payment-errors" role="alert" class="alert alert-danger mt-3" style="display: none;"></div>
                             </form>
@@ -183,7 +183,7 @@
     <script src="https://js.stripe.com/v3/"></script>
     <script>
         // Stripe konfiguracija - TEST MODE
-        const stripe = Stripe('@ViewBag.StripePublishableKey'); // pk_test_... ključ
+        const stripe = Stripe('@ViewBag.StripePublishableKey'); 
         let elements;
         let paymentElement;
 
@@ -269,7 +269,7 @@
                 if (error) {
                     showError(error.message);
                 } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-                    // Plaćanje uspješno - preusmjeri na success stranicu
+                    
                     window.location.href = '@Url.Action("PaymentSuccess", "Rezervacija", new { id = Model.Id })';
                 }
             } catch (error) {
@@ -284,7 +284,7 @@
             const errorDiv = $('#payment-errors');
             errorDiv.text(message).show();
 
-            // Sakrij grešku nakon 5 sekundi
+            
             setTimeout(() => {
                 errorDiv.hide();
             }, 5000);
