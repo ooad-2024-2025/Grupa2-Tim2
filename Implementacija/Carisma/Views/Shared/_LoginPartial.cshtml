@@ -3,7 +3,7 @@
 @inject UserManager<IdentityUser> UserManager
 
 <ul class="navbar-nav">
-@if (SignInManager.IsSignedIn(User))
+@if (SignInManager.IsSignedIn(User) )
 {
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -16,11 +16,14 @@
                     <i class="fas fa-cog me-2"></i>Podešavanja profila
                 </a>
             </li>
+                @if (!User.IsInRole("Administrator"))
+                { 
             <li>
                 <a class="dropdown-item" asp-controller="Rezervacija" asp-action="Index">
                     <i class="fas fa-calendar-check me-2"></i>Moje rezervacije
                 </a>
             </li>
+                }
             <li><hr class="dropdown-divider"></li>
             <li>
                 <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">

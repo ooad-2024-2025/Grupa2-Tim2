@@ -34,7 +34,7 @@ namespace Carisma.Controllers
         }
 
         // GET: Rezervacija - Korisničke rezervacije
-        [Authorize]
+        [Authorize(Roles = "Korisnik")]
         public async Task<IActionResult> Index()
         {
             var currentUser = await _userManager.GetUserAsync(User);
