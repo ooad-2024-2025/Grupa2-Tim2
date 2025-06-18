@@ -2,6 +2,7 @@
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
 
+    @*
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User) )
 {
@@ -48,4 +49,55 @@ else
         </a>
     </li>
 }
+</ul>
+
+*@
+
+                    @using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-user-circle me-1"></i>
+                @User.Identity?.Name
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li>
+                    <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+                        <i class="fas fa-cog me-2"></i>Podešavanja profila
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-controller="Rezervacija" asp-action="Index">
+                        <i class="fas fa-calendar-check me-2"></i>Moje rezervacije
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                        <button type="submit" class="dropdown-item text-danger">
+                            <i class="fas fa-sign-out-alt me-2"></i>Odjava
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">
+                <i class="fas fa-user-plus me-1"></i>Registracija
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link btn" asp-area="Identity" asp-page="/Account/Login">
+                <i class="fas fa-sign-in-alt me-1"></i>Prijava
+            </a>
+        </li>
+    }
 </ul>

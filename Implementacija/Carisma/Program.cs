@@ -20,7 +20,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Identity configuration
 builder.Services.AddDefaultIdentity<IdentityUser>(options => {
-    options.SignIn.RequireConfirmedAccount = false; // Za lakše testiranje
+    options.SignIn.RequireConfirmedAccount = false; // Za lakï¿½e testiranje
     options.Password.RequireDigit = true;
     options.Password.RequiredLength = 6;
     options.Password.RequireNonAlphanumeric = false;
@@ -35,6 +35,17 @@ builder.Services.AddControllersWithViews();
 
 // Stripe configuration - OVDJE, NE U FUNKCIJI!
 StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
+
+//najnovije
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+builder.Services.AddRazorPages()
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization();
+
+//najnovije
+
 
 // Build aplikacije
 var app = builder.Build();
@@ -63,6 +74,20 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+
+//najnovije
+
+var supportedCultures = new[] { new System.Globalization.CultureInfo("bs") };
+
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("bs"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+});
+
+//najnovije
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
@@ -88,7 +113,7 @@ async Task CreateDefaultRolesAndUsers(IServiceProvider serviceProvider)
         }
     }
 
-    // Kreiranje podrška korisnika
+    // Kreiranje podrï¿½ka korisnika
     var podrskaUser = await userManager.FindByEmailAsync("podrska@gmail.com");
     if (podrskaUser == null)
     {
