@@ -9,7 +9,6 @@ using Carisma.Data;
 using Carisma.Models;
 using Microsoft.AspNetCore.Authorization;
 
-
 namespace Carisma.Controllers
 {
     public class OsobaController : Controller
@@ -21,234 +20,217 @@ namespace Carisma.Controllers
             _context = context;
         }
 
-        // GET: Osoba
+        // GET: Osoba - Prikaz svih korisnika
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Osoba.ToListAsync());
+            var korisnici = await _context.Osoba.ToListAsync();
+            return View(korisnici);
         }
 
-        // GET: Osoba/Details/5
+        // GET: Osoba/Details/5 - Detalji korisnika
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                TempData["Greska"] = "ID korisnika nije pronađen.";
+                return RedirectToAction(nameof(Index));
             }
 
             var osoba = await _context.Osoba
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (osoba == null)
             {
-                return NotFound();
-            }
-
-            return View(osoba);
-        }
-
-        // GET: Osoba/Create
-        [Authorize(Roles = "Administrator")]
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Osoba/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> Create([Bind("Id,email,lozinka,broj_telefona,korisnicko_ime,uloga,blokiran")] Osoba osoba)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(osoba);
-                await _context.SaveChangesAsync();
+                TempData["Greska"] = "Korisnik nije pronađen.";
                 return RedirectToAction(nameof(Index));
             }
+
             return View(osoba);
         }
 
-        // GET: Osoba/Edit/5
+        // GET: Osoba/Edit/5 - Uređivanje korisnika
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                TempData["Greska"] = "ID korisnika nije pronađen.";
+                return RedirectToAction(nameof(Index));
             }
 
             var osoba = await _context.Osoba.FindAsync(id);
             if (osoba == null)
             {
-                return NotFound();
+                TempData["Greska"] = "Korisnik nije pronađen.";
+                return RedirectToAction(nameof(Index));
             }
+
+            // Pripremi dropdown za uloge s trenutno odabranom vrijednošću
+            ViewBag.Uloge = new SelectList(Enum.GetValues(typeof(Uloga)), osoba.uloga);
+
             return View(osoba);
         }
 
-        // POST: Osoba/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Osoba/Edit/5 - Spremanje izmjena
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,email,lozinka,broj_telefona,korisnicko_ime,uloga,blokiran")] Osoba osoba)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,email,broj_telefona,korisnicko_ime,uloga,blokiran")] Osoba osoba)
         {
             if (id != osoba.Id)
             {
-                return NotFound();
+                TempData["Greska"] = "Neispravni podaci korisnika.";
+                return RedirectToAction(nameof(Index));
             }
 
-            if (ModelState.IsValid)
-            {
+            //if (ModelState.IsValid)
+           // {
                 try
                 {
-                    _context.Update(osoba);
-                    await _context.SaveChangesAsync();
+                    // Dohvati postojeći entitet
+                    var postojeciKorisnik = await _context.Osoba.FindAsync(id);
+                    if (postojeciKorisnik != null)
+                    {
+                        // Ažuriraj samo polja koja admin može mijenjati
+                        postojeciKorisnik.email = osoba.email;
+                        postojeciKorisnik.broj_telefona = osoba.broj_telefona;
+                        postojeciKorisnik.korisnicko_ime = osoba.korisnicko_ime;
+                        postojeciKorisnik.uloga = osoba.uloga;
+                        postojeciKorisnik.blokiran = osoba.blokiran;
+
+                        await _context.SaveChangesAsync();
+                        TempData["Uspjeh"] = $"Korisnik '{osoba.korisnicko_ime}' je uspješno ažuriran.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        TempData["Greska"] = "Korisnik nije pronađen.";
+                        return RedirectToAction(nameof(Index));
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!OsobaExists(osoba.Id))
                     {
-                        return NotFound();
+                        TempData["Greska"] = "Korisnik više ne postoji.";
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {
-                        throw;
+                        TempData["Greska"] = "Došlo je do greške prilikom spremanja. Molimo pokušajte ponovo.";
+                        // Ponovno postavi ViewBag i vrati view
+                        ViewBag.Uloge = new SelectList(Enum.GetValues(typeof(Uloga)), osoba.uloga);
+                        return View(osoba);
                     }
                 }
+                catch (Exception ex)
+                {
+                    TempData["Greska"] = "Došlo je do neočekivane greške prilikom spremanja.";
+                    ViewBag.Uloge = new SelectList(Enum.GetValues(typeof(Uloga)), osoba.uloga);
+                    return View(osoba);
+                }
+            //}
+
+            // Ako ModelState nije valjan, ponovno postavi ViewBag i vrati view
+            ViewBag.Uloge = new SelectList(Enum.GetValues(typeof(Uloga)), osoba.uloga);
+            return View(osoba);
+        }
+
+        // POST: Osoba/PromijeniStatus/5 - Mijenjanje statusa blokiranosti
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> PromijeniStatus(int id)
+        {
+            var korisnik = await _context.Osoba.FindAsync(id);
+            if (korisnik == null)
+            {
+                TempData["Greska"] = "Korisnik nije pronađen.";
                 return RedirectToAction(nameof(Index));
             }
-            return View(osoba);
-        }
 
-        // GET: Osoba/Delete/5
-        [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var osoba = await _context.Osoba
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (osoba == null)
-            {
-                return NotFound();
-            }
-
-            return View(osoba);
-        }
-
-        // POST: Osoba/Delete/5
-        [Authorize(Roles = "Administrator")]
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var osoba = await _context.Osoba.FindAsync(id);
-            if (osoba != null)
-            {
-                _context.Osoba.Remove(osoba);
-            }
-
+            korisnik.blokiran = !korisnik.blokiran;
             await _context.SaveChangesAsync();
+
+            string status = korisnik.blokiran ? "blokiran" : "odblokiran";
+            TempData["Uspjeh"] = $"Korisnik '{korisnik.korisnicko_ime}' je {status}.";
+
             return RedirectToAction(nameof(Index));
         }
 
-        //registracija
+        // POST: Osoba/PromijeniUlogu/5 - Mijenjanje uloge korisnika
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> PromijeniUlogu(int id, Uloga novaUloga)
+        {
+            var korisnik = await _context.Osoba.FindAsync(id);
+            if (korisnik == null)
+            {
+                TempData["Greska"] = "Korisnik nije pronađen.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var staraUloga = korisnik.uloga;
+            korisnik.uloga = novaUloga;
+            await _context.SaveChangesAsync();
+
+            TempData["Uspjeh"] = $"Uloga korisnika '{korisnik.korisnicko_ime}' je promijenjena sa '{staraUloga}' na '{novaUloga}'.";
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Registracija - dostupna svima
         // GET: Osoba/Registracija
         public IActionResult Registracija()
         {
-            return View(); // prikazuje formu
+            return View();
         }
 
         // POST: Osoba/Registracija
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Registracija(Osoba novaOsoba)
+        public async Task<IActionResult> Registracija(Osoba novaOsoba)
         {
             if (ModelState.IsValid)
             {
-                // Možeš dodatno proveriti da li već postoji korisnik s istim imenom ili email-om
-                var postoji = _context.Osoba.Any(o => o.email == novaOsoba.email);
-                if (postoji)
+                // Provjeri da li već postoji korisnik s istim email-om ili korisničkim imenom
+                var postojiEmail = await _context.Osoba.AnyAsync(o => o.email == novaOsoba.email);
+                var postojiKorisnickoIme = await _context.Osoba.AnyAsync(o => o.korisnicko_ime == novaOsoba.korisnicko_ime);
+
+                if (postojiEmail)
                 {
                     ModelState.AddModelError("email", "Email već postoji.");
+                }
+
+                if (postojiKorisnickoIme)
+                {
+                    ModelState.AddModelError("korisnicko_ime", "Korisničko ime već postoji.");
+                }
+
+                if (postojiEmail || postojiKorisnickoIme)
+                {
                     return View(novaOsoba);
                 }
 
+                // Postavi defaultne vrijednosti
+                novaOsoba.uloga = Uloga.RegistrovaniKorisnik;
+                novaOsoba.blokiran = false;
+
                 _context.Osoba.Add(novaOsoba);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
 
-                TempData["Poruka"] = "Registracija uspešna za korisnika: " + novaOsoba.korisnicko_ime;
-                return RedirectToAction("Index"); // ili gdje god želiš
+                TempData["Uspjeh"] = $"Registracija uspješna! Dobrodošli, {novaOsoba.korisnicko_ime}!";
+                return RedirectToAction("Index", "Home");
             }
 
-            return View(novaOsoba); // ako validacija ne prođe, ponovo prikaži formu s greškama
+            return View(novaOsoba);
         }
 
-        // POST: Osoba/Blokiraj/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Blokiraj(int id)
-        {
-            var korisnik = await _context.Osoba.FindAsync(id);
-            if (korisnik == null)
-            {
-                TempData["Poruka"] = "Korisnik nije pronađen.";
-                return RedirectToAction("Index");
-            }
-
-            korisnik.blokiran = true;
-            await _context.SaveChangesAsync();
-
-            TempData["Poruka"] = $"Korisnik '{korisnik.korisnicko_ime}' je blokiran.";
-            return RedirectToAction("Index");
-        }
-
-        // GET: Osoba/Pregledaj/5
-        public async Task<IActionResult> Pregledaj(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var korisnik = await _context.Osoba
-                .FirstOrDefaultAsync(o => o.Id == id);
-
-            if (korisnik == null)
-            {
-                return NotFound();
-            }
-
-            Console.WriteLine("Pregled korisnika je pozvan."); // samo za test
-            return View(korisnik); // Prikazuje View sa podacima o korisniku
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult OdgovoriNaZahtjev(int idZahtjeva, string odgovor)
-        {
-            // Ovdje bi inače tražio zahtjev u bazi i ažurirao ga
-            Console.WriteLine($"Odgovor na zahtjev: {idZahtjeva}: {odgovor}");
-
-            TempData["Poruka"] = $"Odgovoreno na zahtjev {idZahtjeva}: {odgovor}";
-            return RedirectToAction("Index");
-        }
-
-        //registracija
         private bool OsobaExists(int id)
         {
             return _context.Osoba.Any(e => e.Id == id);
         }
-
-
     }
-
-
 }

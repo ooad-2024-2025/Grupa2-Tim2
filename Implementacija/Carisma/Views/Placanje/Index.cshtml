@@ -1,53 +1,1083 @@
 ﻿@model IEnumerable<Carisma.Models.Placanje>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Upravljanje plaćanjima";
 }
 
-<h1>Index</h1>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Premium Payments Management Card -->
+            <div class="payments-management-card">
+                <!-- Enhanced Header -->
+                <div class="payments-header">
+                    <div class="header-pattern"></div>
+                    <div class="header-content">
+                        <div class="header-main">
+                            <div class="title-section">
+                                <div class="title-icon">
+                                    <i class="fas fa-credit-card"></i>
+                                </div>
+                                <div class="title-text">
+                                    <h1 class="main-title">Upravljanje plaćanjima</h1>
+                                    <p class="subtitle">Pregled i administracija svih transakcija</p>
+                                </div>
+                            </div>
+                        </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.iznos)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.datumPlacanja)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.statusPlacanja)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.brojKartice)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.iznos)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.datumPlacanja)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.statusPlacanja)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.brojKartice)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                        <!-- Enhanced Statistics Dashboard -->
+                        <div class="stats-dashboard">
+                            <div class="stat-card total">
+                                <div class="stat-icon">
+                                    <i class="fas fa-receipt"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <span class="stat-number">@Model.Count()</span>
+                                    <span class="stat-label">Ukupno plaćanja</span>
+                                </div>
+                            </div>
+
+                            <div class="stat-card success">
+                                <div class="stat-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <span class="stat-number">@Model.Count(p => p.statusPlacanja == Carisma.Models.StatusPlacanja.Uspjesno)</span>
+                                    <span class="stat-label">Uspješna</span>
+                                    <div class="stat-progress">
+                                        <div class="progress-bar" style="width: @(Model.Any() ? (Model.Count(p => p.statusPlacanja == Carisma.Models.StatusPlacanja.Uspjesno) * 100.0 / Model.Count()) : 0)%"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="stat-card pending">
+                                <div class="stat-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <span class="stat-number">@Model.Count(p => p.statusPlacanja == Carisma.Models.StatusPlacanja.NaCekanju)</span>
+                                    <span class="stat-label">Na čekanju</span>
+                                </div>
+                            </div>
+
+                            <div class="stat-card revenue">
+                                <div class="stat-icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <span class="stat-number">@Model.Where(p => p.statusPlacanja == Carisma.Models.StatusPlacanja.Uspjesno).Sum(p => p.iznos).ToString("C")</span>
+                                    <span class="stat-label">Ukupan prihod</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Premium Data Table -->
+                <div class="payments-table-container">
+                    <div class="table-wrapper">
+                        <table class="payments-table">
+                            <thead>
+                                <tr>
+                                    <th>ID Plaćanja</th>
+                                    <th>@Html.DisplayNameFor(model => model.iznos)</th>
+                                    <th>@Html.DisplayNameFor(model => model.datumPlacanja)</th>
+                                    <th>@Html.DisplayNameFor(model => model.statusPlacanja)</th>
+                                    <th>@Html.DisplayNameFor(model => model.brojKartice)</th>
+                                    <th>Metoda plaćanja</th>
+                                    <th>Akcije</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Any())
+                                {
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr class="payment-row">
+                                            <!-- Payment ID -->
+                                            <td>
+                                                <div class="payment-id-cell">
+                                                    <div class="payment-icon">
+                                                        <i class="fas fa-receipt"></i>
+                                                    </div>
+                                                    <div class="payment-info">
+                                                        <span class="payment-number">#@item.Id.ToString("D6")</span>
+                                                        <span class="payment-ref">PAY-@item.Id</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <!-- Amount -->
+                                            <td>
+                                                <div class="amount-cell">
+                                                    <span class="amount-value">@item.iznos.ToString("C")</span>
+                                                    <div class="amount-details">
+                                                        <span class="currency">BAM</span>
+                                                        <span class="amount-type">Jednokratno</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <!-- Date -->
+                                            <td>
+                                                <div class="date-cell">
+                                                    <div class="date-main">
+                                                        <i class="fas fa-calendar"></i>
+                                                        <span>@item.datumPlacanja.ToString("dd.MM.yyyy")</span>
+                                                    </div>
+                                                    <div class="time-detail">
+                                                        <i class="fas fa-clock"></i>
+                                                        <span>@item.datumPlacanja.ToString("HH:mm")</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <!-- Status -->
+                                            <td>
+                                                <div class="status-cell">
+                                                    @switch (item.statusPlacanja)
+                                                    {
+                                                        case Carisma.Models.StatusPlacanja.Uspjesno:
+                                                            <div class="status-badge premium success">
+                                                                <div class="status-indicator"></div>
+                                                                <div class="status-content">
+                                                                    <span class="status-title">
+                                                                        <i class="fas fa-check-circle"></i>
+                                                                        Uspješno
+                                                                    </span>
+                                                                    <span class="status-desc">Plaćanje završeno</span>
+                                                                </div>
+                                                            </div>
+                                                            break;
+                                                        case Carisma.Models.StatusPlacanja.NaCekanju:
+                                                            <div class="status-badge premium pending">
+                                                                <div class="status-indicator"></div>
+                                                                <div class="status-content">
+                                                                    <span class="status-title">
+                                                                        <i class="fas fa-clock"></i>
+                                                                        Na čekanju
+                                                                    </span>
+                                                                    <span class="status-desc">U obradi</span>
+                                                                </div>
+                                                            </div>
+                                                            break;
+                                                        case Carisma.Models.StatusPlacanja.Neuspjesno:
+                                                            <div class="status-badge premium failed">
+                                                                <div class="status-indicator"></div>
+                                                                <div class="status-content">
+                                                                    <span class="status-title">
+                                                                        <i class="fas fa-times-circle"></i>
+                                                                        Neuspješno
+                                                                    </span>
+                                                                    <span class="status-desc">Plaćanje odbačeno</span>
+                                                                </div>
+                                                            </div>
+                                                            break;
+                                                    }
+                                                </div>
+                                            </td>
+
+                                            <!-- Card Number -->
+                                            <td>
+                                                <div class="card-cell">
+                                                    @if (!string.IsNullOrEmpty(item.brojKartice))
+                                                    {
+                                                        <div class="card-info">
+                                                            <div class="card-icon">
+                                                                <i class="fas fa-credit-card"></i>
+                                                            </div>
+                                                            <div class="card-details">
+                                                                <span class="card-number">**** **** **** @item.brojKartice.Substring(Math.Max(0, item.brojKartice.Length - 4))</span>
+                                                                <span class="card-type">Visa/Mastercard</span>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="no-card">—</span>
+                                                    }
+                                                </div>
+                                            </td>
+
+                                            <!-- Payment Method -->
+                                            <td>
+                                                <div class="method-cell">
+                                                    <div class="method-badge stripe">
+                                                        <i class="fab fa-stripe"></i>
+                                                        <span>Stripe</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <!-- Actions -->
+                                            <td>
+                                                <div class="actions-container">
+                                                    <div class="actions-group">
+                                                        <a asp-action="Details" asp-route-id="@item.Id" 
+                                                           class="action-btn premium view" 
+                                                           title="Pregled detalja">
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
+                                                        
+                                                        <a asp-action="Edit" asp-route-id="@item.Id" 
+                                                           class="action-btn premium edit" 
+                                                           title="Uredi plaćanje">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        
+                                                        @if (item.statusPlacanja == Carisma.Models.StatusPlacanja.NaCekanju)
+                                                        {
+                                                            <a asp-action="StripeCheckout" asp-route-id="@item.Id" 
+                                                               class="action-btn premium process" 
+                                                               title="Procesiraj plaćanje">
+                                                                <i class="fas fa-credit-card"></i>
+                                                            </a>
+                                                        }
+                                                        
+                                                        <a asp-action="Delete" asp-route-id="@item.Id" 
+                                                           class="action-btn premium delete" 
+                                                           title="Obriši plaćanje">
+                                                            <i class="fas fa-trash"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7">
+                                            <div class="empty-state premium">
+                                                <div class="empty-illustration">
+                                                    <i class="fas fa-receipt"></i>
+                                                    <div class="illustration-bg"></div>
+                                                </div>
+                                                <div class="empty-content">
+                                                    <h3>Nema plaćanja</h3>
+                                                    <p>Trenutno nema registrovanih plaćanja u sistemu.</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Payment Management Theme - Glavna boja: #b16189 sa komplementarnim nijansama */
+    :root {
+        /* Vaša glavna pink nijansa #b16189 */
+        --primary-rose: #b16189;           /* Vaša glavna boja */
+        --primary-rose-light: #d4a5c7;    /* Svetlija verzija */
+        --primary-rose-lighter: #e6c4d7;  /* Još svetlija */
+        --primary-rose-lightest: #f5f1f3;  /* Vrlo bleda */
+        --primary-rose-dark: #8e4c6b;     /* Tamnija verzija */
+        --primary-rose-darker: #6d3a52;   /* Još tamnija */
+        
+        /* Komplementarne boje */
+        --sage-green: #61b1a0;            /* Komplementarna sage green */
+        --sage-light: #a5d4ca;            /* Svetlija sage */
+        --sage-subtle: #f1f6f5;           /* Vrlo bleda sage */
+        --sage-dark: #4a8a7c;             /* Tamnija sage */
+        
+        --warm-gold: #b19561;             /* Warm gold */
+        --warm-gold-light: #d4c7a5;       /* Svetliji warm gold */
+        --warm-gold-subtle: #f6f4f1;      /* Vrlo bled warm gold */
+        --warm-gold-dark: #8b7349;        /* Tamniji warm gold */
+        
+        --dusty-blue: #618eb1;            /* Dusty blue */
+        --dusty-blue-light: #a5c1d4;      /* Svetliji dusty blue */
+        --dusty-blue-subtle: #f1f4f6;     /* Vrlo bled dusty blue */
+        --dusty-blue-dark: #4a6b85;       /* Tamniji dusty blue */
+        
+        /* Status colors bazirane na paleti */
+        --success-green: var(--sage-green);
+        --success-light: var(--sage-subtle);
+        --success-dark: var(--sage-dark);
+        
+        --warning-yellow: var(--warm-gold);
+        --warning-light: var(--warm-gold-subtle);
+        --warning-dark: var(--warm-gold-dark);
+        
+        --error-red: var(--primary-rose);
+        --error-light: var(--primary-rose-lightest);
+        --error-dark: var(--primary-rose-dark);
+        
+        --pending-blue: var(--dusty-blue);
+        --pending-light: var(--dusty-blue-subtle);
+        --pending-dark: var(--dusty-blue-dark);
+        
+        /* Neutral colors */
+        --white: #ffffff;
+        --cream: #fefdfb;
+        --light-gray: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-400: #94a3b8;
+        --gray-500: #64748b;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
+        
+        /* Text colors */
+        --text-primary: #1e293b;
+        --text-secondary: #475569;
+        --text-muted: #64748b;
+        --text-inverse: #ffffff;
+        
+        /* Gradients */
+        --gradient-main: linear-gradient(135deg, var(--primary-rose) 0%, var(--primary-rose-light) 100%);
+        --gradient-success: linear-gradient(135deg, var(--success-green) 0%, var(--sage-light) 100%);
+        --gradient-warning: linear-gradient(135deg, var(--warning-yellow) 0%, var(--warm-gold-light) 100%);
+        --gradient-error: linear-gradient(135deg, var(--error-red) 0%, var(--primary-rose-light) 100%);
+        --gradient-pending: linear-gradient(135deg, var(--pending-blue) 0%, var(--dusty-blue-light) 100%);
+        
+        /* Shadows */
+        --shadow-main: 0 4px 20px rgba(177, 97, 137, 0.15);
+        --shadow-success: 0 4px 20px rgba(97, 177, 160, 0.15);
+        --shadow-warning: 0 4px 20px rgba(177, 149, 97, 0.15);
+        --shadow-error: 0 4px 20px rgba(177, 97, 137, 0.15);
+        --shadow-pending: 0 4px 20px rgba(97, 142, 177, 0.15);
+        --shadow-light: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        
+        /* Transitions */
+        --transition-fast: 0.15s ease;
+        --transition-normal: 0.2s ease;
+        --transition-slow: 0.3s ease;
+        
+        /* Border radius */
+        --radius-sm: 0.375rem;
+        --radius-md: 0.5rem;
+        --radius-lg: 0.75rem;
+        --radius-xl: 1rem;
+        --radius-2xl: 1.5rem;
+        
+        /* Spacing */
+        --space-xs: 0.25rem;
+        --space-sm: 0.5rem;
+        --space-md: 1rem;
+        --space-lg: 1.5rem;
+        --space-xl: 2rem;
+        --space-2xl: 3rem;
+    }
+
+    /* Main Management Card */
+    .payments-management-card {
+        background: var(--white);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-xl);
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+        margin-bottom: var(--space-xl);
+    }
+
+    /* Premium Header sa vašom bojom */
+    .payments-header {
+        position: relative;
+        background: var(--gradient-main);
+        padding: var(--space-2xl);
+        color: var(--white);
+        overflow: hidden;
+    }
+
+    .header-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xl);
+    }
+
+    .header-main {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: var(--space-lg);
+    }
+
+    .title-section {
+        display: flex;
+        align-items: center;
+        gap: var(--space-lg);
+    }
+
+    .title-icon {
+        width: 64px;
+        height: 64px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border-radius: var(--radius-xl);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        color: var(--white);
+        box-shadow: var(--shadow-lg);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .main-title {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--white);
+        margin: 0;
+        letter-spacing: -0.025em;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .subtitle {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin: 0.5rem 0 0 0;
+        font-weight: 400;
+    }
+
+    /* Statistics Dashboard */
+    .stats-dashboard {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--space-lg);
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: var(--radius-xl);
+        padding: var(--space-lg);
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        box-shadow: var(--shadow-md);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: all var(--transition-normal);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        transition: all var(--transition-normal);
+    }
+
+    .stat-card.total::before { background: var(--primary-rose); }
+    .stat-card.success::before { background: var(--success-green); }
+    .stat-card.pending::before { background: var(--warning-yellow); }
+    .stat-card.revenue::before { background: var(--pending-blue); }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+        color: var(--white);
+    }
+
+    .stat-card.total .stat-icon { background: var(--gradient-main); }
+    .stat-card.success .stat-icon { background: var(--gradient-success); }
+    .stat-card.pending .stat-icon { background: var(--gradient-warning); }
+    .stat-card.revenue .stat-icon { background: var(--gradient-pending); }
+
+    .stat-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+
+    .stat-number {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .stat-progress {
+        width: 100%;
+        height: 4px;
+        background: var(--gray-200);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        margin-top: var(--space-xs);
+    }
+
+    .progress-bar {
+        height: 100%;
+        background: var(--gradient-success);
+        border-radius: var(--radius-sm);
+        transition: width var(--transition-slow);
+    }
+
+    /* Table Container */
+    .payments-table-container {
+        padding: var(--space-xl);
+        background: var(--white);
+    }
+
+    .table-wrapper {
+        background: var(--white);
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        box-shadow: var(--shadow-md);
+    }
+
+    /* Table */
+    .payments-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+
+    .payments-table thead {
+        background: linear-gradient(135deg, var(--gray-50) 0%, var(--primary-rose-lightest) 100%);
+    }
+
+    .payments-table th {
+        padding: var(--space-lg) var(--space-md);
+        text-align: left;
+        font-weight: 600;
+        color: var(--text-primary);
+        border-bottom: 2px solid var(--gray-200);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .payments-table td {
+        padding: var(--space-lg) var(--space-md);
+        border-bottom: 1px solid var(--gray-100);
+        vertical-align: middle;
+        background: var(--white);
+    }
+
+    .payment-row {
+        transition: all var(--transition-normal);
+        position: relative;
+    }
+
+    .payment-row:hover {
+        background: var(--primary-rose-lightest);
+        box-shadow: inset 4px 0 0 var(--primary-rose);
+    }
+
+    .payment-row:hover td {
+        background: transparent;
+    }
+
+    /* Payment ID Cell */
+    .payment-id-cell {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+    }
+
+    .payment-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-lg);
+        background: var(--gradient-main);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        font-size: 0.9rem;
+        flex-shrink: 0;
+        box-shadow: var(--shadow-main);
+    }
+
+    .payment-info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+
+    .payment-number {
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 0.95rem;
+    }
+
+    .payment-ref {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        font-family: monospace;
+    }
+
+    /* Amount Cell */
+    .amount-cell {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+
+    .amount-value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .amount-details {
+        display: flex;
+        gap: var(--space-sm);
+        font-size: 0.8rem;
+        color: var(--text-muted);
+    }
+
+    .currency {
+        background: var(--primary-rose-lightest);
+        color: var(--primary-rose-dark);
+        padding: var(--space-xs) var(--space-sm);
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        border: 1px solid var(--primary-rose-light);
+    }
+
+    /* Date Cell */
+    .date-cell {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+
+    .date-main {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+
+    .time-detail {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        font-size: 0.8rem;
+        color: var(--text-muted);
+    }
+
+    .date-main i,
+    .time-detail i {
+        color: var(--primary-rose);
+        width: 12px;
+    }
+
+    /* Status Cell */
+    .status-cell {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .status-badge.premium {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        padding: var(--space-md);
+        border-radius: var(--radius-lg);
+        border: 2px solid;
+        background: var(--white);
+        transition: all var(--transition-normal);
+        max-width: 160px;
+    }
+
+    .status-badge.premium:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .status-badge.premium.success {
+        border-color: var(--success-green);
+        background: linear-gradient(135deg, var(--success-light) 0%, var(--sage-subtle) 100%);
+    }
+
+    .status-badge.premium.pending {
+        border-color: var(--warning-yellow);
+        background: linear-gradient(135deg, var(--warning-light) 0%, var(--warm-gold-subtle) 100%);
+    }
+
+    .status-badge.premium.failed {
+        border-color: var(--error-red);
+        background: linear-gradient(135deg, var(--error-light) 0%, var(--primary-rose-lightest) 100%);
+    }
+
+    .status-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .status-badge.premium.success .status-indicator {
+        background: var(--success-green);
+        animation: pulse 2s infinite;
+    }
+
+    .status-badge.premium.pending .status-indicator {
+        background: var(--warning-yellow);
+        animation: pulse 2s infinite;
+    }
+
+    .status-badge.premium.failed .status-indicator {
+        background: var(--error-red);
+    }
+
+    .status-content {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .status-title {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: var(--space-xs);
+    }
+
+    .status-desc {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        line-height: 1.2;
+    }
+
+    /* Card Cell */
+    .card-cell {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-info {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        padding: var(--space-sm);
+        background: var(--primary-rose-lightest);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--primary-rose-light);
+    }
+
+    .card-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: var(--radius-sm);
+        background: var(--primary-rose);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        font-size: 0.8rem;
+        flex-shrink: 0;
+    }
+
+    .card-details {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .card-number {
+        font-family: monospace;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .card-type {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+    }
+
+    .no-card {
+        color: var(--text-muted);
+        font-style: italic;
+    }
+
+    /* Method Cell */
+    .method-cell {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .method-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-sm);
+        padding: var(--space-sm) var(--space-md);
+        border-radius: var(--radius-lg);
+        font-size: 0.8rem;
+        font-weight: 600;
+        max-width: fit-content;
+    }
+
+    .method-badge.stripe {
+        background: var(--dusty-blue);
+        color: var(--white);
+    }
+
+    /* Actions */
+    .actions-container {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .actions-group {
+        display: flex;
+        gap: var(--space-sm);
+        align-items: center;
+    }
+
+    .action-btn.premium {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-lg);
+        border: 2px solid var(--gray-300);
+        background: var(--white);
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all var(--transition-normal);
+        font-size: 0.9rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .action-btn.premium::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+        transform: translateX(-100%);
+        transition: transform var(--transition-normal);
+    }
+
+    .action-btn.premium:hover::before {
+        transform: translateX(100%);
+    }
+
+    .action-btn.premium:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        border-color: transparent;
+        text-decoration: none;
+    }
+
+    .action-btn.premium.view:hover {
+        background: var(--gradient-pending);
+        color: var(--white);
+    }
+
+    .action-btn.premium.edit:hover {
+        background: var(--gradient-main);
+        color: var(--white);
+    }
+
+    .action-btn.premium.process:hover {
+        background: var(--gradient-success);
+        color: var(--white);
+    }
+
+    .action-btn.premium.delete:hover {
+        background: var(--gradient-error);
+        color: var(--white);
+    }
+
+    /* Empty State */
+    .empty-state.premium {
+        text-align: center;
+        padding: 4.5rem 2rem;
+        background: linear-gradient(135deg, var(--gray-50) 0%, var(--primary-rose-lightest) 100%);
+        position: relative;
+    }
+
+    .empty-illustration {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 2rem;
+    }
+
+    .empty-illustration i {
+        font-size: 4rem;
+        color: var(--primary-rose);
+        opacity: 0.7;
+        position: relative;
+        z-index: 2;
+    }
+
+    .illustration-bg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, var(--primary-rose-lightest) 0%, transparent 70%);
+        border-radius: 50%;
+        z-index: 1;
+    }
+
+    .empty-content h3 {
+        color: var(--text-primary);
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+        font-size: 1.5rem;
+    }
+
+    .empty-content p {
+        color: var(--text-muted);
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    /* Animations */
+    @@keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.5;
+        }
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 1200px) {
+        .stats-dashboard {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .payments-header {
+            padding: var(--space-xl);
+        }
+
+        .header-main {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .title-section {
+            flex-direction: column;
+            text-align: center;
+            gap: var(--space-md);
+        }
+
+        .main-title {
+            font-size: 1.75rem;
+        }
+
+        .stats-dashboard {
+            grid-template-columns: 1fr;
+            gap: var(--space-md);
+        }
+
+        .payments-table-container {
+            padding: var(--space-md);
+        }
+
+        .payments-table {
+            font-size: 0.8rem;
+        }
+
+        .payments-table th,
+        .payments-table td {
+            padding: var(--space-md) var(--space-sm);
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .payment-id-cell,
+        .amount-cell,
+        .date-cell,
+        .card-info {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--space-xs);
+        }
+
+        .actions-group {
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+
+        .action-btn.premium {
+            width: 36px;
+            height: 36px;
+        }
+    }
+
+    /* Scrollbar sa vašom bojom */
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .table-wrapper::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-track {
+        background: var(--gray-100);
+        border-radius: 4px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-thumb {
+        background: var(--gradient-main);
+        border-radius: 4px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(90deg, var(--primary-rose-dark), var(--primary-rose));
+    }
+</style>

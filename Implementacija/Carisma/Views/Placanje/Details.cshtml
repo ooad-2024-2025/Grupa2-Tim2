@@ -1,42 +1,848 @@
 ﻿@model Carisma.Models.Placanje
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalji plaćanja";
 }
 
-<h1>Details</h1>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Premium Payment Details Card -->
+            <div class="payment-details-card">
+                <!-- Dark Rose/Orange Header -->
+                <div class="payment-details-header">
+                    <div class="header-pattern"></div>
+                    <div class="header-content">
+                        <div class="payment-avatar">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <div class="header-info">
+                            <h1 class="payment-title">Detalji plaćanja</h1>
+                            <p class="payment-subtitle">Pregled informacija o transakciji</p>
+                            <div class="payment-status-header">
+                                <span class="status-pill">
+                                    <i class="fas fa-hashtag"></i>
+                                    ID: @Model.Id
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-<div>
-    <h4>Placanje</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.iznos)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.iznos)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.datumPlacanja)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.datumPlacanja)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.statusPlacanja)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.statusPlacanja)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.brojKartice)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.brojKartice)
-        </dd>
-    </dl>
+                <!-- Payment Content Body -->
+                <div class="payment-details-body">
+                    <div class="row g-4">
+                        <!-- Finansijski podaci -->
+                        <div class="col-lg-6">
+                            <div class="details-section financial">
+                                <div class="section-header">
+                                    <div class="section-icon">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                    </div>
+                                    <h3 class="section-title">Finansijski podaci</h3>
+                                </div>
+                                
+                                <div class="section-content">
+                                    <!-- Iznos -->
+                                    <div class="detail-item">
+                                        <div class="detail-label">
+                                            <i class="fas fa-dollar-sign"></i>
+                                            <span>Iznos plaćanja</span>
+                                        </div>
+                                        <div class="detail-value">
+                                            <div class="amount-display">
+                                                <span class="currency">KM</span>
+                                                <span class="amount">@Model.iznos.ToString("F2")</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Status plaćanja -->
+                                    <div class="detail-item">
+                                        <div class="detail-label">
+                                            <i class="fas fa-flag"></i>
+                                            <span>Status plaćanja</span>
+                                        </div>
+                                        <div class="detail-value">
+                                            <div class="status-display">
+                                                @switch (Model.statusPlacanja.ToString())
+                                                {
+                                                    case "Uspjesno":
+                                                        <div class="status-card success">
+                                                            <div class="status-indicator"></div>
+                                                            <div class="status-content">
+                                                                <span class="status-title">
+                                                                    <i class="fas fa-check-circle"></i>
+                                                                    Uspješno
+                                                                </span>
+                                                                <span class="status-desc">Plaćanje je uspješno izvršeno</span>
+                                                            </div>
+                                                        </div>
+                                                        break;
+                                                    case "Neuspjesno":
+                                                        <div class="status-card failed">
+                                                            <div class="status-indicator"></div>
+                                                            <div class="status-content">
+                                                                <span class="status-title">
+                                                                    <i class="fas fa-times-circle"></i>
+                                                                    Neuspješno
+                                                                </span>
+                                                                <span class="status-desc">Plaćanje nije uspješno</span>
+                                                            </div>
+                                                        </div>
+                                                        break;
+                                                    case "UCekanju":
+                                                        <div class="status-card pending">
+                                                            <div class="status-indicator"></div>
+                                                            <div class="status-content">
+                                                                <span class="status-title">
+                                                                    <i class="fas fa-clock"></i>
+                                                                    U čekanju
+                                                                </span>
+                                                                <span class="status-desc">Plaćanje se obrađuje</span>
+                                                            </div>
+                                                        </div>
+                                                        break;
+                                                    default:
+                                                        <div class="status-card unknown">
+                                                            <div class="status-indicator"></div>
+                                                            <div class="status-content">
+                                                                <span class="status-title">
+                                                                    <i class="fas fa-question"></i>
+                                                                    Nepoznato
+                                                                </span>
+                                                                <span class="status-desc">Status nije definisan</span>
+                                                            </div>
+                                                        </div>
+                                                        break;
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Detalji transakcije -->
+                        <div class="col-lg-6">
+                            <div class="details-section transaction">
+                                <div class="section-header">
+                                    <div class="section-icon">
+                                        <i class="fas fa-credit-card"></i>
+                                    </div>
+                                    <h3 class="section-title">Detalji transakcije</h3>
+                                </div>
+                                
+                                <div class="section-content">
+                                    <!-- Datum plaćanja -->
+                                    <div class="detail-item">
+                                        <div class="detail-label">
+                                            <i class="fas fa-calendar-alt"></i>
+                                            <span>Datum i vrijeme</span>
+                                        </div>
+                                        <div class="detail-value">
+                                            <div class="date-display">
+                                                <div class="date-icon">
+                                                    <i class="fas fa-clock"></i>
+                                                </div>
+                                                <div class="date-info">
+                                                    <span class="date-text">@Model.datumPlacanja.ToString("dd.MM.yyyy")</span>
+                                                    <span class="time-text">@Model.datumPlacanja.ToString("HH:mm")</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Broj kartice -->
+                                    <div class="detail-item">
+                                        <div class="detail-label">
+                                            <i class="fas fa-credit-card"></i>
+                                            <span>Kartica</span>
+                                        </div>
+                                        <div class="detail-value">
+                                            @if (!string.IsNullOrEmpty(Model.brojKartice))
+                                            {
+                                                <div class="card-display">
+                                                    <div class="card-visual">
+                                                        <div class="card-icon">
+                                                            <i class="fas fa-credit-card"></i>
+                                                        </div>
+                                                        <div class="card-info">
+                                                            <span class="card-number">@Model.brojKartice</span>
+                                                            <span class="card-type">Kreditna kartica</span>
+                                                        </div>
+                                                        <div class="card-security">
+                                                            <i class="fas fa-shield-alt"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <span class="empty-data">
+                                                    <i class="fas fa-minus"></i>
+                                                    Nije uneseno
+                                                </span>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- Dodatne informacije -->
+                                    <div class="detail-item">
+                                        <div class="detail-label">
+                                            <i class="fas fa-info-circle"></i>
+                                            <span>Dodatne informacije</span>
+                                        </div>
+                                        <div class="detail-value">
+                                            <div class="info-cards">
+                                                <div class="info-card">
+                                                    <div class="info-icon">
+                                                        <i class="fas fa-calendar-plus"></i>
+                                                    </div>
+                                                    <div class="info-content">
+                                                        <div class="info-label">Kreirano</div>
+                                                        <div class="info-value">@DateTime.Now.ToString("dd.MM.yyyy")</div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="info-card">
+                                                    <div class="info-icon">
+                                                        <i class="fas fa-user"></i>
+                                                    </div>
+                                                    <div class="info-content">
+                                                        <div class="info-label">Korisnik</div>
+                                                        <div class="info-value">aislamovic1</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="actions-section">
+                        <div class="actions-container">
+                            <a asp-action="Index" class="btn-back">
+                                <i class="fas fa-arrow-left"></i>
+                                <span>Povratak na listu</span>
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-edit">
+                                <i class="fas fa-edit"></i>
+                                <span>Uredi plaćanje</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<style>
+    /* Dark Rose & Orange Palette - same as Edit */
+    :root {
+        /* Dark Rose */
+        --dark-rose: #c1617c;             /* Tamna roze */
+        --dark-rose-light: #d48fa8;       /* Svetlija tamna roze */
+        --dark-rose-subtle: #f5f1f3;      /* Vrlo bleda tamna roze */
+        --dark-rose-deep: #a24861;        /* Dublja tamna roze */
+        
+        /* Dark Orange */
+        --dark-orange: #d67537;           /* Tamna narandžasta */
+        --dark-orange-light: #e09b6a;     /* Svetlija tamna narandžasta */
+        --dark-orange-subtle: #f5f2f0;    /* Vrlo bleda tamna narandžasta */
+        --dark-orange-deep: #b8632e;      /* Dublja tamna narandžasta */
+        
+        /* Gradients */
+        --gradient-main: linear-gradient(135deg, var(--dark-rose) 0%, var(--dark-orange) 100%);
+        --gradient-financial: linear-gradient(135deg, var(--dark-rose-deep) 0%, var(--dark-rose) 100%);
+        --gradient-transaction: linear-gradient(135deg, var(--dark-orange-deep) 0%, var(--dark-orange) 100%);
+        
+        /* Neutral */
+        --white: #ffffff;
+        --light-gray: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+        
+        /* Status Colors using theme */
+        --success-main: var(--dark-rose-deep);
+        --warning-main: var(--dark-orange);
+        --danger-main: var(--dark-rose);
+        --info-main: var(--dark-orange-deep);
+        
+        /* Shadows */
+        --shadow-main: 0 8px 32px rgba(193, 97, 124, 0.15), 0 4px 16px rgba(214, 117, 55, 0.1);
+        --shadow-rose: 0 4px 20px rgba(193, 97, 124, 0.2);
+        --shadow-orange: 0 4px 20px rgba(214, 117, 55, 0.2);
+        --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+        
+        /* Spacing */
+        --space-xs: 0.25rem;
+        --space-sm: 0.5rem;
+        --space-md: 1rem;
+        --space-lg: 1.5rem;
+        --space-xl: 2rem;
+        --space-2xl: 3rem;
+        
+        /* Radius */
+        --radius-md: 0.5rem;
+        --radius-lg: 0.75rem;
+        --radius-xl: 1rem;
+        --radius-2xl: 1.5rem;
+    }
+
+    /* Main Card */
+    .payment-details-card {
+        background: var(--white);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-main);
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+        margin-bottom: var(--space-xl);
+    }
+
+    /* Header */
+    .payment-details-header {
+        position: relative;
+        background: var(--gradient-main);
+        padding: var(--space-2xl);
+        color: var(--white);
+        overflow: hidden;
+    }
+
+    .header-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: var(--space-xl);
+    }
+
+    .payment-avatar {
+        width: 96px;
+        height: 96px;
+        border-radius: var(--radius-2xl);
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: var(--white);
+        flex-shrink: 0;
+        box-shadow: var(--shadow-md);
+    }
+
+    .header-info {
+        flex: 1;
+    }
+
+    .payment-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0 0 var(--space-sm) 0;
+        color: var(--white);
+    }
+
+    .payment-subtitle {
+        font-size: 1.1rem;
+        margin: 0 0 var(--space-md) 0;
+        opacity: 0.9;
+    }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-sm);
+        padding: var(--space-sm) var(--space-md);
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: var(--radius-lg);
+        font-size: 0.9rem;
+        font-weight: 600;
+        backdrop-filter: blur(10px);
+    }
+
+    /* Details Body */
+    .payment-details-body {
+        padding: var(--space-2xl);
+        background: var(--white);
+    }
+
+    /* Details Sections */
+    .details-section {
+        background: var(--light-gray);
+        border-radius: var(--radius-xl);
+        padding: var(--space-xl);
+        height: 100%;
+        border: 1px solid var(--gray-200);
+        transition: all 0.3s ease;
+    }
+
+    .details-section:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .details-section.financial:hover {
+        box-shadow: var(--shadow-rose);
+        border-color: var(--dark-rose);
+    }
+
+    .details-section.transaction:hover {
+        box-shadow: var(--shadow-orange);
+        border-color: var(--dark-orange);
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        margin-bottom: var(--space-xl);
+        padding-bottom: var(--space-lg);
+        border-bottom: 2px solid var(--gray-200);
+    }
+
+    .section-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: var(--white);
+        flex-shrink: 0;
+        box-shadow: var(--shadow-md);
+    }
+
+    .details-section.financial .section-icon {
+        background: var(--gradient-financial);
+    }
+
+    .details-section.transaction .section-icon {
+        background: var(--gradient-transaction);
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    /* Detail Items */
+    .detail-item {
+        margin-bottom: var(--space-xl);
+        padding-bottom: var(--space-lg);
+        border-bottom: 1px solid var(--gray-200);
+    }
+
+    .detail-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .detail-label {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        margin-bottom: var(--space-md);
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .detail-label i {
+        color: var(--dark-rose);
+        width: 16px;
+    }
+
+    .detail-value {
+        margin-left: var(--space-lg);
+    }
+
+    /* Amount Display */
+    .amount-display {
+        display: flex;
+        align-items: baseline;
+        gap: var(--space-sm);
+        padding: var(--space-lg);
+        background: var(--dark-rose-subtle);
+        border: 2px solid var(--dark-rose);
+        border-radius: var(--radius-lg);
+    }
+
+    .currency {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--dark-rose-deep);
+    }
+
+    .amount {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        font-family: 'Courier New', monospace;
+    }
+
+    /* Status Cards */
+    .status-card {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: var(--space-md);
+        border-radius: var(--radius-lg);
+        border: 2px solid;
+        background: var(--white);
+    }
+
+    .status-card.success {
+        border-color: var(--success-main);
+        background: var(--dark-rose-subtle);
+    }
+
+    .status-card.failed {
+        border-color: var(--danger-main);
+        background: var(--dark-rose-subtle);
+    }
+
+    .status-card.pending {
+        border-color: var(--warning-main);
+        background: var(--dark-orange-subtle);
+    }
+
+    .status-card.unknown {
+        border-color: var(--info-main);
+        background: var(--dark-orange-subtle);
+    }
+
+    .status-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .status-card.success .status-indicator {
+        background: var(--success-main);
+        animation: pulse 2s infinite;
+    }
+
+    .status-card.failed .status-indicator {
+        background: var(--danger-main);
+    }
+
+    .status-card.pending .status-indicator {
+        background: var(--warning-main);
+        animation: pulse 2s infinite;
+    }
+
+    .status-card.unknown .status-indicator {
+        background: var(--info-main);
+    }
+
+    .status-content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+
+    .status-title {
+        font-size: 1rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        color: var(--text-primary);
+    }
+
+    .status-desc {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    /* Date Display */
+    .date-display {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: var(--space-md);
+        background: var(--dark-orange-subtle);
+        border: 2px solid var(--dark-orange);
+        border-radius: var(--radius-lg);
+    }
+
+    .date-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-lg);
+        background: var(--dark-orange);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        flex-shrink: 0;
+    }
+
+    .date-info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+
+    .date-text {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .time-text {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        font-family: 'Courier New', monospace;
+    }
+
+    /* Card Display */
+    .card-display {
+        padding: var(--space-md);
+        background: var(--dark-rose-subtle);
+        border: 2px solid var(--dark-rose);
+        border-radius: var(--radius-lg);
+    }
+
+    .card-visual {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+    }
+
+    .card-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-lg);
+        background: var(--dark-rose);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        flex-shrink: 0;
+    }
+
+    .card-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+
+    .card-number {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        font-family: 'Courier New', monospace;
+        letter-spacing: 1px;
+    }
+
+    .card-type {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    .card-security {
+        color: var(--dark-rose-deep);
+        font-size: 1.2rem;
+    }
+
+    /* Info Cards */
+    .info-cards {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+    }
+
+    .info-card {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: var(--space-md);
+        background: var(--white);
+        border: 1px solid var(--gray-300);
+        border-radius: var(--radius-lg);
+        transition: all 0.3s ease;
+    }
+
+    .info-card:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-light);
+        border-color: var(--dark-orange);
+    }
+
+    .info-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: var(--radius-md);
+        background: var(--dark-orange);
+        color: var(--white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .info-content {
+        flex: 1;
+    }
+
+    .info-label {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-bottom: var(--space-xs);
+    }
+
+    .info-value {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    /* Empty Data */
+    .empty-data {
+        color: var(--text-muted);
+        font-style: italic;
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+    }
+
+    /* Actions */
+    .actions-section {
+        margin-top: var(--space-2xl);
+        padding-top: var(--space-xl);
+        border-top: 3px solid;
+        border-image: var(--gradient-main) 1;
+    }
+
+    .actions-container {
+        display: flex;
+        gap: var(--space-md);
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-back,
+    .btn-edit {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        padding: var(--space-md) var(--space-xl);
+        border-radius: var(--radius-lg);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        border: 2px solid;
+        min-width: 160px;
+        justify-content: center;
+    }
+
+    .btn-back {
+        background: var(--white);
+        color: var(--text-secondary);
+        border-color: var(--gray-300);
+    }
+
+    .btn-back:hover {
+        background: var(--dark-orange-subtle);
+        color: var(--text-primary);
+        border-color: var(--dark-orange);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-orange);
+    }
+
+    .btn-edit {
+        background: var(--gradient-main);
+        color: var(--white);
+        border-color: var(--dark-rose);
+    }
+
+    .btn-edit:hover {
+        background: var(--gradient-transaction);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-main);
+    }
+
+    /* Animations */
+    @@keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .header-content {
+            flex-direction: column;
+            text-align: center;
+            gap: var(--space-lg);
+        }
+
+        .payment-title {
+            font-size: 2rem;
+        }
+
+        .payment-details-body {
+            padding: var(--space-xl);
+        }
+
+        .details-section {
+            padding: var(--space-lg);
+        }
+
+        .actions-container {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn-back,
+        .btn-edit {
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .amount-display {
+            flex-direction: column;
+            text-align: center;
+            gap: var(--space-xs);
+        }
+
+        .card-visual,
+        .date-display {
+            flex-direction: column;
+            text-align: center;
+            gap: var(--space-sm);
+        }
+    }
+</style>

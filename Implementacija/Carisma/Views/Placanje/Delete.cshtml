@@ -1,45 +1,863 @@
 ﻿@model Carisma.Models.Placanje
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Obriši plaćanje";
 }
 
-<h1>Delete</h1>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Premium Delete Confirmation Card -->
+            <div class="delete-confirmation-card">
+                <!-- Warning Header -->
+                <div class="delete-header">
+                    <div class="header-pattern"></div>
+                    <div class="header-content">
+                        <div class="warning-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="header-info">
+                            <h1 class="delete-title">
+                                <i class="fas fa-trash-alt"></i>
+                                Potvrda brisanja
+                            </h1>
+                            <p class="delete-subtitle">Ova akcija se ne može poništiti</p>
+                            <div class="warning-message">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Jeste li sigurni da želite obrisati ovo plaćanje?</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Placanje</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.iznos)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.iznos)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.datumPlacanja)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.datumPlacanja)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.statusPlacanja)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.statusPlacanja)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.brojKartice)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.brojKartice)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+                <!-- Payment Details Preview -->
+                <div class="delete-body">
+                    <div class="payment-preview">
+                        <div class="preview-header">
+                            <div class="preview-icon">
+                                <i class="fas fa-receipt"></i>
+                            </div>
+                            <div class="preview-info">
+                                <h3 class="preview-title">Pregled plaćanja</h3>
+                                <p class="preview-subtitle">Podaci koji će biti obrisani</p>
+                            </div>
+                        </div>
+
+                        <div class="preview-content">
+                            <div class="row g-4">
+                                <!-- Payment Summary -->
+                                <div class="col-lg-6">
+                                    <div class="detail-section financial">
+                                        <div class="section-header">
+                                            <div class="section-icon">
+                                                <i class="fas fa-dollar-sign"></i>
+                                            </div>
+                                            <h4 class="section-title">Finansijski podaci</h4>
+                                        </div>
+                                        
+                                        <div class="detail-grid">
+                                            <!-- Iznos -->
+                                            <div class="detail-row">
+                                                <div class="detail-label">
+                                                    <i class="fas fa-money-bill-wave"></i>
+                                                    <span>@Html.DisplayNameFor(model => model.iznos)</span>
+                                                </div>
+                                                <div class="detail-value amount">
+                                                    <span class="currency">KM</span>
+                                                    <span class="value">@Model.iznos.ToString("F2")</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Status -->
+                                            <div class="detail-row">
+                                                <div class="detail-label">
+                                                    <i class="fas fa-flag"></i>
+                                                    <span>@Html.DisplayNameFor(model => model.statusPlacanja)</span>
+                                                </div>
+                                                <div class="detail-value">
+                                                    @switch (Model.statusPlacanja.ToString())
+                                                    {
+                                                        case "Uspjesno":
+                                                            <div class="status-indicator success">
+                                                                <i class="fas fa-check-circle"></i>
+                                                                <span>Uspješno</span>
+                                                            </div>
+                                                            break;
+                                                        case "Neuspjesno":
+                                                            <div class="status-indicator failed">
+                                                                <i class="fas fa-times-circle"></i>
+                                                                <span>Neuspješno</span>
+                                                            </div>
+                                                            break;
+                                                        case "NaCekanju":
+                                                            <div class="status-indicator pending">
+                                                                <i class="fas fa-clock"></i>
+                                                                <span>Na čekanju</span>
+                                                            </div>
+                                                            break;
+                                                        default:
+                                                            <div class="status-indicator unknown">
+                                                                <i class="fas fa-question"></i>
+                                                                <span>Nepoznato</span>
+                                                            </div>
+                                                            break;
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Transaction Details -->
+                                <div class="col-lg-6">
+                                    <div class="detail-section transaction">
+                                        <div class="section-header">
+                                            <div class="section-icon">
+                                                <i class="fas fa-credit-card"></i>
+                                            </div>
+                                            <h4 class="section-title">Detalji transakcije</h4>
+                                        </div>
+                                        
+                                        <div class="detail-grid">
+                                            <!-- Datum -->
+                                            <div class="detail-row">
+                                                <div class="detail-label">
+                                                    <i class="fas fa-calendar-alt"></i>
+                                                    <span>@Html.DisplayNameFor(model => model.datumPlacanja)</span>
+                                                </div>
+                                                <div class="detail-value date">
+                                                    <div class="date-info">
+                                                        <span class="date-text">@Model.datumPlacanja.ToString("dd.MM.yyyy")</span>
+                                                        <span class="time-text">@Model.datumPlacanja.ToString("HH:mm")</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Kartica -->
+                                            <div class="detail-row">
+                                                <div class="detail-label">
+                                                    <i class="fas fa-credit-card"></i>
+                                                    <span>@Html.DisplayNameFor(model => model.brojKartice)</span>
+                                                </div>
+                                                <div class="detail-value">
+                                                    @if (!string.IsNullOrEmpty(Model.brojKartice))
+                                                    {
+                                                        <div class="card-preview">
+                                                            <div class="card-icon">
+                                                                <i class="fas fa-credit-card"></i>
+                                                            </div>
+                                                            <span class="card-number">**** **** **** @Model.brojKartice.Substring(Math.Max(0, Model.brojKartice.Length - 4))</span>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="no-data">Nije uneseno</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Warning Notice -->
+                    <div class="warning-notice">
+                        <div class="notice-content">
+                            <div class="notice-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="notice-text">
+                                <h4>Upozorenje!</h4>
+                                <p>Brisanje plaćanja će trajno ukloniti sve povezane podatke iz sistema. Ova akcija se ne može poništiti i može uticati na finansijske izvještaje.</p>
+                                <ul>
+                                    <li>Podaci o transakciji će biti trajno obrisani</li>
+                                    <li>Istorija plaćanja neće biti dostupna</li>
+                                    <li>Povezani finansijski izvještaji mogu biti promenjeni</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="actions-section">
+                        <div class="actions-container">
+                            <div class="actions-left">
+                                <a asp-action="Index" class="btn-cancel">
+                                    <i class="fas fa-arrow-left"></i>
+                                    <span>Otkaži</span>
+                                </a>
+                                
+                                <a asp-action="Details" asp-route-id="@Model.Id" class="btn-details">
+                                    <i class="fas fa-eye"></i>
+                                    <span>Pregled detalja</span>
+                                </a>
+                            </div>
+                            
+                            <div class="actions-right">
+                                <form asp-action="Delete" method="post" class="delete-form">
+                                    <input type="hidden" asp-for="Id" />
+                                    <button type="submit" class="btn-delete" onclick="return confirmDelete()">
+                                        <i class="fas fa-trash-alt"></i>
+                                        <span>Potvrdi brisanje</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    /* Delete Confirmation Theme - Glavna boja: #b16189 */
+    :root {
+        /* Vaša glavna pink nijansa #b16189 */
+        --primary-rose: #b16189;           /* Vaša glavna boja */
+        --primary-rose-light: #d4a5c7;    /* Svetlija verzija */
+        --primary-rose-dark: #8e4c6b;     /* Tamnija verzija */
+        --primary-rose-subtle: #f5f1f3;   /* Vrlo bleda */
+        
+        /* Warning/Danger colors */
+        --danger-red: #dc2626;
+        --danger-light: #fef2f2;
+        --danger-dark: #991b1b;
+        --warning-yellow: #f59e0b;
+        --warning-light: #fef3c7;
+        --warning-dark: #d97706;
+        
+        /* Status colors */
+        --success-green: #10b981;
+        --success-light: #d1fae5;
+        --success-dark: #047857;
+        
+        --pending-blue: #3b82f6;
+        --pending-light: #dbeafe;
+        --pending-dark: #1d4ed8;
+        
+        /* Neutral colors */
+        --white: #ffffff;
+        --light-gray: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-400: #94a3b8;
+        --gray-500: #64748b;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        
+        /* Text colors */
+        --text-primary: #1e293b;
+        --text-secondary: #475569;
+        --text-muted: #64748b;
+        --text-inverse: #ffffff;
+        
+        /* Gradients */
+        --gradient-warning: linear-gradient(135deg, var(--danger-red) 0%, var(--warning-yellow) 100%);
+        --gradient-danger: linear-gradient(135deg, var(--danger-red) 0%, var(--danger-dark) 100%);
+        --gradient-primary: linear-gradient(135deg, var(--primary-rose) 0%, var(--primary-rose-light) 100%);
+        --gradient-success: linear-gradient(135deg, var(--success-green) 0%, #059669 100%);
+        --gradient-pending: linear-gradient(135deg, var(--pending-blue) 0%, var(--pending-dark) 100%);
+        
+        /* Shadows */
+        --shadow-danger: 0 4px 20px rgba(220, 38, 38, 0.2);
+        --shadow-warning: 0 4px 20px rgba(245, 158, 11, 0.15);
+        --shadow-primary: 0 4px 20px rgba(177, 97, 137, 0.15);
+        --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        
+        /* Spacing */
+        --space-xs: 0.25rem;
+        --space-sm: 0.5rem;
+        --space-md: 1rem;
+        --space-lg: 1.5rem;
+        --space-xl: 2rem;
+        --space-2xl: 3rem;
+        
+        /* Radius */
+        --radius-md: 0.5rem;
+        --radius-lg: 0.75rem;
+        --radius-xl: 1rem;
+        --radius-2xl: 1.5rem;
+    }
+
+    /* Main Card */
+    .delete-confirmation-card {
+        background: var(--white);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-danger);
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+        margin-bottom: var(--space-xl);
+    }
+
+    /* Warning Header */
+    .delete-header {
+        position: relative;
+        background: var(--gradient-warning);
+        padding: var(--space-2xl);
+        color: var(--white);
+        overflow: hidden;
+    }
+
+    .header-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: var(--space-xl);
+    }
+
+    .warning-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: var(--radius-2xl);
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: var(--white);
+        flex-shrink: 0;
+        box-shadow: var(--shadow-lg);
+        animation: pulse-warning 2s infinite;
+    }
+
+    .header-info {
+        flex: 1;
+    }
+
+    .delete-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0 0 var(--space-sm) 0;
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        color: var(--white);
+    }
+
+    .delete-subtitle {
+        font-size: 1rem;
+        margin: 0 0 var(--space-md) 0;
+        opacity: 0.9;
+    }
+
+    .warning-message {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        padding: var(--space-sm) var(--space-md);
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: var(--radius-lg);
+        font-size: 0.95rem;
+        font-weight: 600;
+        backdrop-filter: blur(10px);
+    }
+
+    /* Delete Body */
+    .delete-body {
+        padding: var(--space-2xl);
+        background: var(--white);
+    }
+
+    /* Payment Preview */
+    .payment-preview {
+        background: var(--light-gray);
+        border-radius: var(--radius-xl);
+        padding: var(--space-xl);
+        margin-bottom: var(--space-xl);
+        border: 1px solid var(--gray-200);
+    }
+
+    .preview-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        margin-bottom: var(--space-xl);
+        padding-bottom: var(--space-lg);
+        border-bottom: 2px solid var(--gray-200);
+    }
+
+    .preview-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-lg);
+        background: var(--gradient-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: var(--white);
+        flex-shrink: 0;
+        box-shadow: var(--shadow-primary);
+    }
+
+    .preview-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .preview-subtitle {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin: 0.25rem 0 0 0;
+    }
+
+    /* Detail Sections */
+    .detail-section {
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        padding: var(--space-lg);
+        height: 100%;
+        border: 1px solid var(--gray-200);
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        margin-bottom: var(--space-lg);
+        padding-bottom: var(--space-md);
+        border-bottom: 1px solid var(--gray-200);
+    }
+
+    .section-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        color: var(--white);
+        flex-shrink: 0;
+    }
+
+    .detail-section.financial .section-icon {
+        background: var(--gradient-primary);
+    }
+
+    .detail-section.transaction .section-icon {
+        background: var(--gradient-pending);
+    }
+
+    .section-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    /* Detail Grid */
+    .detail-grid {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-lg);
+    }
+
+    .detail-row {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);
+    }
+
+    .detail-label {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .detail-label i {
+        color: var(--primary-rose);
+        width: 14px;
+    }
+
+    .detail-value {
+        padding-left: var(--space-lg);
+    }
+
+    /* Amount Display */
+    .detail-value.amount {
+        display: flex;
+        align-items: baseline;
+        gap: var(--space-sm);
+        padding: var(--space-md);
+        background: var(--primary-rose-subtle);
+        border: 1px solid var(--primary-rose-light);
+        border-radius: var(--radius-md);
+    }
+
+    .currency {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--primary-rose-dark);
+    }
+
+    .value {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        font-family: 'Courier New', monospace;
+    }
+
+    /* Status Indicators */
+    .status-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-sm);
+        padding: var(--space-sm) var(--space-md);
+        border-radius: var(--radius-lg);
+        font-size: 0.85rem;
+        font-weight: 600;
+        border: 1px solid;
+    }
+
+    .status-indicator.success {
+        background: var(--success-light);
+        color: var(--success-dark);
+        border-color: var(--success-green);
+    }
+
+    .status-indicator.failed {
+        background: var(--danger-light);
+        color: var(--danger-dark);
+        border-color: var(--danger-red);
+    }
+
+    .status-indicator.pending {
+        background: var(--pending-light);
+        color: var(--pending-dark);
+        border-color: var(--pending-blue);
+    }
+
+    .status-indicator.unknown {
+        background: var(--warning-light);
+        color: var(--warning-dark);
+        border-color: var(--warning-yellow);
+    }
+
+    /* Date Display */
+    .detail-value.date {
+        padding: var(--space-md);
+        background: var(--gray-100);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--gray-200);
+    }
+
+    .date-info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+
+    .date-text {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .time-text {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        font-family: 'Courier New', monospace;
+    }
+
+    /* Card Preview */
+    .card-preview {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        padding: var(--space-sm);
+        background: var(--primary-rose-subtle);
+        border: 1px solid var(--primary-rose-light);
+        border-radius: var(--radius-md);
+    }
+
+    .card-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: var(--radius-sm);
+        background: var(--primary-rose);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        font-size: 0.8rem;
+        flex-shrink: 0;
+    }
+
+    .card-number {
+        font-family: 'Courier New', monospace;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .no-data {
+        color: var(--text-muted);
+        font-style: italic;
+    }
+
+    /* Warning Notice */
+    .warning-notice {
+        background: linear-gradient(135deg, var(--warning-light) 0%, #fef3c7 100%);
+        border: 2px solid var(--warning-yellow);
+        border-radius: var(--radius-xl);
+        padding: var(--space-xl);
+        margin-bottom: var(--space-xl);
+    }
+
+    .notice-content {
+        display: flex;
+        gap: var(--space-lg);
+    }
+
+    .notice-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-lg);
+        background: var(--warning-yellow);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: var(--white);
+        flex-shrink: 0;
+        box-shadow: var(--shadow-warning);
+    }
+
+    .notice-text {
+        flex: 1;
+    }
+
+    .notice-text h4 {
+        color: var(--warning-dark);
+        margin: 0 0 var(--space-md) 0;
+        font-weight: 700;
+    }
+
+    .notice-text p {
+        color: var(--text-primary);
+        margin: 0 0 var(--space-md) 0;
+        line-height: 1.5;
+    }
+
+    .notice-text ul {
+        color: var(--text-secondary);
+        margin: 0;
+        padding-left: var(--space-xl);
+    }
+
+    .notice-text li {
+        margin-bottom: var(--space-sm);
+        line-height: 1.4;
+    }
+
+    /* Actions */
+    .actions-section {
+        padding-top: var(--space-xl);
+        border-top: 2px solid var(--gray-200);
+    }
+
+    .actions-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: var(--space-lg);
+    }
+
+    .actions-left,
+    .actions-right {
+        display: flex;
+        gap: var(--space-md);
+        align-items: center;
+    }
+
+    .btn-cancel,
+    .btn-details,
+    .btn-delete {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        padding: var(--space-md) var(--space-xl);
+        border-radius: var(--radius-lg);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        border: 2px solid;
+        cursor: pointer;
+        min-width: 140px;
+        justify-content: center;
+    }
+
+    .btn-cancel {
+        background: var(--white);
+        color: var(--text-secondary);
+        border-color: var(--gray-300);
+    }
+
+    .btn-cancel:hover {
+        background: var(--gray-100);
+        color: var(--text-primary);
+        border-color: var(--gray-400);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-details {
+        background: var(--white);
+        color: var(--primary-rose);
+        border-color: var(--primary-rose);
+    }
+
+    .btn-details:hover {
+        background: var(--gradient-primary);
+        color: var(--white);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-primary);
+    }
+
+    .btn-delete {
+        background: var(--gradient-danger);
+        color: var(--white);
+        border-color: var(--danger-red);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-delete::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .btn-delete:hover::before {
+        left: 100%;
+    }
+
+    .btn-delete:hover {
+        background: var(--gradient-warning);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-danger);
+    }
+
+    .delete-form {
+        margin: 0;
+    }
+
+    /* Animations */
+    @@keyframes pulse-warning {
+        0%, 100% {
+            transform: scale(1);
+            box-shadow: var(--shadow-lg);
+        }
+        50% {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-danger);
+        }
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .header-content {
+            flex-direction: column;
+            text-align: center;
+            gap: var(--space-lg);
+        }
+
+        .delete-title {
+            font-size: 1.75rem;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .delete-body {
+            padding: var(--space-xl);
+        }
+
+        .payment-preview {
+            padding: var(--space-lg);
+        }
+
+        .notice-content {
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+
+        .actions-container {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .actions-left,
+        .actions-right {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .actions-right {
+            order: -1;
+        }
+
+        .btn-cancel,
+        .btn-details,
+        .btn-delete {
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .actions-left {
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+    }
+</style>
+
+<script>
+    function confirmDelete() {
+        return confirm('UPOZORENJE: Ova akcija će trajno obrisati plaćanje i ne može se poništiti. Da li ste sigurni da želite da nastavite?');
+    }
+    
+    // Auto focus na cancel dugme za sigurnost
+    document.addEventListener('DOMContentLoaded', function() {
+        const cancelBtn = document.querySelector('.btn-cancel');
+        if (cancelBtn) {
+            cancelBtn.focus();
+        }
+    });
+</script>

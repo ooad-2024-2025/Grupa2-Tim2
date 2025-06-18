@@ -1,58 +1,1254 @@
 ﻿@model Carisma.Models.Osoba
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Uredi korisnika";
 }
 
-<h1>Edit</h1>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Premium Edit Card -->
+            <div class="premium-edit-card">
+                <!-- Enhanced Header -->
+                <div class="premium-edit-header">
+                    <div class="header-pattern"></div>
+                    <div class="header-content">
+                        <div class="user-avatar-edit">
+                            @Model.korisnicko_ime.Substring(0, 2).ToUpper()
+                            @if (Model.uloga == Carisma.Models.Uloga.Administrator)
+                            {
+                                <div class="admin-crown">
+                                    <i class="fas fa-crown"></i>
+                                </div>
+                            }
+                        </div>
+                        <div class="header-info">
+                            <h1 class="edit-title">
+                                <i class="fas fa-user-edit"></i>
+                                Uredi korisnika
+                            </h1>
+                            <p class="edit-subtitle">Ažuriranje korisničkih informacija i dozvola</p>
+                            <div class="edit-meta">
+                                <span class="meta-item">
+                                    <i class="fas fa-user"></i>
+                                    @Model.korisnicko_ime
+                                </span>
+                                <span class="meta-item">
+                                    <i class="fas fa-hashtag"></i>
+                                    ID: @Model.Id
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-<h4>Osoba</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="email" class="control-label"></label>
-                <input asp-for="email" class="form-control" />
-                <span asp-validation-for="email" class="text-danger"></span>
+                <!-- Enhanced Notifications -->
+                <div class="notifications-container">
+                    @if (TempData["Greska"] != null)
+                    {
+                        <div class="notification error">
+                            <div class="notification-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-title">Greška!</div>
+                                <div class="notification-message">@TempData["Greska"]</div>
+                            </div>
+                            <button class="notification-close" data-bs-dismiss="alert">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    }
+
+                    @if (TempData["Uspjeh"] != null)
+                    {
+                        <div class="notification success">
+                            <div class="notification-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-title">Uspješno!</div>
+                                <div class="notification-message">@TempData["Uspjeh"]</div>
+                            </div>
+                            <button class="notification-close" data-bs-dismiss="alert">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    }
+                </div>
+
+                <!-- Premium Form Body -->
+                <div class="premium-edit-body">
+                    <form asp-action="Edit" method="post" class="premium-form">
+                        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div class="row g-4">
+                            <!-- Osnovni podaci sekcija -->
+                            <div class="col-lg-6">
+                                <div class="form-section">
+                                    <div class="section-header">
+                                        <div class="section-icon basic">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <h3 class="section-title">Osnovni podaci</h3>
+                                    </div>
+                                    
+                                    <div class="section-content">
+                                        <!-- Korisničko ime -->
+                                        <div class="form-group">
+                                            <label asp-for="korisnicko_ime" class="form-label">
+                                                <i class="fas fa-at"></i>
+                                                <span>Korisničko ime</span>
+                                                <span class="required">*</span>
+                                            </label>
+                                            <div class="input-wrapper">
+                                                <input asp-for="korisnicko_ime" class="form-control premium" placeholder="Unesite korisničko ime" />
+                                                <div class="input-icon">
+                                                    <i class="fas fa-user"></i>
+                                                </div>
+                                            </div>
+                                            <span asp-validation-for="korisnicko_ime" class="validation-error"></span>
+                                        </div>
+
+                                        <!-- Email adresa -->
+                                        <div class="form-group">
+                                            <label asp-for="email" class="form-label">
+                                                <i class="fas fa-envelope"></i>
+                                                <span>Email adresa</span>
+                                                <span class="required">*</span>
+                                            </label>
+                                            <div class="input-wrapper">
+                                                <input asp-for="email" class="form-control premium" type="email" placeholder="Unesite email adresu" />
+                                                <div class="input-icon">
+                                                    <i class="fas fa-envelope"></i>
+                                                </div>
+                                            </div>
+                                            <span asp-validation-for="email" class="validation-error"></span>
+                                            <div class="form-help">
+                                                <i class="fas fa-info-circle"></i>
+                                                Email se koristi za prijavu i komunikaciju
+                                            </div>
+                                        </div>
+
+                                        <!-- Broj telefona -->
+                                        <div class="form-group">
+                                            <label asp-for="broj_telefona" class="form-label">
+                                                <i class="fas fa-phone"></i>
+                                                <span>Broj telefona</span>
+                                            </label>
+                                            <div class="input-wrapper">
+                                                <input asp-for="broj_telefona" class="form-control premium" placeholder="Unesite broj telefona" />
+                                                <div class="input-icon">
+                                                    <i class="fas fa-phone"></i>
+                                                </div>
+                                            </div>
+                                            <span asp-validation-for="broj_telefona" class="validation-error"></span>
+                                            <div class="form-help">
+                                                <i class="fas fa-info-circle"></i>
+                                                Opcionalno polje za kontakt
+                                            </div>
+                                        </div>
+
+                                        <!-- Prikaz postojećeg imena -->
+                                        @if (!string.IsNullOrEmpty(Model.Ime) || !string.IsNullOrEmpty(Model.Prezime))
+                                        {
+                                            <div class="form-group">
+                                                <label class="form-label">
+                                                    <i class="fas fa-id-card"></i>
+                                                    <span>Ime i prezime</span>
+                                                </label>
+                                                <div class="readonly-field">
+                                                    <div class="readonly-content">
+                                                        <div class="readonly-icon">
+                                                            <i class="fas fa-user-check"></i>
+                                                        </div>
+                                                        <div class="readonly-info">
+                                                            <div class="readonly-value">
+                                                                @if (!string.IsNullOrEmpty(Model.Ime) && !string.IsNullOrEmpty(Model.Prezime))
+                                                                {
+                                                                    @Model.PunoIme
+                                                                }
+                                                                else if (!string.IsNullOrEmpty(Model.Ime))
+                                                                {
+                                                                    @Model.Ime
+                                                                }
+                                                                else if (!string.IsNullOrEmpty(Model.Prezime))
+                                                                {
+                                                                    @Model.Prezime
+                                                                }
+                                                            </div>
+                                                            <div class="readonly-note">Podatak se ne može mijenjati</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-help">
+                                                    <i class="fas fa-lock"></i>
+                                                    Ime i prezime se ne mogu mijenjati kroz admin panel
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sistemski podaci sekcija -->
+                            <div class="col-lg-6">
+                                <div class="form-section">
+                                    <div class="section-header">
+                                        <div class="section-icon system">
+                                            <i class="fas fa-cogs"></i>
+                                        </div>
+                                        <h3 class="section-title">Sistemski podaci</h3>
+                                    </div>
+                                    
+                                    <div class="section-content">
+                                        <!-- Uloga korisnika -->
+                                        <div class="form-group">
+                                            <label asp-for="uloga" class="form-label">
+                                                <i class="fas fa-user-tag"></i>
+                                                <span>Uloga korisnika</span>
+                                                <span class="required">*</span>
+                                            </label>
+                                            <div class="select-wrapper">
+                                                <select asp-for="uloga" class="form-select premium" asp-items="ViewBag.Uloge">
+                                                    <option value="">-- Odaberite ulogu --</option>
+                                                </select>
+                                                <div class="select-icon">
+                                                    <i class="fas fa-chevron-down"></i>
+                                                </div>
+                                            </div>
+                                            <span asp-validation-for="uloga" class="validation-error"></span>
+                                            <div class="current-role">
+                                                <i class="fas fa-info-circle"></i>
+                                                Trenutna uloga: 
+                                                <span class="role-value">@(Model.uloga?.ToString() ?? "Nije postavljena")</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Status računa -->
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <i class="fas fa-shield-alt"></i>
+                                                <span>Status računa</span>
+                                            </label>
+                                            <div class="switch-container">
+                                                <div class="switch-wrapper">
+                                                    <input class="switch-input" type="checkbox" asp-for="blokiran" id="blockSwitch" />
+                                                    <label class="switch-label" for="blockSwitch">
+                                                        <span class="switch-slider">
+                                                            <span class="switch-icon active">
+                                                                <i class="fas fa-check"></i>
+                                                            </span>
+                                                            <span class="switch-icon blocked">
+                                                                <i class="fas fa-ban"></i>
+                                                            </span>
+                                                        </span>
+                                                    </label>
+                                                    <div class="switch-text">
+                                                        <span class="switch-active">Aktivan</span>
+                                                        <span class="switch-blocked">Blokiran</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-help warning">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                Blokirani korisnici se neće moći prijaviti na sistem
+                                            </div>
+                                        </div>
+
+                                        <!-- Dodatne informacije -->
+                                        <div class="info-cards">
+                                            <div class="info-card">
+                                                <div class="info-icon">
+                                                    <i class="fas fa-calendar-plus"></i>
+                                                </div>
+                                                <div class="info-content">
+                                                    <div class="info-label">Član od</div>
+                                                    <div class="info-value">15. mart 2023.</div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="info-card">
+                                                <div class="info-icon">
+                                                    <i class="fas fa-clock"></i>
+                                                </div>
+                                                <div class="info-content">
+                                                    <div class="info-label">Poslednja aktivnost</div>
+                                                    <div class="info-value">Prije 2 sata</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions Section -->
+                        <div class="actions-section">
+                            <div class="actions-container">
+                                <div class="actions-left">
+                                    <a asp-action="Index" class="btn-secondary-custom">
+                                        <i class="fas fa-arrow-left"></i>
+                                        <span>Nazad na listu</span>
+                                    </a>
+                                </div>
+                                
+                                <div class="actions-right">
+                                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn-outline-custom">
+                                        <i class="fas fa-eye"></i>
+                                        <span>Pregled</span>
+                                    </a>
+                                    <button type="submit" class="btn-primary-custom">
+                                        <i class="fas fa-save"></i>
+                                        <span>Spremi izmjene</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="lozinka" class="control-label"></label>
-                <input asp-for="lozinka" class="form-control" />
-                <span asp-validation-for="lozinka" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="broj_telefona" class="control-label"></label>
-                <input asp-for="broj_telefona" class="form-control" />
-                <span asp-validation-for="broj_telefona" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="korisnicko_ime" class="control-label"></label>
-                <input asp-for="korisnicko_ime" class="form-control" />
-                <span asp-validation-for="korisnicko_ime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="uloga" class="control-label"></label>
-                <input asp-for="uloga" class="form-control" />
-                <span asp-validation-for="uloga" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="blokiran" /> @Html.DisplayNameFor(model => model.blokiran)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<style>
+    /* Elegantna paleta sa #b16189 */
+    :root {
+        /* Glavne boje bazirane na #b16189 */
+        --primary-rose: #b16189;           /* Vaša boja */
+        --primary-light: #d4a5c7;         /* Svetlija verzija */
+        --primary-dark: #8e4c6b;          /* Tamnija verzija */
+        --primary-subtle: #f6f1f4;        /* Vrlo bleda verzija */
+        --primary-accent: #c97ba5;        /* Akcent boja */
+        
+        /* Komplementarne boje */
+        --secondary-teal: #4a9d9c;        /* Komplementarna teal */
+        --secondary-green: #6db193;       /* Meka zelena */
+        --secondary-gold: #d4a574;        /* Topla zlatna */
+        
+        /* Gradijenti */
+        --gradient-primary: linear-gradient(135deg, var(--primary-rose) 0%, var(--primary-light) 100%);
+        --gradient-secondary: linear-gradient(135deg, var(--secondary-teal) 0%, var(--secondary-green) 100%);
+        --gradient-warm: linear-gradient(135deg, var(--primary-rose) 0%, var(--secondary-gold) 100%);
+        --gradient-cool: linear-gradient(135deg, var(--secondary-teal) 0%, var(--primary-rose) 100%);
+        
+        /* Neutralne boje */
+        --white: #ffffff;
+        --cream: #fefcfd;                  /* Topli krem */
+        --light-gray: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-400: #94a3b8;
+        --gray-500: #64748b;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
+        
+        /* Tekst boje */
+        --text-primary: #1e293b;
+        --text-secondary: #475569;
+        --text-muted: #64748b;
+        --text-inverse: #ffffff;
+        
+        /* Status boje */
+        --success-light: #ecfdf5;
+        --success-main: var(--secondary-green);
+        --success-dark: #15803d;
+        
+        --warning-light: #fefce8;
+        --warning-main: var(--secondary-gold);
+        --warning-dark: #a16207;
+        
+        --error-light: var(--primary-subtle);
+        --error-main: var(--primary-rose);
+        --error-dark: var(--primary-dark);
+        
+        --info-light: #e0f2fe;
+        --info-main: var(--secondary-teal);
+        --info-dark: #0c4a6e;
+        
+        /* Senke */
+        --shadow-primary: 0 4px 20px rgba(177, 97, 137, 0.15);
+        --shadow-secondary: 0 4px 20px rgba(74, 157, 156, 0.15);
+        --shadow-warm: 0 4px 20px rgba(212, 165, 116, 0.15);
+        --shadow-soft: 0 8px 32px rgba(177, 97, 137, 0.08), 0 4px 16px rgba(74, 157, 156, 0.06), 0 2px 8px rgba(212, 165, 116, 0.04);
+        --shadow-light: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        
+        /* Tranzicije */
+        --transition-fast: 0.15s ease;
+        --transition-normal: 0.2s ease;
+        --transition-slow: 0.3s ease;
+        
+        /* Border Radius */
+        --radius-sm: 0.375rem;
+        --radius-md: 0.5rem;
+        --radius-lg: 0.75rem;
+        --radius-xl: 1rem;
+        --radius-2xl: 1.5rem;
+        
+        /* Spacing */
+        --space-xs: 0.25rem;
+        --space-sm: 0.5rem;
+        --space-md: 1rem;
+        --space-lg: 1.5rem;
+        --space-xl: 2rem;
+        --space-2xl: 3rem;
+    }
+
+    /* Main Premium Card */
+    .premium-edit-card {
+        background: var(--white);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-soft);
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+        margin-bottom: var(--space-xl);
+    }
+
+    /* Premium Header */
+    .premium-edit-header {
+        position: relative;
+        background: var(--gradient-primary);
+        padding: var(--space-2xl);
+        color: var(--white);
+        overflow: hidden;
+    }
+
+    .header-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: var(--space-xl);
+    }
+
+    .user-avatar-edit {
+        width: 80px;
+        height: 80px;
+        border-radius: var(--radius-2xl);
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(15px);
+        border: 3px solid rgba(255, 255, 255, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--white);
+        position: relative;
+        flex-shrink: 0;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .admin-crown {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        width: 28px;
+        height: 28px;
+        background: var(--gradient-warm);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        color: var(--white);
+        border: 2px solid var(--white);
+        box-shadow: var(--shadow-md);
+    }
+
+    .header-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .edit-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0 0 var(--space-sm) 0;
+        color: var(--white);
+        letter-spacing: -0.025em;
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .edit-subtitle {
+        font-size: 1rem;
+        margin: 0 0 var(--space-md) 0;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 400;
+    }
+
+    .edit-meta {
+        display: flex;
+        gap: var(--space-lg);
+        flex-wrap: wrap;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.95);
+        background: rgba(255, 255, 255, 0.15);
+        padding: var(--space-sm) var(--space-md);
+        border-radius: var(--radius-lg);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Enhanced Notifications */
+    .notifications-container {
+        padding: 0 var(--space-xl) var(--space-lg) var(--space-xl);
+    }
+
+    .notification {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-md);
+        padding: var(--space-lg);
+        border-radius: var(--radius-lg);
+        margin-bottom: var(--space-md);
+        position: relative;
+        animation: slideInDown 0.3s ease;
+        border-left: 4px solid;
+        box-shadow: var(--shadow-md);
+    }
+
+    .notification.success {
+        background: linear-gradient(135deg, var(--success-light) 0%, #f0fdf4 100%);
+        border-left-color: var(--success-main);
+    }
+
+    .notification.error {
+        background: linear-gradient(135deg, var(--error-light) 0%, #fef2f2 100%);
+        border-left-color: var(--error-main);
+    }
+
+    .notification-icon {
+        flex-shrink: 0;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .notification.success .notification-icon {
+        color: var(--success-main);
+    }
+
+    .notification.error .notification-icon {
+        color: var(--error-main);
+    }
+
+    .notification-content {
+        flex: 1;
+    }
+
+    .notification-title {
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: var(--space-xs);
+    }
+
+    .notification.success .notification-title {
+        color: var(--success-dark);
+    }
+
+    .notification.error .notification-title {
+        color: var(--error-dark);
+    }
+
+    .notification-message {
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+
+    .notification.success .notification-message {
+        color: var(--success-dark);
+    }
+
+    .notification.error .notification-message {
+        color: var(--error-dark);
+    }
+
+    .notification-close {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: var(--space-xs);
+        border-radius: var(--radius-md);
+        transition: all var(--transition-fast);
+    }
+
+    .notification-close:hover {
+        background: rgba(0, 0, 0, 0.1);
+        color: var(--text-primary);
+    }
+
+    /* Premium Form Body */
+    .premium-edit-body {
+        padding: var(--space-2xl);
+        background: var(--cream);
+    }
+
+    .premium-form {
+        max-width: 100%;
+    }
+
+    /* Validation Summary */
+    .validation-summary {
+        background: linear-gradient(135deg, var(--error-light) 0%, #fef2f2 100%);
+        color: var(--error-dark);
+        padding: var(--space-lg);
+        border-radius: var(--radius-lg);
+        border-left: 4px solid var(--error-main);
+        margin-bottom: var(--space-xl);
+        box-shadow: var(--shadow-primary);
+    }
+
+    /* Form Sections */
+    .form-section {
+        background: var(--white);
+        border-radius: var(--radius-xl);
+        padding: var(--space-xl);
+        height: 100%;
+        border: 1px solid var(--gray-200);
+        transition: all var(--transition-normal);
+        box-shadow: var(--shadow-light);
+    }
+
+    .form-section:hover {
+        box-shadow: var(--shadow-primary);
+        transform: translateY(-3px);
+        border-color: var(--primary-light);
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        margin-bottom: var(--space-xl);
+        padding-bottom: var(--space-lg);
+        border-bottom: 2px solid var(--gray-200);
+    }
+
+    .section-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: var(--white);
+        flex-shrink: 0;
+        box-shadow: var(--shadow-md);
+    }
+
+    .section-icon.basic {
+        background: var(--gradient-primary);
+    }
+
+    .section-icon.system {
+        background: var(--gradient-secondary);
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    /* Form Groups */
+    .form-group {
+        margin-bottom: var(--space-xl);
+    }
+
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        margin-bottom: var(--space-md);
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .form-label i {
+        color: var(--primary-rose);
+        width: 16px;
+    }
+
+    .required {
+        color: var(--error-main);
+        font-weight: 700;
+    }
+
+    /* Input Wrapper */
+    .input-wrapper {
+        position: relative;
+    }
+
+    .form-control.premium {
+        width: 100%;
+        padding: var(--space-md) var(--space-lg) var(--space-md) 3rem;
+        border: 2px solid var(--gray-300);
+        border-radius: var(--radius-lg);
+        font-size: 0.9rem;
+        transition: all var(--transition-normal);
+        background: var(--white);
+    }
+
+    .form-control.premium:focus {
+        outline: none;
+        border-color: var(--primary-rose);
+        box-shadow: 0 0 0 3px rgba(177, 97, 137, 0.1);
+        background: linear-gradient(135deg, var(--white) 0%, var(--primary-subtle) 100%);
+    }
+
+    .input-icon {
+        position: absolute;
+        left: var(--space-md);
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        transition: color var(--transition-normal);
+    }
+
+    .form-control.premium:focus + .input-icon {
+        color: var(--primary-rose);
+    }
+
+    /* Select Wrapper */
+    .select-wrapper {
+        position: relative;
+    }
+
+    .form-select.premium {
+        width: 100%;
+        padding: var(--space-md) 3rem var(--space-md) var(--space-lg);
+        border: 2px solid var(--gray-300);
+        border-radius: var(--radius-lg);
+        font-size: 0.9rem;
+        transition: all var(--transition-normal);
+        background: var(--white);
+        appearance: none;
+        cursor: pointer;
+    }
+
+    .form-select.premium:focus {
+        outline: none;
+        border-color: var(--secondary-teal);
+        box-shadow: 0 0 0 3px rgba(74, 157, 156, 0.1);
+        background: linear-gradient(135deg, var(--white) 0%, var(--info-light) 100%);
+    }
+
+    .select-icon {
+        position: absolute;
+        right: var(--space-md);
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        pointer-events: none;
+        transition: color var(--transition-normal);
+    }
+
+    .form-select.premium:focus + .select-icon {
+        color: var(--secondary-teal);
+    }
+
+    /* Validation Errors */
+    .validation-error {
+        display: block;
+        color: var(--error-main);
+        font-size: 0.8rem;
+        margin-top: var(--space-sm);
+        font-weight: 600;
+    }
+
+    /* Form Help */
+    .form-help {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-top: var(--space-sm);
+        line-height: 1.4;
+        padding: var(--space-sm) var(--space-md);
+        background: var(--gray-100);
+        border-radius: var(--radius-md);
+    }
+
+    .form-help.warning {
+        color: var(--warning-dark);
+        background: var(--warning-light);
+    }
+
+    .form-help i {
+        color: var(--secondary-green);
+        width: 12px;
+        flex-shrink: 0;
+    }
+
+    .form-help.warning i {
+        color: var(--warning-main);
+    }
+
+    /* Current Role */
+    .current-role {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-top: var(--space-sm);
+        padding: var(--space-sm) var(--space-md);
+        background: linear-gradient(135deg, var(--info-light) 0%, #e0f2fe 100%);
+        border-radius: var(--radius-md);
+        border-left: 3px solid var(--info-main);
+    }
+
+    .role-value {
+        font-weight: 600;
+        color: var(--info-dark);
+    }
+
+    /* Readonly Field */
+    .readonly-field {
+        margin-top: var(--space-sm);
+    }
+
+    .readonly-content {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: var(--space-md);
+        background: linear-gradient(135deg, var(--gray-100) 0%, var(--warning-light) 100%);
+        border: 2px solid var(--gray-300);
+        border-radius: var(--radius-lg);
+    }
+
+    .readonly-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-lg);
+        background: var(--gradient-warm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        flex-shrink: 0;
+    }
+
+    .readonly-info {
+        flex: 1;
+    }
+
+    .readonly-value {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: var(--space-xs);
+    }
+
+    .readonly-note {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+    }
+
+    /* Switch Container */
+    .switch-container {
+        margin-top: var(--space-sm);
+    }
+
+    .switch-wrapper {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: var(--space-md);
+        background: var(--white);
+        border: 2px solid var(--gray-300);
+        border-radius: var(--radius-lg);
+        transition: all var(--transition-normal);
+    }
+
+    .switch-wrapper:hover {
+        border-color: var(--secondary-green);
+        box-shadow: var(--shadow-secondary);
+    }
+
+    .switch-input {
+        display: none;
+    }
+
+    .switch-label {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .switch-slider {
+        display: flex;
+        align-items: center;
+        width: 64px;
+        height: 32px;
+        background: var(--secondary-green);
+        border-radius: 16px;
+        transition: all var(--transition-normal);
+        position: relative;
+        box-shadow: var(--shadow-secondary);
+    }
+
+    .switch-input:checked + .switch-label .switch-slider {
+        background: var(--primary-rose);
+        box-shadow: var(--shadow-primary);
+    }
+
+    .switch-icon {
+        position: absolute;
+        width: 28px;
+        height: 28px;
+        background: var(--white);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        transition: all var(--transition-normal);
+        box-shadow: var(--shadow-md);
+    }
+
+    .switch-icon.active {
+        left: 2px;
+        color: var(--secondary-green);
+        transform: translateX(0);
+    }
+
+    .switch-icon.blocked {
+        right: 2px;
+        color: var(--primary-rose);
+        transform: translateX(0);
+        opacity: 0;
+    }
+
+    .switch-input:checked + .switch-label .switch-icon.active {
+        transform: translateX(32px);
+        opacity: 0;
+    }
+
+    .switch-input:checked + .switch-label .switch-icon.blocked {
+        transform: translateX(-32px);
+        opacity: 1;
+    }
+
+    .switch-text {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+
+    .switch-active,
+    .switch-blocked {
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all var(--transition-normal);
+    }
+
+    .switch-active {
+        color: var(--success-dark);
+    }
+
+    .switch-blocked {
+        color: var(--text-muted);
+    }
+
+    .switch-input:checked ~ .switch-text .switch-active {
+        color: var(--text-muted);
+    }
+
+    .switch-input:checked ~ .switch-text .switch-blocked {
+        color: var(--error-dark);
+    }
+
+    /* Info Cards */
+    .info-cards {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+        margin-top: var(--space-lg);
+    }
+
+    .info-card {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: var(--space-md);
+        background: linear-gradient(135deg, var(--white) 0%, var(--success-light) 100%);
+        border: 1px solid var(--secondary-green);
+        border-radius: var(--radius-lg);
+        transition: all var(--transition-normal);
+    }
+
+    .info-card:hover {
+        box-shadow: var(--shadow-secondary);
+        transform: translateY(-2px);
+        border-color: var(--secondary-green);
+    }
+
+    .info-card:nth-child(even) {
+        background: linear-gradient(135deg, var(--white) 0%, var(--warning-light) 100%);
+        border-color: var(--secondary-gold);
+    }
+
+    .info-card:nth-child(even):hover {
+        box-shadow: var(--shadow-warm);
+        border-color: var(--secondary-gold);
+    }
+
+    .info-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: var(--radius-md);
+        background: var(--secondary-green);
+        color: var(--white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    .info-card:nth-child(even) .info-icon {
+        background: var(--secondary-gold);
+    }
+
+    .info-content {
+        flex: 1;
+    }
+
+    .info-label {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-bottom: var(--space-xs);
+    }
+
+    .info-value {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    /* Actions Section */
+    .actions-section {
+        margin-top: var(--space-2xl);
+        padding-top: var(--space-xl);
+        border-top: 3px solid;
+        border-image: var(--gradient-primary) 1;
+    }
+
+    .actions-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: var(--space-lg);
+    }
+
+    .actions-left,
+    .actions-right {
+        display: flex;
+        gap: var(--space-md);
+        align-items: center;
+    }
+
+    /* Premium Buttons */
+    .btn-secondary-custom,
+    .btn-outline-custom,
+    .btn-primary-custom {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        padding: var(--space-md) var(--space-xl);
+        border-radius: var(--radius-lg);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all var(--transition-normal);
+        border: 2px solid;
+        cursor: pointer;
+        min-width: 140px;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-secondary-custom {
+        background: var(--white);
+        color: var(--text-secondary);
+        border-color: var(--gray-300);
+    }
+
+    .btn-secondary-custom:hover {
+        background: linear-gradient(135deg, var(--gray-100) 0%, var(--warning-light) 100%);
+        color: var(--text-primary);
+        border-color: var(--secondary-gold);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-warm);
+    }
+
+    .btn-outline-custom {
+        background: var(--white);
+        color: var(--secondary-teal);
+        border-color: var(--secondary-teal);
+    }
+
+    .btn-outline-custom:hover {
+        background: var(--gradient-secondary);
+        color: var(--white);
+        border-color: var(--secondary-teal);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-secondary);
+    }
+
+    .btn-primary-custom {
+        background: var(--gradient-primary);
+        color: var(--white);
+        border-color: var(--primary-rose);
+        position: relative;
+    }
+
+    .btn-primary-custom::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .btn-primary-custom:hover::before {
+        left: 100%;
+    }
+
+    .btn-primary-custom:hover {
+        background: var(--gradient-cool);
+        border-color: var(--secondary-teal);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-soft);
+    }
+
+    /* Animations */
+    @@keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .premium-edit-header {
+            padding: var(--space-xl);
+        }
+
+        .header-content {
+            flex-direction: column;
+            text-align: center;
+            gap: var(--space-lg);
+        }
+
+        .edit-title {
+            font-size: 1.75rem;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .edit-meta {
+            justify-content: center;
+        }
+
+        .premium-edit-body {
+            padding: var(--space-xl);
+        }
+
+        .form-section {
+            padding: var(--space-lg);
+        }
+
+        .actions-container {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .actions-left,
+        .actions-right {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .actions-right {
+            flex-direction: column;
+        }
+
+        .btn-secondary-custom,
+        .btn-outline-custom,
+        .btn-primary-custom {
+            width: 100%;
+            max-width: 300px;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .switch-wrapper {
+            flex-direction: column;
+            text-align: center;
+            gap: var(--space-sm);
+        }
+
+        .info-cards {
+            gap: var(--space-sm);
+        }
+
+        .info-card {
+            flex-direction: column;
+            text-align: center;
+            gap: var(--space-sm);
+        }
+    }
+</style>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

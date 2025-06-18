@@ -4,125 +4,325 @@
     ViewData["Title"] = "Izmijeni vozilo";
 }
 
-<div class="container mt-4">
+<div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-header bg-warning text-white">
-                    <h3 class="card-title mb-0">
-                        <i class="fas fa-edit me-2"></i>
-                        Izmijeni vozilo
-                    </h3>
+        <div class="col-lg-10">
+            <!-- Premium Vehicle Edit Card -->
+            <div class="premium-vehicle-edit-card">
+                <!-- Enhanced Header -->
+                <div class="premium-vehicle-edit-header">
+                    <div class="header-pattern"></div>
+                    <div class="header-content">
+                        <div class="vehicle-avatar-edit">
+                            <i class="fas fa-car"></i>
+                            <div class="edit-badge">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                        </div>
+                        <div class="header-info">
+                            <h1 class="edit-title">
+                                <i class="fas fa-tools"></i>
+                                Izmijeni vozilo
+                            </h1>
+                            <p class="edit-subtitle">Ažuriranje informacija o vozilu</p>
+                            <div class="edit-meta">
+                                <span class="meta-item">
+                                    <i class="fas fa-hashtag"></i>
+                                    ID: @Model.Id
+                                </span>
+                                <span class="meta-item">
+                                    <i class="fas fa-car"></i>
+                                    @Model.Marka @Model.Model
+                                </span>
+                                <span class="meta-item">
+                                    <i class="fas fa-calendar"></i>
+                                    @Model.Godina
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
+
+                <!-- Enhanced Notifications -->
+                <div class="notifications-container">
                     @if (TempData["Poruka"] != null)
                     {
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            @TempData["Poruka"]
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        <div class="notification success">
+                            <div class="notification-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-title">Uspješno!</div>
+                                <div class="notification-message">@TempData["Poruka"]</div>
+                            </div>
+                            <button class="notification-close" data-bs-dismiss="alert">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
                     }
 
-                    <div class="alert alert-info" role="alert">
-                        <i class="fas fa-info-circle me-2"></i>
-                        <strong>Napomena!</strong> Uredite željene informacije o vozilu.
-                    </div>
+                    @if (ViewData.ModelState.ErrorCount > 0)
+                    {
+                        <div class="notification error">
+                            <div class="notification-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-title">Greška!</div>
+                                <div class="notification-message">Molimo ispravite greške u formi.</div>
+                            </div>
+                            <button class="notification-close" data-bs-dismiss="alert">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    }
+                </div>
 
-                    <form asp-action="Edit" method="post">
+                <!-- Premium Form Body -->
+                <div class="premium-vehicle-edit-body">
+                    <form asp-action="Edit" method="post" class="premium-vehicle-edit-form">
                         @Html.AntiForgeryToken()
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
                         <input type="hidden" asp-for="Id" />
+                        
+                        <div class="row g-4">
+                            <!-- Vehicle Details Section -->
+                            <div class="col-lg-6">
+                                <div class="form-section">
+                                    <div class="section-header">
+                                        <div class="section-icon vehicle-details">
+                                            <i class="fas fa-car"></i>
+                                        </div>
+                                        <h3 class="section-title">Osnovni podaci vozila</h3>
+                                    </div>
+                                    
+                                    <div class="section-content">
+                                        <!-- Vehicle Brand -->
+                                        <div class="form-group">
+                                            <label asp-for="Marka" class="form-label">
+                                                <i class="fas fa-tag"></i>
+                                                <span>Marka vozila</span>
+                                                <span class="required">*</span>
+                                            </label>
+                                            <div class="input-wrapper">
+                                                <input asp-for="Marka" class="form-control premium" placeholder="Unesite marku vozila" />
+                                                <div class="input-icon">
+                                                    <i class="fas fa-tag"></i>
+                                                </div>
+                                            </div>
+                                            <span asp-validation-for="Marka" class="validation-error"></span>
+                                            <div class="form-help">
+                                                <i class="fas fa-info-circle"></i>
+                                                Unesite naziv marke vozila (npr. BMW, Mercedes, Audi)
+                                            </div>
+                                        </div>
 
-                        <div class="bg-light p-4 rounded">
-                            <h5 class="text-primary mb-3">
-                                <i class="fas fa-car me-2"></i>
-                                Detalji vozila
-                            </h5>
+                                        <!-- Vehicle Model -->
+                                        <div class="form-group">
+                                            <label asp-for="Model" class="form-label">
+                                                <i class="fas fa-car-side"></i>
+                                                <span>Model vozila</span>
+                                                <span class="required">*</span>
+                                            </label>
+                                            <div class="input-wrapper">
+                                                <input asp-for="Model" class="form-control premium" placeholder="Unesite model vozila" />
+                                                <div class="input-icon">
+                                                    <i class="fas fa-car-side"></i>
+                                                </div>
+                                            </div>
+                                            <span asp-validation-for="Model" class="validation-error"></span>
+                                            <div class="form-help">
+                                                <i class="fas fa-info-circle"></i>
+                                                Unesite tačan naziv modela vozila
+                                            </div>
+                                        </div>
 
-                            <div class="row mb-3">
-                                <div class="col-sm-4">
-                                    <strong class="text-muted">Marka:</strong>
-                                </div>
-                                <div class="col-sm-8">
-                                    <input asp-for="Marka" class="form-control" placeholder="Unesite marku vozila..." />
-                                    <span asp-validation-for="Marka" class="text-danger small"></span>
+                                        <!-- Production Year -->
+                                        <div class="form-group">
+                                            <label asp-for="Godina" class="form-label">
+                                                <i class="fas fa-calendar"></i>
+                                                <span>Godina proizvodnje</span>
+                                                <span class="required">*</span>
+                                            </label>
+                                            <div class="input-wrapper">
+                                                <input asp-for="Godina" type="number" class="form-control premium" min="1990" max="2025" placeholder="2024" />
+                                                <div class="input-icon">
+                                                    <i class="fas fa-calendar"></i>
+                                                </div>
+                                            </div>
+                                            <span asp-validation-for="Godina" class="validation-error"></span>
+                                            <div class="form-help">
+                                                <i class="fas fa-info-circle"></i>
+                                                Godina mora biti između 1990 i 2025
+                                            </div>
+                                        </div>
+
+                                        <!-- Current Status Display -->
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <i class="fas fa-info-circle"></i>
+                                                <span>Trenutni status</span>
+                                            </label>
+                                            <div class="current-status-display">
+                                                @if (Model.Status == 0)
+                                                {
+                                                    <div class="status-indicator current available">
+                                                        <i class="fas fa-check-circle"></i>
+                                                        <span>Dostupno za iznajmljivanje</span>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="status-indicator current unavailable">
+                                                        <i class="fas fa-times-circle"></i>
+                                                        <span>Nedostupno</span>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="row mb-3">
-                                <div class="col-sm-4">
-                                    <strong class="text-muted">Model:</strong>
-                                </div>
-                                <div class="col-sm-8">
-                                    <input asp-for="Model" class="form-control" placeholder="Unesite model vozila..." />
-                                    <span asp-validation-for="Model" class="text-danger small"></span>
-                                </div>
-                            </div>
+                            <!-- Rental Details Section -->
+                            <div class="col-lg-6">
+                                <div class="form-section">
+                                    <div class="section-header">
+                                        <div class="section-icon rental-details">
+                                            <i class="fas fa-dollar-sign"></i>
+                                        </div>
+                                        <h3 class="section-title">Detalji za iznajmljivanje</h3>
+                                    </div>
+                                    
+                                    <div class="section-content">
+                                        <!-- Daily Price -->
+                                        <div class="form-group">
+                                            <label asp-for="CijenaPoDanu" class="form-label">
+                                                <i class="fas fa-money-bill"></i>
+                                                <span>Cijena po danu</span>
+                                                <span class="required">*</span>
+                                            </label>
+                                            <div class="input-wrapper price-input">
+                                                <input asp-for="CijenaPoDanu" type="number" step="0.01" min="0" class="form-control premium price" placeholder="50.00" />
+                                                <div class="input-icon">
+                                                    <i class="fas fa-money-bill"></i>
+                                                </div>
+                                            </div>
+                                            <span asp-validation-for="CijenaPoDanu" class="validation-error"></span>
+                                            <div class="form-help">
+                                                <i class="fas fa-info-circle"></i>
+                                                Unesite cijenu u bosanskim markama (BAM)
+                                            </div>
+                                        </div>
 
-                            <div class="row mb-3">
-                                <div class="col-sm-4">
-                                    <strong class="text-muted">Godina:</strong>
-                                </div>
-                                <div class="col-sm-8">
-                                    <input asp-for="Godina" class="form-control" placeholder="npr. 2020" />
-                                    <span asp-validation-for="Godina" class="text-danger small"></span>
-                                </div>
-                            </div>
+                                        <!-- Vehicle Owner -->
+                                        <div class="form-group">
+                                            <label asp-for="OsobaId" class="form-label">
+                                                <i class="fas fa-user"></i>
+                                                <span>Vlasnik vozila</span>
+                                                <span class="required">*</span>
+                                            </label>
+                                            <div class="select-wrapper">
+                                                <select asp-for="OsobaId" class="form-select premium" asp-items="ViewBag.OsobaId">
+                                                    <option value="">Izaberite vlasnika</option>
+                                                </select>
+                                                <div class="select-icon">
+                                                    <i class="fas fa-chevron-down"></i>
+                                                </div>
+                                            </div>
+                                            <span asp-validation-for="OsobaId" class="validation-error"></span>
+                                            <div class="current-owner">
+                                                <i class="fas fa-user-check"></i>
+                                                Trenutni vlasnik: 
+                                                <span class="owner-name">@(ViewBag.CurrentOwner ?? "Nije postavljen")</span>
+                                            </div>
+                                        </div>
 
-                            <div class="row mb-3">
-                                <div class="col-sm-4">
-                                    <strong class="text-muted">Cijena po danu:</strong>
-                                </div>
-                                <div class="col-sm-8">
-                                    <input asp-for="CijenaPoDanu" class="form-control" placeholder="0.00" />
-                                    <span asp-validation-for="CijenaPoDanu" class="text-danger small"></span>
-                                </div>
-                            </div>
+                                        <!-- Vehicle Status -->
+                                        <div class="form-group">
+                                            <label asp-for="Status" class="form-label">
+                                                <i class="fas fa-flag"></i>
+                                                <span>Novi status vozila</span>
+                                                <span class="required">*</span>
+                                            </label>
+                                            <div class="status-container">
+                                                <div class="status-wrapper">
+                                                    <input class="status-input" type="radio" asp-for="Status" value="0" id="statusAvailable" />
+                                                    <label class="status-label available" for="statusAvailable">
+                                                        <span class="status-indicator">
+                                                            <span class="status-icon">
+                                                                <i class="fas fa-check"></i>
+                                                            </span>
+                                                        </span>
+                                                        <div class="status-text">
+                                                            <span class="status-title">Dostupno</span>
+                                                            <span class="status-desc">Vozilo je spremno za iznajmljivanje</span>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                                
+                                                <div class="status-wrapper">
+                                                    <input class="status-input" type="radio" asp-for="Status" value="1" id="statusUnavailable" />
+                                                    <label class="status-label unavailable" for="statusUnavailable">
+                                                        <span class="status-indicator">
+                                                            <span class="status-icon">
+                                                                <i class="fas fa-times"></i>
+                                                            </span>
+                                                        </span>
+                                                        <div class="status-text">
+                                                            <span class="status-title">Nedostupno</span>
+                                                            <span class="status-desc">Vozilo trenutno nije dostupno</span>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <span asp-validation-for="Status" class="validation-error"></span>
+                                            <div class="form-help">
+                                                <i class="fas fa-info-circle"></i>
+                                                Odaberite novi status vozila
+                                            </div>
+                                        </div>
 
-                            <div class="row mb-3">
-                                <div class="col-sm-4">
-                                    <strong class="text-muted">Status:</strong>
-                                </div>
-                                <div class="col-sm-8">
-                                    <select asp-for="Status" class="form-control">
-                                        <option value="0">Dostupno</option>
-                                        <option value="1">Nedostupno</option>
-                                    </select>
-                                    <span asp-validation-for="Status" class="text-danger small"></span>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-sm-4">
-                                    <strong class="text-muted">Osoba:</strong>
-                                </div>
-                                <div class="col-sm-8">
-                                    <select asp-for="OsobaId" class="form-control" asp-items="ViewBag.OsobaId">
-                                        <option value="">-- Izaberite osobu --</option>
-                                    </select>
-                                    <span asp-validation-for="OsobaId" class="text-danger small"></span>
+                                        <!-- Change Summary -->
+                                        <div class="change-summary">
+                                            <div class="summary-header">
+                                                <i class="fas fa-history"></i>
+                                                <span>Pregled izmjena</span>
+                                            </div>
+                                            <div class="summary-content">
+                                                <div class="summary-item">
+                                                    <span class="summary-label">Poslednja izmjena:</span>
+                                                    <span class="summary-value">2025-06-18 02:05:02</span>
+                                                </div>
+                                                <div class="summary-item">
+                                                    <span class="summary-label">Korisnik:</span>
+                                                    <span class="summary-value">aislamovic1</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="card-footer bg-light">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <a asp-action="Index" class="btn btn-secondary btn-lg">
-                                        <i class="fas fa-arrow-left me-2"></i>
-                                        Nazad na listu
+                        <!-- Actions Section -->
+                        <div class="actions-section">
+                            <div class="actions-container">
+                                <div class="actions-left">
+                                    <a asp-action="Index" class="btn-secondary-custom">
+                                        <i class="fas fa-arrow-left"></i>
+                                        <span>Nazad na listu</span>
                                     </a>
                                 </div>
-
-                                <div>
-                                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info btn-lg me-2">
-                                        <i class="fas fa-eye me-2"></i>
-                                        Pregled
+                                
+                                <div class="actions-right">
+                                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn-info-custom">
+                                        <i class="fas fa-eye"></i>
+                                        <span>Pregled</span>
                                     </a>
-
-                                    <button type="submit" class="btn btn-success btn-lg">
-                                        <i class="fas fa-save me-2"></i>
-                                        Sačuvaj izmjene
+                                    <button type="submit" class="btn-primary-custom">
+                                        <i class="fas fa-save"></i>
+                                        <span>Sačuvaj izmjene</span>
                                     </button>
                                 </div>
                             </div>
@@ -135,54 +335,991 @@
 </div>
 
 <style>
-    .card {
-        border: none;
-        border-radius: 10px;
+    /* Vehicle Edit Theme - Glavna boja: #b16189 sa automotive akcentima */
+    :root {
+        /* Vaša glavna pink nijansa #b16189 */
+        --primary-rose: #b16189;           /* Vaša glavna boja */
+        --primary-rose-light: #d4a5c7;    /* Svetlija verzija */
+        --primary-rose-dark: #8e4c6b;     /* Tamnija verzija */
+        --primary-rose-subtle: #f5f1f3;   /* Vrlo bleda */
+        
+        /* Automotive colors */
+        --automotive-blue: #2563eb;       /* Premium blue */
+        --automotive-blue-light: #60a5fa; /* Light blue */
+        --automotive-blue-subtle: #eff6ff; /* Very light blue */
+        --automotive-blue-dark: #1d4ed8;  /* Dark blue */
+        
+        --automotive-orange: #ea580c;     /* Orange accent */
+        --automotive-orange-light: #fb923c;
+        --automotive-orange-subtle: #fff7ed;
+        --automotive-orange-dark: #c2410c;
+        
+        /* Status colors */
+        --success-green: #059669;
+        --success-light: #d1fae5;
+        --success-dark: #047857;
+        
+        --warning-yellow: #d97706;
+        --warning-light: #fef3c7;
+        --warning-dark: #92400e;
+        
+        --error-red: #dc2626;
+        --error-light: #fee2e2;
+        --error-dark: #991b1b;
+        
+        /* Neutral colors */
+        --white: #ffffff;
+        --cream: #fefdfb;
+        --light-gray: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-400: #94a3b8;
+        --gray-500: #64748b;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
+        
+        /* Text colors */
+        --text-primary: #1e293b;
+        --text-secondary: #475569;
+        --text-muted: #64748b;
+        --text-inverse: #ffffff;
+        
+        /* Gradients */
+        --gradient-main: linear-gradient(135deg, var(--primary-rose) 0%, var(--automotive-orange) 100%);
+        --gradient-vehicle: linear-gradient(135deg, var(--automotive-blue) 0%, var(--primary-rose) 100%);
+        --gradient-rental: linear-gradient(135deg, var(--automotive-orange) 0%, var(--primary-rose-light) 100%);
+        --gradient-success: linear-gradient(135deg, var(--success-green) 0%, #059669 100%);
+        --gradient-info: linear-gradient(135deg, var(--automotive-blue) 0%, var(--automotive-blue-dark) 100%);
+        
+        /* Shadows */
+        --shadow-main: 0 4px 20px rgba(177, 97, 137, 0.15);
+        --shadow-automotive: 0 4px 20px rgba(37, 99, 235, 0.15);
+        --shadow-orange: 0 4px 20px rgba(234, 88, 12, 0.15);
+        --shadow-success: 0 4px 20px rgba(5, 150, 105, 0.15);
+        --shadow-light: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        
+        /* Transitions */
+        --transition-fast: 0.15s ease;
+        --transition-normal: 0.2s ease;
+        --transition-slow: 0.3s ease;
+        
+        /* Border radius */
+        --radius-sm: 0.375rem;
+        --radius-md: 0.5rem;
+        --radius-lg: 0.75rem;
+        --radius-xl: 1rem;
+        --radius-2xl: 1.5rem;
+        
+        /* Spacing */
+        --space-xs: 0.25rem;
+        --space-sm: 0.5rem;
+        --space-md: 1rem;
+        --space-lg: 1.5rem;
+        --space-xl: 2rem;
+        --space-2xl: 3rem;
     }
 
-    .card-header {
-        border-radius: 10px 10px 0 0 !important;
+    /* Main Premium Card */
+    .premium-vehicle-edit-card {
+        background: var(--white);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-xl);
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+        margin-bottom: var(--space-xl);
     }
 
-    .btn-lg {
-        padding: 12px 24px;
-        font-size: 1.1rem;
+    /* Premium Header sa edit temom */
+    .premium-vehicle-edit-header {
+        position: relative;
+        background: var(--gradient-main);
+        padding: var(--space-2xl);
+        color: var(--white);
+        overflow: hidden;
     }
 
-    .badge {
+    .header-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: var(--space-xl);
+    }
+
+    .vehicle-avatar-edit {
+        width: 80px;
+        height: 80px;
+        border-radius: var(--radius-2xl);
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(15px);
+        border: 3px solid rgba(255, 255, 255, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        color: var(--white);
+        position: relative;
+        flex-shrink: 0;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .edit-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        width: 28px;
+        height: 28px;
+        background: var(--automotive-orange);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         font-size: 0.9rem;
+        color: var(--white);
+        border: 2px solid var(--white);
+        box-shadow: var(--shadow-md);
     }
 
-    .alert {
-        border-left: 4px solid #17a2b8;
+    .header-info {
+        flex: 1;
+        min-width: 0;
     }
 
-    .bg-light {
-        background-color: #f8f9fa !important;
+    .edit-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0 0 var(--space-sm) 0;
+        color: var(--white);
+        letter-spacing: -0.025em;
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
 
-    .text-muted {
-        color: #6c757d !important;
+    .edit-subtitle {
+        font-size: 1rem;
+        margin: 0 0 var(--space-md) 0;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 400;
     }
 
-    .shadow {
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    .edit-meta {
+        display: flex;
+        gap: var(--space-lg);
+        flex-wrap: wrap;
     }
 
-    .form-control, .form-select {
-        border-radius: 5px;
-        border: 1px solid #ced4da;
-        padding: 8px 12px;
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.95);
+        background: rgba(255, 255, 255, 0.15);
+        padding: var(--space-sm) var(--space-md);
+        border-radius: var(--radius-lg);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-        .form-control:focus, .form-select:focus {
-            border-color: #80bdff;
-            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    /* Enhanced Notifications */
+    .notifications-container {
+        padding: 0 var(--space-xl) var(--space-lg) var(--space-xl);
+    }
+
+    .notification {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-md);
+        padding: var(--space-lg);
+        border-radius: var(--radius-lg);
+        margin-bottom: var(--space-md);
+        position: relative;
+        animation: slideInDown 0.3s ease;
+        border-left: 4px solid;
+        box-shadow: var(--shadow-md);
+    }
+
+    .notification.success {
+        background: linear-gradient(135deg, var(--success-light) 0%, #f0fdf4 100%);
+        border-left-color: var(--success-green);
+    }
+
+    .notification.error {
+        background: linear-gradient(135deg, var(--error-light) 0%, #fef2f2 100%);
+        border-left-color: var(--error-red);
+    }
+
+    .notification-icon {
+        flex-shrink: 0;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .notification.success .notification-icon {
+        color: var(--success-green);
+    }
+
+    .notification.error .notification-icon {
+        color: var(--error-red);
+    }
+
+    .notification-content {
+        flex: 1;
+    }
+
+    .notification-title {
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: var(--space-xs);
+    }
+
+    .notification.success .notification-title {
+        color: var(--success-dark);
+    }
+
+    .notification.error .notification-title {
+        color: var(--error-dark);
+    }
+
+    .notification-message {
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+
+    .notification.success .notification-message {
+        color: var(--success-dark);
+    }
+
+    .notification.error .notification-message {
+        color: var(--error-dark);
+    }
+
+    .notification-close {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: var(--space-xs);
+        border-radius: var(--radius-md);
+        transition: all var(--transition-fast);
+    }
+
+    .notification-close:hover {
+        background: rgba(0, 0, 0, 0.1);
+        color: var(--text-primary);
+    }
+
+    /* Premium Form Body */
+    .premium-vehicle-edit-body {
+        padding: var(--space-2xl);
+        background: var(--cream);
+    }
+
+    .premium-vehicle-edit-form {
+        max-width: 100%;
+    }
+
+    /* Validation Summary */
+    .validation-summary {
+        background: linear-gradient(135deg, var(--error-light) 0%, #fef2f2 100%);
+        color: var(--error-dark);
+        padding: var(--space-lg);
+        border-radius: var(--radius-lg);
+        border-left: 4px solid var(--error-red);
+        margin-bottom: var(--space-xl);
+        box-shadow: var(--shadow-main);
+    }
+
+    /* Form Sections */
+    .form-section {
+        background: var(--white);
+        border-radius: var(--radius-xl);
+        padding: var(--space-xl);
+        height: 100%;
+        border: 1px solid var(--gray-200);
+        transition: all var(--transition-normal);
+        box-shadow: var(--shadow-light);
+    }
+
+    .form-section:hover {
+        box-shadow: var(--shadow-main);
+        transform: translateY(-3px);
+        border-color: var(--primary-rose-light);
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        margin-bottom: var(--space-xl);
+        padding-bottom: var(--space-lg);
+        border-bottom: 2px solid var(--gray-200);
+    }
+
+    .section-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: var(--white);
+        flex-shrink: 0;
+        box-shadow: var(--shadow-md);
+    }
+
+    .section-icon.vehicle-details {
+        background: var(--gradient-vehicle);
+    }
+
+    .section-icon.rental-details {
+        background: var(--gradient-rental);
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    /* Form Groups */
+    .form-group {
+        margin-bottom: var(--space-xl);
+    }
+
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        margin-bottom: var(--space-md);
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .form-label i {
+        color: var(--primary-rose);
+        width: 16px;
+    }
+
+    .required {
+        color: var(--error-red);
+        font-weight: 700;
+    }
+
+    /* Input Wrapper */
+    .input-wrapper {
+        position: relative;
+    }
+
+    .form-control.premium {
+        width: 100%;
+        padding: var(--space-md) var(--space-lg) var(--space-md) 3rem;
+        border: 2px solid var(--gray-300);
+        border-radius: var(--radius-lg);
+        font-size: 0.9rem;
+        transition: all var(--transition-normal);
+        background: var(--white);
+    }
+
+    /* Price Input - POBOLJŠANO */
+    .price-input .form-control {
+        padding: var(--space-md) 4rem var(--space-md) var(--space-lg);
+    }
+
+    .price-input::after {
+        content: 'BAM';
+        position: absolute;
+        right: 3.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-weight: 600;
+        color: var(--automotive-orange);
+        font-size: 0.9rem;
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    .price-input .input-icon {
+        right: var(--space-md);
+    }
+
+    .form-control.premium:focus {
+        outline: none;
+        border-color: var(--primary-rose);
+        box-shadow: 0 0 0 3px rgba(177, 97, 137, 0.1);
+        background: linear-gradient(135deg, var(--white) 0%, var(--primary-rose-subtle) 100%);
+    }
+
+    .input-icon {
+        position: absolute;
+        right: var(--space-md);
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        transition: color var(--transition-normal);
+    }
+
+    .form-control.premium:focus + .input-icon {
+        color: var(--primary-rose);
+    }
+
+    /* Select Wrapper */
+    .select-wrapper {
+        position: relative;
+    }
+
+    .form-select.premium {
+        width: 100%;
+        padding: var(--space-md) 3rem var(--space-md) var(--space-lg);
+        border: 2px solid var(--gray-300);
+        border-radius: var(--radius-lg);
+        font-size: 0.9rem;
+        transition: all var(--transition-normal);
+        background: var(--white);
+        appearance: none;
+        cursor: pointer;
+    }
+
+    .form-select.premium:focus {
+        outline: none;
+        border-color: var(--automotive-blue);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        background: linear-gradient(135deg, var(--white) 0%, var(--automotive-blue-subtle) 100%);
+    }
+
+    .select-icon {
+        position: absolute;
+        right: var(--space-md);
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        pointer-events: none;
+        transition: color var(--transition-normal);
+    }
+
+    .form-select.premium:focus + .select-icon {
+        color: var(--automotive-blue);
+    }
+
+    /* Validation Errors */
+    .validation-error {
+        display: block;
+        color: var(--error-red);
+        font-size: 0.8rem;
+        margin-top: var(--space-sm);
+        font-weight: 600;
+    }
+
+    /* Form Help */
+    .form-help {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-top: var(--space-sm);
+        line-height: 1.4;
+        padding: var(--space-sm) var(--space-md);
+        background: var(--gray-100);
+        border-radius: var(--radius-md);
+    }
+
+    .form-help i {
+        color: var(--automotive-blue);
+        width: 12px;
+        flex-shrink: 0;
+    }
+
+    /* Current Owner */
+    .current-owner {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-top: var(--space-sm);
+        padding: var(--space-sm) var(--space-md);
+        background: linear-gradient(135deg, var(--automotive-blue-subtle) 0%, #e0f2fe 100%);
+        border-radius: var(--radius-md);
+        border-left: 3px solid var(--automotive-blue);
+    }
+
+    .owner-name {
+        font-weight: 600;
+        color: var(--automotive-blue-dark);
+    }
+
+    /* Current Status Display - POBOLJŠANO */
+    .current-status-display {
+        margin-top: var(--space-sm);
+    }
+
+    .status-indicator.current {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: var(--space-lg);
+        border-radius: var(--radius-xl);
+        font-weight: 600;
+        border: 2px solid;
+        position: relative;
+        overflow: hidden;
+        min-height: 60px;
+        box-shadow: var(--shadow-md);
+        transition: all var(--transition-normal);
+        width: 100%;
+        max-width: 350px;
+    }
+
+    .status-indicator.current::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 6px;
+        border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+    }
+
+    .status-indicator.current.available {
+        background: linear-gradient(135deg, var(--success-light) 0%, #f0fdf4 100%);
+        color: var(--success-dark);
+        border-color: var(--success-green);
+    }
+
+    .status-indicator.current.available::before {
+        background: var(--success-green);
+    }
+
+    .status-indicator.current.unavailable {
+        background: linear-gradient(135deg, var(--error-light) 0%, #fef2f2 100%);
+        color: var(--error-dark);
+        border-color: var(--error-red);
+    }
+
+    .status-indicator.current.unavailable::before {
+        background: var(--error-red);
+    }
+
+    .status-indicator.current:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .status-indicator.current i {
+        font-size: 1.25rem;
+        margin-right: var(--space-sm);
+        flex-shrink: 0;
+    }
+
+    .status-indicator.current span {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+    }
+
+    /* Status Container */
+    .status-container {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+        margin-top: var(--space-sm);
+    }
+
+    .status-wrapper {
+        position: relative;
+    }
+
+    .status-input {
+        display: none;
+    }
+
+    .status-label {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: var(--space-md);
+        border: 2px solid var(--gray-300);
+        border-radius: var(--radius-lg);
+        cursor: pointer;
+        transition: all var(--transition-normal);
+        background: var(--white);
+    }
+
+    .status-label:hover {
+        border-color: var(--primary-rose-light);
+        box-shadow: var(--shadow-light);
+    }
+
+    .status-input:checked + .status-label {
+        border-color: var(--primary-rose);
+        box-shadow: 0 0 0 3px rgba(177, 97, 137, 0.1);
+    }
+
+    .status-input:checked + .status-label.available {
+        background: linear-gradient(135deg, var(--success-light) 0%, #f0fdf4 100%);
+        border-color: var(--success-green);
+        box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+    }
+
+    .status-input:checked + .status-label.unavailable {
+        background: linear-gradient(135deg, var(--error-light) 0%, #fef2f2 100%);
+        border-color: var(--error-red);
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    }
+
+    .status-indicator {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--gray-300);
+        background: var(--white);
+        transition: all var(--transition-normal);
+        flex-shrink: 0;
+    }
+
+    .status-input:checked + .status-label .status-indicator {
+        border-color: var(--white);
+        color: var(--white);
+    }
+
+    .status-input:checked + .status-label.available .status-indicator {
+        background: var(--success-green);
+    }
+
+    .status-input:checked + .status-label.unavailable .status-indicator {
+        background: var(--error-red);
+    }
+
+    .status-text {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+
+    .status-title {
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 1rem;
+    }
+
+    .status-desc {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    /* Change Summary */
+    .change-summary {
+        background: linear-gradient(135deg, var(--gray-100) 0%, var(--primary-rose-subtle) 100%);
+        border: 1px solid var(--primary-rose-light);
+        border-radius: var(--radius-lg);
+        padding: var(--space-lg);
+        margin-top: var(--space-lg);
+    }
+
+    .summary-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        margin-bottom: var(--space-md);
+        font-weight: 600;
+        color: var(--primary-rose-dark);
+    }
+
+    .summary-content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.85rem;
+    }
+
+    .summary-label {
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .summary-value {
+        color: var(--text-primary);
+        font-weight: 600;
+        font-family: monospace;
+    }
+
+    /* Actions Section */
+    .actions-section {
+        margin-top: var(--space-2xl);
+        padding-top: var(--space-xl);
+        border-top: 3px solid;
+        border-image: var(--gradient-main) 1;
+    }
+
+    .actions-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: var(--space-lg);
+    }
+
+    .actions-left,
+    .actions-right {
+        display: flex;
+        gap: var(--space-md);
+        align-items: center;
+    }
+
+    /* Premium Buttons */
+    .btn-secondary-custom,
+    .btn-info-custom,
+    .btn-primary-custom {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        padding: var(--space-md) var(--space-xl);
+        border-radius: var(--radius-lg);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all var(--transition-normal);
+        border: 2px solid;
+        cursor: pointer;
+        min-width: 140px;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-secondary-custom {
+        background: var(--white);
+        color: var(--text-secondary);
+        border-color: var(--gray-300);
+    }
+
+    .btn-secondary-custom:hover {
+        background: linear-gradient(135deg, var(--gray-100) 0%, var(--automotive-orange-subtle) 100%);
+        color: var(--text-primary);
+        border-color: var(--automotive-orange);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-orange);
+    }
+
+    .btn-info-custom {
+        background: var(--white);
+        color: var(--automotive-blue);
+        border-color: var(--automotive-blue);
+    }
+
+    .btn-info-custom:hover {
+        background: var(--gradient-info);
+        color: var(--white);
+        border-color: var(--automotive-blue);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-automotive);
+    }
+
+    .btn-primary-custom {
+        background: var(--gradient-main);
+        color: var(--white);
+        border-color: var(--primary-rose);
+        position: relative;
+    }
+
+    .btn-primary-custom::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .btn-primary-custom:hover::before {
+        left: 100%;
+    }
+
+    .btn-primary-custom:hover {
+        background: var(--gradient-vehicle);
+        border-color: var(--automotive-blue);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-main);
+    }
+
+    /* Animations */
+    @@keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
         }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .premium-vehicle-edit-header {
+            padding: var(--space-xl);
+        }
+
+        .header-content {
+            flex-direction: column;
+            text-align: center;
+            gap: var(--space-lg);
+        }
+
+        .edit-title {
+            font-size: 1.75rem;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .edit-meta {
+            justify-content: center;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .premium-vehicle-edit-body {
+            padding: var(--space-xl);
+        }
+
+        .form-section {
+            padding: var(--space-lg);
+        }
+
+        .actions-container {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .actions-left,
+        .actions-right {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .actions-right {
+            flex-direction: column;
+        }
+
+        .btn-secondary-custom,
+        .btn-info-custom,
+        .btn-primary-custom {
+            width: 100%;
+            max-width: 300px;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .summary-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--space-xs);
+        }
+
+        .edit-meta {
+            align-items: center;
+        }
+
+        .meta-item {
+            justify-content: center;
+        }
+    }
 </style>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Price formatting
+            const priceInput = document.querySelector('input[name="CijenaPoDanu"]');
+            if (priceInput) {
+                priceInput.addEventListener('input', function(e) {
+                    let value = parseFloat(e.target.value);
+                    if (!isNaN(value) && value >= 0) {
+                        e.target.value = value.toFixed(2);
+                    }
+                });
+            }
+
+            // Year validation
+            const yearInput = document.querySelector('input[name="Godina"]');
+            if (yearInput) {
+                yearInput.addEventListener('input', function(e) {
+                    let value = parseInt(e.target.value);
+                    if (value < 1990) {
+                        e.target.value = 1990;
+                    } else if (value > 2025) {
+                        e.target.value = 2025;
+                    }
+                });
+            }
+
+            // Form change detection
+            let originalFormData = new FormData(document.querySelector('.premium-vehicle-edit-form'));
+            
+            function hasFormChanged() {
+                let currentFormData = new FormData(document.querySelector('.premium-vehicle-edit-form'));
+                for (let [key, value] of originalFormData.entries()) {
+                    if (currentFormData.get(key) !== value) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            // Warn on page leave if form has changes
+            window.addEventListener('beforeunload', function(e) {
+                if (hasFormChanged()) {
+                    e.preventDefault();
+                    e.returnValue = 'Imate nesačuvane izmjene. Jeste li sigurni da želite napustiti stranicu?';
+                }
+            });
+
+            // Remove warning when form is submitted
+            document.querySelector('.premium-vehicle-edit-form').addEventListener('submit', function() {
+                window.removeEventListener('beforeunload', arguments.callee);
+            });
+        });
+    </script>
 }

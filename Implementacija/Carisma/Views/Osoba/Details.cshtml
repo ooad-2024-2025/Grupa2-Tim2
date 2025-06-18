@@ -1,54 +1,1072 @@
 ﻿@model Carisma.Models.Osoba
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalji korisnika";
 }
 
-<h1>Details</h1>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Premium User Details Card -->
+            <div class="premium-details-card">
+                <!-- Enhanced Header with #b16189 Theme -->
+                <div class="premium-details-header">
+                    <div class="header-pattern"></div>
+                    <div class="header-content">
+                        <div class="user-avatar-large">
+                            @Model.korisnicko_ime.Substring(0, 2).ToUpper()
+                            @if (Model.uloga == Carisma.Models.Uloga.Administrator)
+                            {
+                                <div class="admin-crown">
+                                    <i class="fas fa-crown"></i>
+                                </div>
+                            }
+                        </div>
+                        <div class="header-info">
+                            <h1 class="user-title">
+                                @if (!string.IsNullOrEmpty(Model.Ime) && !string.IsNullOrEmpty(Model.Prezime))
+                                {
+                                    @Model.PunoIme
+                                }
+                                else
+                                {
+                                    @Model.korisnicko_ime
+                                }
+                            </h1>
+                            <p class="user-subtitle">Detaljan pregled korisničkih informacija</p>
+                            <div class="user-status-header">
+                                @if (Model.blokiran)
+                                {
+                                    <span class="status-pill blocked">
+                                        <i class="fas fa-ban"></i>
+                                        Blokiran
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="status-pill active">
+                                        <i class="fas fa-check-circle"></i>
+                                        Aktivan
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-<div>
-    <h4>Osoba</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.lozinka)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.lozinka)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.broj_telefona)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.broj_telefona)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.korisnicko_ime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.korisnicko_ime)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.uloga)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.uloga)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.blokiran)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.blokiran)
-        </dd>
-    </dl>
+                <!-- Premium Content Body -->
+                <div class="premium-details-body">
+                    <div class="row g-4">
+                        <!-- Lični podaci sekcija -->
+                        <div class="col-lg-6">
+                            <div class="details-section">
+                                <div class="section-header">
+                                    <div class="section-icon personal">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <h3 class="section-title">Lični podaci</h3>
+                                </div>
+                                
+                                <div class="section-content">
+                                    <!-- Ime i prezime -->
+                                    <div class="detail-item">
+                                        <div class="detail-label">
+                                            <i class="fas fa-user-tag"></i>
+                                            <span>Ime i prezime</span>
+                                        </div>
+                                        <div class="detail-value">
+                                            @if (!string.IsNullOrEmpty(Model.Ime) && !string.IsNullOrEmpty(Model.Prezime))
+                                            {
+                                                <span class="value-text primary">@Model.PunoIme</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="value-text empty">
+                                                    <i class="fas fa-minus"></i>
+                                                    Nije uneseno
+                                                </span>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- Korisničko ime -->
+                                    <div class="detail-item">
+                                        <div class="detail-label">
+                                            <i class="fas fa-at"></i>
+                                            <span>Korisničko ime</span>
+                                        </div>
+                                        <div class="detail-value">
+                                            <span class="value-badge username">
+                                                <i class="fas fa-user"></i>
+                                                @Model.korisnicko_ime
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- ID korisnika -->
+                                    <div class="detail-item">
+                                        <div class="detail-label">
+                                            <i class="fas fa-hashtag"></i>
+                                            <span>ID korisnika</span>
+                                        </div>
+                                        <div class="detail-value">
+                                            <span class="value-badge id">
+                                                <i class="fas fa-fingerprint"></i>
+                                                #@Model.Id
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Uloga -->
+                                    <div class="detail-item">
+                                        <div class="detail-label">
+                                            <i class="fas fa-user-shield"></i>
+                                            <span>Uloga u sistemu</span>
+                                        </div>
+                                        <div class="detail-value">
+                                            @if (Model.uloga != null)
+                                            {
+                                                @switch (Model.uloga)
+                                                {
+                                                    case Carisma.Models.Uloga.Administrator:
+                                                        <div class="role-card admin">
+                                                            <div class="role-icon">
+                                                                <i class="fas fa-crown"></i>
+                                                            </div>
+                                                            <div class="role-info">
+                                                                <span class="role-name">Administrator</span>
+                                                                <span class="role-desc">Potpuna kontrola sistema</span>
+                                                            </div>
+                                                        </div>
+                                                        break;
+                                                    case Carisma.Models.Uloga.RegistrovaniKorisnik:
+                                                        <div class="role-card user">
+                                                            <div class="role-icon">
+                                                                <i class="fas fa-user"></i>
+                                                            </div>
+                                                            <div class="role-info">
+                                                                <span class="role-name">Registrovani korisnik</span>
+                                                                <span class="role-desc">Standardni pristup</span>
+                                                            </div>
+                                                        </div>
+                                                        break;
+                                                    case Carisma.Models.Uloga.NeregistrovaniKorisnik:
+                                                        <div class="role-card guest">
+                                                            <div class="role-icon">
+                                                                <i class="fas fa-user-times"></i>
+                                                            </div>
+                                                            <div class="role-info">
+                                                                <span class="role-name">Neregistrovani</span>
+                                                                <span class="role-desc">Ograničen pristup</span>
+                                                            </div>
+                                                        </div>
+                                                        break;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <div class="role-card undefined">
+                                                    <div class="role-icon">
+                                                        <i class="fas fa-question"></i>
+                                                    </div>
+                                                    <div class="role-info">
+                                                        <span class="role-name">Nedefinirano</span>
+                                                        <span class="role-desc">Potrebna dodjela uloge</span>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kontakt informacije sekcija -->
+                        <div class="col-lg-6">
+                            <div class="details-section">
+                                <div class="section-header">
+                                    <div class="section-icon contact">
+                                        <i class="fas fa-address-book"></i>
+                                    </div>
+                                    <h3 class="section-title">Kontakt informacije</h3>
+                                </div>
+                                
+                                <div class="section-content">
+                                    <!-- Email -->
+                                    <div class="detail-item">
+                                        <div class="detail-label">
+                                            <i class="fas fa-envelope"></i>
+                                            <span>Email adresa</span>
+                                        </div>
+                                        <div class="detail-value">
+                                            <div class="contact-card email">
+                                                <div class="contact-icon">
+                                                    <i class="fas fa-envelope"></i>
+                                                </div>
+                                                <div class="contact-info">
+                                                    <a href="mailto:@Model.email" class="contact-link">
+                                                        @Model.email
+                                                    </a>
+                                                    <span class="contact-status verified">
+                                                        <i class="fas fa-check-circle"></i>
+                                                        Verifikovan
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Broj telefona -->
+                                    <div class="detail-item">
+                                        <div class="detail-label">
+                                            <i class="fas fa-phone"></i>
+                                            <span>Broj telefona</span>
+                                        </div>
+                                        <div class="detail-value">
+                                            @if (!string.IsNullOrEmpty(Model.broj_telefona))
+                                            {
+                                                <div class="contact-card phone">
+                                                    <div class="contact-icon">
+                                                        <i class="fas fa-phone"></i>
+                                                    </div>
+                                                    <div class="contact-info">
+                                                        <a href="tel:@Model.broj_telefona" class="contact-link">
+                                                            @Model.broj_telefona
+                                                        </a>
+                                                        <span class="contact-status">
+                                                            <i class="fas fa-mobile-alt"></i>
+                                                            Mobilni
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <span class="value-text empty">
+                                                    <i class="fas fa-minus"></i>
+                                                    Nije uneseno
+                                                </span>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- Status računa -->
+                                    <div class="detail-item">
+                                        <div class="detail-label">
+                                            <i class="fas fa-shield-alt"></i>
+                                            <span>Status računa</span>
+                                        </div>
+                                        <div class="detail-value">
+                                            @if (Model.blokiran)
+                                            {
+                                                <div class="status-card blocked">
+                                                    <div class="status-indicator"></div>
+                                                    <div class="status-content">
+                                                        <span class="status-title">
+                                                            <i class="fas fa-ban"></i>
+                                                            Račun je blokiran
+                                                        </span>
+                                                        <span class="status-desc">Pristup sistemu je onemogućen</span>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="status-card active">
+                                                    <div class="status-indicator"></div>
+                                                    <div class="status-content">
+                                                        <span class="status-title">
+                                                            <i class="fas fa-check-circle"></i>
+                                                            Račun je aktivan
+                                                        </span>
+                                                        <span class="status-desc">Korisnik ima pun pristup</span>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- Datum registracije -->
+                                    <div class="detail-item">
+                                        <div class="detail-label">
+                                            <i class="fas fa-calendar-plus"></i>
+                                            <span>Član od</span>
+                                        </div>
+                                        <div class="detail-value">
+                                            <div class="date-card">
+                                                <div class="date-icon">
+                                                    <i class="fas fa-calendar"></i>
+                                                </div>
+                                                <div class="date-info">
+                                                    <span class="date-text">15. mart 2023.</span>
+                                                    <span class="date-duration">Prije 1 godine</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Povratak dugme -->
+                    <div class="actions-section">
+                        <div class="actions-container">
+                            <a asp-action="Index" class="btn-back">
+                                <i class="fas fa-arrow-left"></i>
+                                <span>Povratak na listu</span>
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-edit">
+                                <i class="fas fa-edit"></i>
+                                <span>Uredi korisnika</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<style>
+    /* Paleta bazirana na #b16189 */
+    :root {
+        /* Glavna paleta sa vašom bojom */
+        --primary-rose: #b16189;           /* Vaša boja */
+        --primary-light: #d4a5c7;         /* Svetlija verzija */
+        --primary-dark: #8e4c6b;          /* Tamnija verzija */
+        --primary-subtle: #f6f1f4;        /* Vrlo bleda verzija */
+        --primary-accent: #c97ba5;        /* Akcent boja */
+        
+        /* Komplementarne boje */
+        --sage-green: #61b188;             /* Komplementarna sage green */
+        --sage-light: #a5d4c7;            /* Svetlija sage */
+        --sage-subtle: #f1f6f4;           /* Vrlo bleda sage */
+        
+        --dusty-teal: #618eb1;            /* Dusty teal */
+        --dusty-teal-light: #a5c1d4;      /* Svetliji dusty teal */
+        --dusty-teal-subtle: #f1f4f6;     /* Vrlo bled dusty teal */
+        
+        --warm-gold: #b19561;             /* Warm gold */
+        --warm-gold-light: #d4c7a5;       /* Svetliji warm gold */
+        --warm-gold-subtle: #f6f4f1;      /* Vrlo bled warm gold */
+        
+        /* Gradijenti */
+        --gradient-primary: linear-gradient(135deg, var(--primary-rose) 0%, var(--primary-light) 100%);
+        --gradient-secondary: linear-gradient(135deg, var(--dusty-teal) 0%, var(--sage-green) 100%);
+        --gradient-warm: linear-gradient(135deg, var(--primary-rose) 0%, var(--warm-gold) 100%);
+        
+        /* Dark tones */
+        --primary-dark-bg: #2d3441;       /* Tamni blue-gray */
+        --secondary-dark-bg: #4a5568;     /* Srednji blue-gray */
+        
+        /* Neutral Colors */
+        --white: #ffffff;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-300: #d1d5db;
+        --gray-400: #9ca3af;
+        --gray-500: #6b7280;
+        --gray-600: #4b5563;
+        --gray-700: #374151;
+        --gray-800: #1f2937;
+        --gray-900: #111827;
+        
+        /* Text Colors */
+        --text-primary: #1f2937;
+        --text-secondary: #6b7280;
+        --text-muted: #9ca3af;
+        --text-inverse: #ffffff;
+        
+        /* Status Colors */
+        --success-light: var(--sage-subtle);
+        --success-main: var(--sage-green);
+        --success-dark: #047857;
+        
+        --warning-light: var(--warm-gold-subtle);
+        --warning-main: var(--warm-gold);
+        --warning-dark: #d97706;
+        
+        --error-light: var(--primary-subtle);
+        --error-main: var(--primary-rose);
+        --error-dark: var(--primary-dark);
+        
+        --info-light: var(--dusty-teal-subtle);
+        --info-main: var(--dusty-teal);
+        --info-dark: #1d4ed8;
+        
+        /* Shadows and Effects */
+        --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        --shadow-primary: 0 4px 20px rgba(177, 97, 137, 0.15);
+        --shadow-sage: 0 4px 20px rgba(97, 177, 136, 0.15);
+        --shadow-teal: 0 4px 20px rgba(97, 142, 177, 0.15);
+        
+        /* Transitions */
+        --transition-fast: 0.15s ease;
+        --transition-normal: 0.2s ease;
+        --transition-slow: 0.3s ease;
+        
+        /* Border Radius */
+        --radius-sm: 0.375rem;
+        --radius-md: 0.5rem;
+        --radius-lg: 0.75rem;
+        --radius-xl: 1rem;
+        --radius-2xl: 1.5rem;
+        
+        /* Spacing */
+        --space-xs: 0.25rem;
+        --space-sm: 0.5rem;
+        --space-md: 1rem;
+        --space-lg: 1.5rem;
+        --space-xl: 2rem;
+        --space-2xl: 3rem;
+    }
+
+    /* Main Premium Card */
+    .premium-details-card {
+        background: var(--white);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-xl);
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+        margin-bottom: var(--space-xl);
+    }
+
+    /* Premium Header sa vašom bojom */
+    .premium-details-header {
+        position: relative;
+        background: var(--gradient-primary);
+        padding: var(--space-2xl);
+        color: var(--white);
+        overflow: hidden;
+    }
+
+    .header-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: var(--space-xl);
+    }
+
+    .user-avatar-large {
+        width: 96px;
+        height: 96px;
+        border-radius: var(--radius-2xl);
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--white);
+        position: relative;
+        flex-shrink: 0;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .admin-crown {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        width: 32px;
+        height: 32px;
+        background: var(--gradient-warm);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        color: var(--white);
+        border: 3px solid var(--white);
+        box-shadow: var(--shadow-md);
+    }
+
+    .header-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .user-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0 0 var(--space-sm) 0;
+        color: var(--white);
+        letter-spacing: -0.025em;
+    }
+
+    .user-subtitle {
+        font-size: 1.1rem;
+        margin: 0 0 var(--space-md) 0;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 400;
+    }
+
+    .user-status-header {
+        display: flex;
+        gap: var(--space-md);
+    }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-sm);
+        padding: var(--space-sm) var(--space-md);
+        border-radius: var(--radius-lg);
+        font-size: 0.9rem;
+        font-weight: 600;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .status-pill.active {
+        background: rgba(97, 177, 136, 0.2);
+        color: var(--white);
+    }
+
+    .status-pill.blocked {
+        background: rgba(177, 97, 137, 0.2);
+        color: var(--white);
+    }
+
+    /* Premium Body */
+    .premium-details-body {
+        padding: var(--space-2xl);
+        background: var(--white);
+    }
+
+    /* Details Sections */
+    .details-section {
+        background: var(--gray-50);
+        border-radius: var(--radius-xl);
+        padding: var(--space-xl);
+        height: 100%;
+        border: 1px solid var(--gray-200);
+        transition: all var(--transition-normal);
+    }
+
+    .details-section:hover {
+        box-shadow: var(--shadow-primary);
+        transform: translateY(-2px);
+        border-color: var(--primary-light);
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        margin-bottom: var(--space-xl);
+        padding-bottom: var(--space-lg);
+        border-bottom: 2px solid var(--gray-200);
+    }
+
+    .section-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: var(--white);
+        flex-shrink: 0;
+        box-shadow: var(--shadow-md);
+    }
+
+    .section-icon.personal {
+        background: var(--gradient-primary);
+    }
+
+    .section-icon.contact {
+        background: var(--gradient-secondary);
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    /* Detail Items */
+    .detail-item {
+        margin-bottom: var(--space-xl);
+        padding-bottom: var(--space-lg);
+        border-bottom: 1px solid var(--gray-200);
+    }
+
+    .detail-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .detail-label {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        margin-bottom: var(--space-md);
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .detail-label i {
+        color: var(--primary-rose);
+        width: 16px;
+    }
+
+    .detail-value {
+        margin-left: var(--space-lg);
+    }
+
+    /* Value Types */
+    .value-text {
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    .value-text.primary {
+        color: var(--text-primary);
+        font-weight: 600;
+    }
+
+    .value-text.empty {
+        color: var(--text-muted);
+        font-style: italic;
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+    }
+
+    .value-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-sm);
+        padding: var(--space-sm) var(--space-md);
+        border-radius: var(--radius-lg);
+        font-size: 0.9rem;
+        font-weight: 600;
+        border: 2px solid;
+    }
+
+    .value-badge.username {
+        background: var(--primary-subtle);
+        color: var(--primary-rose);
+        border-color: var(--primary-light);
+    }
+
+    .value-badge.id {
+        background: var(--gray-100);
+        color: var(--gray-700);
+        border-color: var(--gray-300);
+    }
+
+    /* Role Cards */
+    .role-card {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: var(--space-md);
+        border-radius: var(--radius-lg);
+        border: 2px solid;
+        background: var(--white);
+        transition: all var(--transition-normal);
+    }
+
+    .role-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .role-card.admin {
+        border-color: var(--warm-gold);
+        background: linear-gradient(135deg, var(--warm-gold-subtle) 0%, var(--warm-gold-light) 30%);
+    }
+
+    .role-card.user {
+        border-color: var(--sage-green);
+        background: linear-gradient(135deg, var(--sage-subtle) 0%, var(--sage-light) 30%);
+    }
+
+    .role-card.guest {
+        border-color: var(--dusty-teal);
+        background: linear-gradient(135deg, var(--dusty-teal-subtle) 0%, var(--dusty-teal-light) 30%);
+    }
+
+    .role-card.undefined {
+        border-color: var(--primary-rose);
+        background: linear-gradient(135deg, var(--primary-subtle) 0%, var(--primary-light) 30%);
+    }
+
+    .role-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        color: var(--white);
+        flex-shrink: 0;
+    }
+
+    .role-card.admin .role-icon {
+        background: var(--warm-gold);
+    }
+
+    .role-card.user .role-icon {
+        background: var(--sage-green);
+    }
+
+    .role-card.guest .role-icon {
+        background: var(--dusty-teal);
+    }
+
+    .role-card.undefined .role-icon {
+        background: var(--primary-rose);
+    }
+
+    .role-info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+
+    .role-name {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .role-desc {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    /* Contact Cards */
+    .contact-card {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: var(--space-md);
+        border-radius: var(--radius-lg);
+        border: 2px solid;
+        background: var(--white);
+        transition: all var(--transition-normal);
+    }
+
+    .contact-card:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .contact-card.email {
+        border-color: var(--primary-light);
+        background: var(--primary-subtle);
+    }
+
+    .contact-card.phone {
+        border-color: var(--dusty-teal-light);
+        background: var(--dusty-teal-subtle);
+    }
+
+    .contact-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        color: var(--white);
+        flex-shrink: 0;
+    }
+
+    .contact-card.email .contact-icon {
+        background: var(--primary-rose);
+    }
+
+    .contact-card.phone .contact-icon {
+        background: var(--dusty-teal);
+    }
+
+    .contact-info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+        min-width: 0;
+        flex: 1;
+    }
+
+    .contact-link {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        text-decoration: none;
+        transition: color var(--transition-normal);
+        word-break: break-all;
+    }
+
+    .contact-link:hover {
+        color: var(--primary-rose);
+    }
+
+    .contact-status {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: var(--space-xs);
+    }
+
+    .contact-status.verified {
+        color: var(--success-main);
+        font-weight: 500;
+    }
+
+    /* Status Cards */
+    .status-card {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: var(--space-md);
+        border-radius: var(--radius-lg);
+        border: 2px solid;
+        background: var(--white);
+    }
+
+    .status-card.active {
+        border-color: var(--success-main);
+        background: var(--success-light);
+    }
+
+    .status-card.blocked {
+        border-color: var(--error-main);
+        background: var(--error-light);
+    }
+
+    .status-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .status-card.active .status-indicator {
+        background: var(--success-main);
+        animation: pulse 2s infinite;
+    }
+
+    .status-card.blocked .status-indicator {
+        background: var(--error-main);
+    }
+
+    .status-content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+
+    .status-title {
+        font-size: 1rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+    }
+
+    .status-card.active .status-title {
+        color: var(--success-dark);
+    }
+
+    .status-card.blocked .status-title {
+        color: var(--error-dark);
+    }
+
+    .status-desc {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    /* Date Cards */
+    .date-card {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: var(--space-md);
+        border-radius: var(--radius-lg);
+        border: 2px solid var(--primary-light);
+        background: var(--primary-subtle);
+    }
+
+    .date-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-lg);
+        background: var(--primary-rose);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        color: var(--white);
+        flex-shrink: 0;
+    }
+
+    .date-info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+
+    .date-text {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .date-duration {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    /* Actions Section */
+    .actions-section {
+        margin-top: var(--space-2xl);
+        padding-top: var(--space-xl);
+        border-top: 2px solid var(--gray-200);
+    }
+
+    .actions-container {
+        display: flex;
+        gap: var(--space-md);
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-back,
+    .btn-edit {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        padding: var(--space-md) var(--space-xl);
+        border-radius: var(--radius-lg);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all var(--transition-normal);
+        border: 2px solid;
+        min-width: 160px;
+        justify-content: center;
+    }
+
+    .btn-back {
+        background: var(--white);
+        color: var(--text-secondary);
+        border-color: var(--gray-300);
+    }
+
+    .btn-back:hover {
+        background: var(--gray-100);
+        color: var(--text-primary);
+        border-color: var(--gray-400);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-edit {
+        background: var(--gradient-primary);
+        color: var(--white);
+        border-color: var(--primary-rose);
+    }
+
+    .btn-edit:hover {
+        background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-rose) 100%);
+        border-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-primary);
+    }
+
+    /* Animations */
+    @@keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.5;
+        }
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .premium-details-header {
+            padding: var(--space-xl);
+        }
+
+        .header-content {
+            flex-direction: column;
+            text-align: center;
+            gap: var(--space-lg);
+        }
+
+        .user-title {
+            font-size: 2rem;
+        }
+
+        .premium-details-body {
+            padding: var(--space-xl);
+        }
+
+        .details-section {
+            padding: var(--space-lg);
+        }
+
+        .actions-container {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn-back,
+        .btn-edit {
+            width: 100%;
+            max-width: 300px;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .detail-value {
+            margin-left: 0;
+            margin-top: var(--space-sm);
+        }
+
+        .role-card,
+        .contact-card,
+        .status-card,
+        .date-card {
+            flex-direction: column;
+            text-align: center;
+            gap: var(--space-sm);
+        }
+    }
+</style>

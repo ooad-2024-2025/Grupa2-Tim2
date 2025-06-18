@@ -1,65 +1,740 @@
 ﻿@model IEnumerable<Carisma.Models.Osoba>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Upravljanje korisnicima";
 }
 
-<h1>Index</h1>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="management-card">
+                <div class="card-header">
+                    <div class="header-content">
+                        <div class="header-info">
+                            <h2 class="page-title">
+                                <i class="fas fa-users"></i>
+                                Upravljanje korisnicima
+                            </h2>
+                            <p class="page-subtitle">Administracija korisničkih računa</p>
+                        </div>
+                        <div class="header-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">@Model.Count()</span>
+                                <span class="stat-label">Ukupno</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">@Model.Count(k => !k.blokiran)</span>
+                                <span class="stat-label">Aktivni</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">@Model.Count(k => k.blokiran)</span>
+                                <span class="stat-label">Blokirani</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.lozinka)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.broj_telefona)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.korisnicko_ime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.uloga)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.blokiran)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.lozinka)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.broj_telefona)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.korisnicko_ime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.uloga)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.blokiran)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                <div class="card-body">
+                    @if (TempData["Uspjeh"] != null)
+                    {
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i>
+                            <span>@TempData["Uspjeh"]</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (TempData["Greska"] != null)
+                    {
+                        <div class="alert alert-error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>@TempData["Greska"]</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Korisnik</th>
+                                    <th>Ime i prezime</th>
+                                    <th>Kontakt informacije</th>
+                                    <th>Uloga</th>
+                                    <th>Status</th>
+                                    <th>Akcije</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Any())
+                                {
+                                    @foreach (var korisnik in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="user-cell">
+                                                    <div class="user-avatar">
+                                                        @korisnik.korisnicko_ime.Substring(0, 2).ToUpper()
+                                                    </div>
+                                                    <div class="user-info">
+                                                        <div class="username">@korisnik.korisnicko_ime</div>
+                                                        <div class="user-id">ID: @korisnik.Id</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="name-cell">
+                                                    @if (!string.IsNullOrEmpty(korisnik.Ime) && !string.IsNullOrEmpty(korisnik.Prezime))
+                                                    {
+                                                        <span class="full-name">@korisnik.PunoIme</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="no-data">—</span>
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="contact-cell">
+                                                    <div class="contact-item">
+                                                        <i class="fas fa-envelope"></i>
+                                                        <a href="mailto:@korisnik.email">@korisnik.email</a>
+                                                    </div>
+                                                    @if (!string.IsNullOrEmpty(korisnik.broj_telefona))
+                                                    {
+                                                        <div class="contact-item">
+                                                            <i class="fas fa-phone"></i>
+                                                            <a href="tel:@korisnik.broj_telefona">@korisnik.broj_telefona</a>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="role-cell">
+                                                    @if (korisnik.uloga != null)
+                                                    {
+                                                        @switch (korisnik.uloga)
+                                                        {
+                                                            case Carisma.Models.Uloga.Administrator:
+                                                                <span class="role-badge role-admin">
+                                                                    <i class="fas fa-crown"></i>
+                                                                    Administrator
+                                                                </span>
+                                                                break;
+                                                            case Carisma.Models.Uloga.RegistrovaniKorisnik:
+                                                                <span class="role-badge role-user">
+                                                                    <i class="fas fa-user"></i>
+                                                                    Registrovani
+                                                                </span>
+                                                                break;
+                                                            case Carisma.Models.Uloga.NeregistrovaniKorisnik:
+                                                                <span class="role-badge role-guest">
+                                                                    <i class="fas fa-user-times"></i>
+                                                                    Neregistrovani
+                                                                </span>
+                                                                break;
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="role-badge role-undefined">
+                                                            <i class="fas fa-question"></i>
+                                                            Nedefinirano
+                                                        </span>
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="status-cell">
+                                                    @if (korisnik.blokiran)
+                                                    {
+                                                        <span class="status-badge status-blocked">
+                                                            <i class="fas fa-ban"></i>
+                                                            Blokiran
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="status-badge status-active">
+                                                            <i class="fas fa-check"></i>
+                                                            Aktivan
+                                                        </span>
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="actions-cell">
+                                                    <a asp-action="Details" asp-route-id="@korisnik.Id" 
+                                                       class="action-btn btn-view" 
+                                                       title="Pregled detalja">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    
+                                                    <a asp-action="Edit" asp-route-id="@korisnik.Id" 
+                                                       class="action-btn btn-edit" 
+                                                       title="Uredi korisnika">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    
+                                                    <form asp-action="PromijeniStatus" asp-route-id="@korisnik.Id" 
+                                                          method="post" style="display: inline;">
+                                                        <input type="hidden" name="__RequestVerificationToken" value="@Html.AntiForgeryToken().ToString()" />
+                                                        @if (korisnik.blokiran)
+                                                        {
+                                                            <button type="submit" class="action-btn btn-unlock" 
+                                                                    title="Odblokiraj korisnika"
+                                                                    onclick="return confirm('Odblokiraj korisnika @korisnik.korisnicko_ime?')">
+                                                                <i class="fas fa-unlock"></i>
+                                                            </button>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button type="submit" class="action-btn btn-block" 
+                                                                    title="Blokiraj korisnika"
+                                                                    onclick="return confirm('Blokiraj korisnika @korisnik.korisnicko_ime?')">
+                                                                <i class="fas fa-lock"></i>
+                                                            </button>
+                                                        }
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6" class="empty-state">
+                                            <div class="empty-content">
+                                                <i class="fas fa-users"></i>
+                                                <h4>Nema korisnika</h4>
+                                                <p>Trenutno nema registrovanih korisnika u sistemu.</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Paleta bazirana na #b16189 sa komplementarnim bojama */
+    :root {
+        /* Glavna paleta sa vašom bojom */
+        --primary-rose: #b16189;           /* Vaša boja */
+        --primary-light: #d4a5c7;         /* Svetlija verzija */
+        --primary-dark: #8e4c6b;          /* Tamnija verzija */
+        --primary-subtle: #f6f1f4;        /* Vrlo bleda verzija */
+        
+        /* Komplementarne boje */
+        --sage-green: #61b188;             /* Komplementarna sage green */
+        --sage-light: #a5d4c7;            /* Svetlija sage */
+        --sage-subtle: #f1f6f4;           /* Vrlo bleda sage */
+        
+        --dusty-teal: #618eb1;            /* Dusty teal */
+        --dusty-teal-light: #a5c1d4;      /* Svetliji dusty teal */
+        --dusty-teal-subtle: #f1f4f6;     /* Vrlo bled dusty teal */
+        
+        --warm-gold: #b19561;             /* Warm gold */
+        --warm-gold-light: #d4c7a5;       /* Svetliji warm gold */
+        --warm-gold-subtle: #f6f4f1;      /* Vrlo bled warm gold */
+        
+        /* Dark tones */
+        --primary-dark-bg: #2d3441;       /* Tamni blue-gray */
+        --secondary-dark-bg: #4a5568;     /* Srednji blue-gray */
+        
+        /* Neutral Colors */
+        --white: #ffffff;
+        --light-gray: #f8fafc;
+        --border-color: #e2e8f0;
+        --text-primary: #2d3441;
+        --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+        
+        /* Status Colors */
+        --success-color: var(--sage-green);
+        --warning-color: var(--warm-gold);
+        --danger-color: #dc2626;
+        --info-color: var(--dusty-teal);
+        
+        /* Shadows */
+        --shadow-primary: rgba(177, 97, 137, 0.12);
+        --shadow-sage: rgba(97, 177, 136, 0.12);
+        --shadow-teal: rgba(97, 142, 177, 0.12);
+        --shadow-light: rgba(0, 0, 0, 0.04);
+        --shadow-medium: rgba(0, 0, 0, 0.1);
+    }
+
+    /* Main card */
+    .management-card {
+        background: var(--white);
+        border-radius: 16px;
+        box-shadow: 0 4px 24px var(--shadow-light);
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+    }
+
+    /* Header sa vašom bojom u gradijantu */
+    .card-header {
+        background: linear-gradient(135deg, var(--primary-rose) 0%, var(--primary-dark) 50%, var(--primary-dark-bg) 100%);
+        color: var(--white);
+        padding: 2.5rem 2rem;
+        border: none;
+        position: relative;
+    }
+
+    .card-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--primary-rose);
+        opacity: 0.9;
+    }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+    }
+
+    .page-title {
+        font-size: 1.875rem;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.875rem;
+        letter-spacing: -0.025em;
+    }
+
+    .page-title i {
+        color: var(--primary-light);
+        opacity: 0.95;
+        font-size: 1.75rem;
+    }
+
+    .page-subtitle {
+        margin: 0.6rem 0 0 0;
+        opacity: 0.8;
+        font-size: 1rem;
+        font-weight: 400;
+        color: #cbd5e1;
+    }
+
+    .header-stats {
+        display: flex;
+        gap: 2.5rem;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-number {
+        display: block;
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--primary-light);
+        line-height: 1;
+    }
+
+    .stat-label {
+        display: block;
+        font-size: 0.8rem;
+        opacity: 0.8;
+        text-transform: uppercase;
+        letter-spacing: 0.75px;
+        font-weight: 600;
+        margin-top: 0.25rem;
+    }
+
+    /* Card body */
+    .card-body {
+        padding: 2.5rem;
+        background: var(--white);
+    }
+
+    /* Alerts */
+    .alert {
+        display: flex;
+        align-items: center;
+        gap: 0.875rem;
+        padding: 1.125rem 1.5rem;
+        border-radius: 12px;
+        border: none;
+        margin-bottom: 1.75rem;
+        position: relative;
+        font-weight: 500;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .alert-success {
+        background-color: var(--sage-subtle);
+        color: var(--success-color);
+        border-left: 4px solid var(--success-color);
+    }
+
+    .alert-error {
+        background-color: var(--primary-subtle);
+        color: var(--primary-rose);
+        border-left: 4px solid var(--primary-rose);
+    }
+
+    .btn-close {
+        position: absolute;
+        right: 1.25rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        font-size: 1.125rem;
+        cursor: pointer;
+        opacity: 0.6;
+        transition: opacity 0.2s ease;
+    }
+
+    .btn-close:hover {
+        opacity: 0.9;
+    }
+
+    /* Table wrapper */
+    .table-wrapper {
+        background: var(--white);
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+        box-shadow: 0 2px 12px var(--shadow-primary);
+    }
+
+    /* Table */
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+
+    .data-table thead {
+        background: linear-gradient(135deg, var(--light-gray) 0%, var(--primary-subtle) 100%);
+    }
+
+    .data-table th {
+        padding: 1.375rem 1.25rem;
+        text-align: left;
+        font-weight: 700;
+        color: var(--text-primary);
+        border-bottom: 2px solid var(--border-color);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.75px;
+    }
+
+    .data-table td {
+        padding: 1.375rem 1.25rem;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+        vertical-align: middle;
+    }
+
+    .data-table tbody tr {
+        transition: all 0.25s ease;
+    }
+
+    .data-table tbody tr:hover {
+        background: linear-gradient(135deg, var(--primary-subtle) 0%, var(--sage-subtle) 50%, var(--dusty-teal-subtle) 100%);
+        box-shadow: 0 2px 8px var(--shadow-primary);
+        transform: translateY(-1px);
+    }
+
+    /* User cell sa vašom bojom u avatar-u */
+    .user-cell {
+        display: flex;
+        align-items: center;
+        gap: 1.125rem;
+    }
+
+    .user-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-rose) 0%, var(--primary-light) 100%);
+        color: var(--white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+        box-shadow: 0 3px 12px var(--shadow-primary);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .username {
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 0.975rem;
+    }
+
+    .user-id {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-top: 0.25rem;
+        font-weight: 500;
+    }
+
+    /* Name cell */
+    .full-name {
+        font-weight: 500;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+    }
+
+    .no-data {
+        color: var(--text-muted);
+        font-style: italic;
+    }
+
+    /* Contact cell */
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .contact-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .contact-item i {
+        color: var(--dusty-teal);
+        width: 14px;
+        font-size: 0.8rem;
+        opacity: 0.8;
+    }
+
+    .contact-item a {
+        color: var(--text-primary);
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: color 0.2s ease;
+    }
+
+    .contact-item a:hover {
+        color: var(--dusty-teal);
+        text-decoration: underline;
+    }
+
+    /* Role badges sa harmoničnim bojama */
+    .role-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 24px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: capitalize;
+        letter-spacing: 0.25px;
+    }
+
+    .role-admin {
+        background: linear-gradient(135deg, var(--warm-gold-subtle) 0%, var(--warm-gold-light) 30%);
+        color: var(--warm-gold);
+        border: 1px solid var(--warm-gold-light);
+    }
+
+    .role-user {
+        background: linear-gradient(135deg, var(--sage-subtle) 0%, var(--sage-light) 30%);
+        color: var(--sage-green);
+        border: 1px solid var(--sage-light);
+    }
+
+    .role-guest {
+        background: linear-gradient(135deg, var(--dusty-teal-subtle) 0%, var(--dusty-teal-light) 30%);
+        color: var(--dusty-teal);
+        border: 1px solid var(--dusty-teal-light);
+    }
+
+    .role-undefined {
+        background: linear-gradient(135deg, var(--primary-subtle) 0%, var(--primary-light) 30%);
+        color: var(--primary-rose);
+        border: 1px solid var(--primary-light);
+    }
+
+    /* Status badges */
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 24px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.25px;
+    }
+
+    .status-active {
+        background: linear-gradient(135deg, var(--sage-subtle) 0%, #d1fae5 100%);
+        color: var(--success-color);
+        border: 1px solid var(--sage-light);
+    }
+
+    .status-blocked {
+        background: linear-gradient(135deg, var(--primary-subtle) 0%, #fee2e2 100%);
+        color: var(--primary-rose);
+        border: 1px solid var(--primary-light);
+    }
+
+    /* Actions sa harmoničnim hover efektima */
+    .actions-cell {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+        background: var(--white);
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        font-size: 0.875rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px var(--shadow-medium);
+    }
+
+    .btn-view:hover {
+        background: linear-gradient(135deg, var(--dusty-teal) 0%, var(--info-color) 100%);
+        color: var(--white);
+        border-color: var(--dusty-teal);
+    }
+
+    .btn-edit:hover {
+        background: linear-gradient(135deg, var(--primary-rose) 0%, var(--primary-light) 100%);
+        color: var(--white);
+        border-color: var(--primary-rose);
+    }
+
+    .btn-unlock:hover {
+        background: linear-gradient(135deg, var(--sage-green) 0%, var(--success-color) 100%);
+        color: var(--white);
+        border-color: var(--sage-green);
+    }
+
+    .btn-block:hover {
+        background: linear-gradient(135deg, var(--primary-rose) 0%, var(--primary-dark) 100%);
+        color: var(--white);
+        border-color: var(--primary-rose);
+    }
+
+    /* Empty state */
+    .empty-state {
+        text-align: center;
+        padding: 4.5rem 2rem;
+        background: linear-gradient(135deg, var(--light-gray) 0%, var(--primary-subtle) 50%, var(--sage-subtle) 100%);
+    }
+
+    .empty-content i {
+        font-size: 3.5rem;
+        color: var(--text-muted);
+        margin-bottom: 1.25rem;
+        opacity: 0.6;
+    }
+
+    .empty-content h4 {
+        color: var(--text-primary);
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+        font-size: 1.25rem;
+    }
+
+    .empty-content p {
+        color: var(--text-muted);
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .header-content {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .header-stats {
+            gap: 1.5rem;
+            width: 100%;
+            justify-content: space-around;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .user-cell {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .actions-cell {
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .data-table {
+            font-size: 0.8rem;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1rem 0.75rem;
+        }
+    }
+
+    /* Scrollbar sa vašom bojom */
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .table-wrapper::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-track {
+        background: var(--light-gray);
+        border-radius: 4px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-thumb {
+        background: linear-gradient(90deg, var(--primary-rose), var(--primary-light));
+        border-radius: 4px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(90deg, var(--primary-dark), var(--primary-rose));
+    }
+</style>

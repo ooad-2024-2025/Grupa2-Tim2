@@ -11,7 +11,7 @@ namespace Carisma.Data
         {
         }
 
-        public DbSet<Osoba> Osoba { get; set; }
+        public DbSet<Osoba> Osoba { get; set; } = default;
         public DbSet<Vozilo> Vozila { get; set; }
         public DbSet<Carisma.Models.Podrska> Podrska { get; set; } = default!;
 

@@ -1,49 +1,742 @@
 ﻿@model Carisma.Models.Placanje
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Uredi plaćanje";
 }
 
-<h1>Edit</h1>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Premium Payment Edit Card -->
+            <div class="payment-edit-card">
+                <!-- Dark Rose/Orange Header -->
+                <div class="payment-edit-header">
+                    <div class="header-pattern"></div>
+                    <div class="header-content">
+                        <div class="payment-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="header-info">
+                            <h1 class="edit-title">
+                                <i class="fas fa-edit"></i>
+                                Uredi plaćanje
+                            </h1>
+                            <p class="edit-subtitle">Ažuriranje informacija o plaćanju</p>
+                            <div class="payment-id">
+                                <span class="id-badge">
+                                    <i class="fas fa-hashtag"></i>
+                                    ID: @Model.Id
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-<h4>Placanje</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="iznos" class="control-label"></label>
-                <input asp-for="iznos" class="form-control" />
-                <span asp-validation-for="iznos" class="text-danger"></span>
+                <!-- Form Body -->
+                <div class="payment-edit-body">
+                    <form asp-action="Edit" method="post" class="payment-form">
+                        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div class="row g-4">
+                            <!-- Iznos plaćanja -->
+                            <div class="col-lg-6">
+                                <div class="form-section">
+                                    <div class="section-header amount">
+                                        <div class="section-icon">
+                                            <i class="fas fa-dollar-sign"></i>
+                                        </div>
+                                        <h3 class="section-title">Iznos plaćanja</h3>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label asp-for="iznos" class="form-label">
+                                            <i class="fas fa-money-bill-wave"></i>
+                                            <span>Iznos (KM)</span>
+                                            <span class="required">*</span>
+                                        </label>
+                                        <div class="input-wrapper amount-input">
+                                            <div class="currency-symbol">KM</div>
+                                            <input asp-for="iznos" class="form-control premium amount" 
+                                                   placeholder="0.00" step="0.01" min="0" />
+                                            <div class="input-icon">
+                                                <i class="fas fa-coins"></i>
+                                            </div>
+                                        </div>
+                                        <span asp-validation-for="iznos" class="validation-error"></span>
+                                        <div class="form-help">
+                                            <i class="fas fa-info-circle"></i>
+                                            Unesite iznos u konvertibilnim markama (KM)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Datum plaćanja -->
+                            <div class="col-lg-6">
+                                <div class="form-section">
+                                    <div class="section-header date">
+                                        <div class="section-icon">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </div>
+                                        <h3 class="section-title">Datum plaćanja</h3>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label asp-for="datumPlacanja" class="form-label">
+                                            <i class="fas fa-calendar"></i>
+                                            <span>Datum i vrijeme</span>
+                                            <span class="required">*</span>
+                                        </label>
+                                        <div class="input-wrapper date-input">
+                                            <input asp-for="datumPlacanja" class="form-control premium date" 
+                                                   type="datetime-local" />
+                                            <div class="input-icon">
+                                                <i class="fas fa-clock"></i>
+                                            </div>
+                                        </div>
+                                        <span asp-validation-for="datumPlacanja" class="validation-error"></span>
+                                        <div class="form-help">
+                                            <i class="fas fa-info-circle"></i>
+                                            Odaberite datum i vrijeme izvršavanja plaćanja
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Status plaćanja -->
+                            <div class="col-lg-6">
+                                <div class="form-section">
+                                    <div class="section-header status">
+                                        <div class="section-icon">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                        <h3 class="section-title">Status plaćanja</h3>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label asp-for="statusPlacanja" class="form-label">
+                                            <i class="fas fa-flag"></i>
+                                            <span>Status</span>
+                                            <span class="required">*</span>
+                                        </label>
+                                        <div class="select-wrapper status-select">
+                                            <select asp-for="statusPlacanja" class="form-select premium" 
+                                                    asp-items="Html.GetEnumSelectList<StatusPlacanja>()">
+                                                <option value="">-- Odaberite status --</option>
+                                            </select>
+                                            <div class="select-icon">
+                                                <i class="fas fa-chevron-down"></i>
+                                            </div>
+                                        </div>
+                                        <span asp-validation-for="statusPlacanja" class="validation-error"></span>
+                                        <div class="current-status">
+                                            <i class="fas fa-info-circle"></i>
+                                            Trenutni status: 
+                                            <span class="status-value">@(Model.statusPlacanja.ToString() ?? "Nije postavljen")</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Broj kartice -->
+                            <div class="col-lg-6">
+                                <div class="form-section">
+                                    <div class="section-header card">
+                                        <div class="section-icon">
+                                            <i class="fas fa-credit-card"></i>
+                                        </div>
+                                        <h3 class="section-title">Kartica</h3>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label asp-for="brojKartice" class="form-label">
+                                            <i class="fas fa-credit-card"></i>
+                                            <span>Broj kartice</span>
+                                        </label>
+                                        <div class="input-wrapper card-input">
+                                            <input asp-for="brojKartice" class="form-control premium card" 
+                                                   placeholder="**** **** **** ****" maxlength="19" />
+                                            <div class="input-icon">
+                                                <i class="fas fa-shield-alt"></i>
+                                            </div>
+                                        </div>
+                                        <span asp-validation-for="brojKartice" class="validation-error"></span>
+                                        <div class="form-help security">
+                                            <i class="fas fa-lock"></i>
+                                            Podaci o kartici su sigurno šifrovani
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions Section -->
+                        <div class="actions-section">
+                            <div class="actions-container">
+                                <a asp-action="Index" class="btn-secondary-custom">
+                                    <i class="fas fa-arrow-left"></i>
+                                    <span>Nazad na listu</span>
+                                </a>
+                                
+                                <a asp-action="Details" asp-route-id="@Model.Id" class="btn-outline-custom">
+                                    <i class="fas fa-eye"></i>
+                                    <span>Pregled</span>
+                                </a>
+                                
+                                <button type="submit" class="btn-primary-custom">
+                                    <i class="fas fa-save"></i>
+                                    <span>Spremi izmjene</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="datumPlacanja" class="control-label"></label>
-                <input asp-for="datumPlacanja" class="form-control" />
-                <span asp-validation-for="datumPlacanja" class="text-danger"></span>
-            </div>
-           <div class="form-group">
-    <label asp-for="statusPlacanja" class="control-label"></label>
-    <select asp-for="statusPlacanja" class="form-control" asp-items="Html.GetEnumSelectList<StatusPlacanja>()"></select>
-    <span asp-validation-for="statusPlacanja" class="text-danger"></span>
-</div>
-            <div class="form-group">
-                <label asp-for="brojKartice" class="control-label"></label>
-                <input asp-for="brojKartice" class="form-control" />
-                <span asp-validation-for="brojKartice" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<style>
+    /* Dark Rose & Orange Palette */
+    :root {
+        /* Dark Rose */
+        --dark-rose: #c1617c;             /* Tamna roze */
+        --dark-rose-light: #d48fa8;       /* Svetlija tamna roze */
+        --dark-rose-subtle: #f5f1f3;      /* Vrlo bleda tamna roze */
+        --dark-rose-deep: #a24861;        /* Dublja tamna roze */
+        
+        /* Dark Orange */
+        --dark-orange: #d67537;           /* Tamna narandžasta */
+        --dark-orange-light: #e09b6a;     /* Svetlija tamna narandžasta */
+        --dark-orange-subtle: #f5f2f0;    /* Vrlo bleda tamna narandžasta */
+        --dark-orange-deep: #b8632e;      /* Dublja tamna narandžasta */
+        
+        /* Gradients */
+        --gradient-main: linear-gradient(135deg, var(--dark-rose) 0%, var(--dark-orange) 100%);
+        --gradient-amount: linear-gradient(135deg, var(--dark-rose-deep) 0%, var(--dark-rose) 100%);
+        --gradient-date: linear-gradient(135deg, var(--dark-orange-deep) 0%, var(--dark-orange) 100%);
+        --gradient-status: linear-gradient(135deg, var(--dark-rose) 0%, var(--dark-orange-deep) 100%);
+        --gradient-card: linear-gradient(135deg, var(--dark-orange) 0%, var(--dark-rose-deep) 100%);
+        
+        /* Neutral */
+        --white: #ffffff;
+        --light-gray: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+        --danger-color: #ef4444;
+        
+        /* Shadows */
+        --shadow-main: 0 8px 32px rgba(193, 97, 124, 0.15), 0 4px 16px rgba(214, 117, 55, 0.1);
+        --shadow-rose: 0 4px 20px rgba(193, 97, 124, 0.2);
+        --shadow-orange: 0 4px 20px rgba(214, 117, 55, 0.2);
+        --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+        
+        /* Spacing */
+        --space-xs: 0.25rem;
+        --space-sm: 0.5rem;
+        --space-md: 1rem;
+        --space-lg: 1.5rem;
+        --space-xl: 2rem;
+        --space-2xl: 3rem;
+        
+        /* Radius */
+        --radius-md: 0.5rem;
+        --radius-lg: 0.75rem;
+        --radius-xl: 1rem;
+        --radius-2xl: 1.5rem;
+    }
+
+    /* Main Card */
+    .payment-edit-card {
+        background: var(--white);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-main);
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+        margin-bottom: var(--space-xl);
+    }
+
+    /* Header */
+    .payment-edit-header {
+        position: relative;
+        background: var(--gradient-main);
+        padding: var(--space-2xl);
+        color: var(--white);
+        overflow: hidden;
+    }
+
+    .header-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: var(--space-xl);
+    }
+
+    .payment-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: var(--radius-2xl);
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: var(--white);
+        flex-shrink: 0;
+        box-shadow: var(--shadow-md);
+    }
+
+    .header-info {
+        flex: 1;
+    }
+
+    .edit-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0 0 var(--space-sm) 0;
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        color: var(--white);
+    }
+
+    .edit-subtitle {
+        font-size: 1rem;
+        margin: 0 0 var(--space-md) 0;
+        opacity: 0.9;
+    }
+
+    .id-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-sm);
+        padding: var(--space-sm) var(--space-md);
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: var(--radius-lg);
+        font-size: 0.9rem;
+        font-weight: 600;
+        backdrop-filter: blur(10px);
+    }
+
+    /* Form Body */
+    .payment-edit-body {
+        padding: var(--space-2xl);
+        background: var(--white);
+    }
+
+    /* Validation Summary */
+    .validation-summary {
+        background: linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%);
+        color: var(--danger-color);
+        padding: var(--space-lg);
+        border-radius: var(--radius-lg);
+        border-left: 4px solid var(--danger-color);
+        margin-bottom: var(--space-xl);
+    }
+
+    /* Form Sections */
+    .form-section {
+        background: var(--light-gray);
+        border-radius: var(--radius-xl);
+        padding: var(--space-xl);
+        height: 100%;
+        border: 1px solid var(--gray-200);
+        transition: all 0.3s ease;
+    }
+
+    .form-section:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        margin-bottom: var(--space-xl);
+        padding-bottom: var(--space-lg);
+        border-bottom: 2px solid var(--gray-200);
+    }
+
+    .section-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: var(--white);
+        flex-shrink: 0;
+        box-shadow: var(--shadow-md);
+    }
+
+    .section-header.amount .section-icon {
+        background: var(--gradient-amount);
+    }
+
+    .section-header.date .section-icon {
+        background: var(--gradient-date);
+    }
+
+    .section-header.status .section-icon {
+        background: var(--gradient-status);
+    }
+
+    .section-header.card .section-icon {
+        background: var(--gradient-card);
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    /* Form Groups */
+    .form-group {
+        margin-bottom: var(--space-xl);
+    }
+
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        margin-bottom: var(--space-md);
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .form-label i {
+        width: 16px;
+        color: var(--dark-rose);
+    }
+
+    .required {
+        color: var(--danger-color);
+        font-weight: 700;
+    }
+
+    /* Input Wrappers */
+    .input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .form-control.premium {
+        width: 100%;
+        padding: var(--space-md) 3rem var(--space-md) var(--space-lg);
+        border: 2px solid var(--gray-300);
+        border-radius: var(--radius-lg);
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        background: var(--white);
+    }
+
+    .amount-input .form-control {
+        padding-left: 4rem;
+    }
+
+    .currency-symbol {
+        position: absolute;
+        left: var(--space-md);
+        font-weight: 700;
+        color: var(--dark-rose-deep);
+        z-index: 2;
+    }
+
+    .input-icon {
+        position: absolute;
+        right: var(--space-md);
+        color: var(--text-muted);
+        transition: color 0.3s ease;
+    }
+
+    .form-control.premium:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(193, 97, 124, 0.1);
+    }
+
+    .amount-input .form-control:focus {
+        border-color: var(--dark-rose);
+        background: linear-gradient(135deg, var(--white) 0%, var(--dark-rose-subtle) 100%);
+    }
+
+    .amount-input .form-control:focus + .input-icon {
+        color: var(--dark-rose);
+    }
+
+    .date-input .form-control:focus {
+        border-color: var(--dark-orange);
+        background: linear-gradient(135deg, var(--white) 0%, var(--dark-orange-subtle) 100%);
+    }
+
+    .date-input .form-control:focus + .input-icon {
+        color: var(--dark-orange);
+    }
+
+    .card-input .form-control:focus {
+        border-color: var(--dark-rose);
+        background: linear-gradient(135deg, var(--white) 0%, var(--dark-rose-subtle) 100%);
+    }
+
+    .card-input .form-control:focus + .input-icon {
+        color: var(--dark-rose);
+    }
+
+    /* Select Wrapper */
+    .select-wrapper {
+        position: relative;
+    }
+
+    .form-select.premium {
+        width: 100%;
+        padding: var(--space-md) 3rem var(--space-md) var(--space-lg);
+        border: 2px solid var(--gray-300);
+        border-radius: var(--radius-lg);
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        background: var(--white);
+        appearance: none;
+        cursor: pointer;
+    }
+
+    .status-select .form-select:focus {
+        border-color: var(--dark-rose);
+        box-shadow: 0 0 0 3px rgba(193, 97, 124, 0.1);
+        background: linear-gradient(135deg, var(--white) 0%, var(--dark-rose-subtle) 100%);
+    }
+
+    .select-icon {
+        position: absolute;
+        right: var(--space-md);
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        pointer-events: none;
+        transition: color 0.3s ease;
+    }
+
+    .status-select .form-select:focus + .select-icon {
+        color: var(--dark-rose);
+    }
+
+    /* Validation & Help */
+    .validation-error {
+        display: block;
+        color: var(--danger-color);
+        font-size: 0.8rem;
+        margin-top: var(--space-sm);
+        font-weight: 600;
+    }
+
+    .form-help {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-top: var(--space-sm);
+        padding: var(--space-sm) var(--space-md);
+        background: var(--gray-100);
+        border-radius: var(--radius-md);
+    }
+
+    .form-help.security {
+        color: var(--dark-rose-deep);
+        background: var(--dark-rose-subtle);
+    }
+
+    .form-help i {
+        color: var(--dark-rose);
+        width: 12px;
+    }
+
+    /* Current Status */
+    .current-status {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-top: var(--space-sm);
+        padding: var(--space-sm) var(--space-md);
+        background: var(--dark-rose-subtle);
+        border-radius: var(--radius-md);
+        border-left: 3px solid var(--dark-rose);
+    }
+
+    .status-value {
+        font-weight: 600;
+        color: var(--dark-rose);
+    }
+
+    /* Actions */
+    .actions-section {
+        margin-top: var(--space-2xl);
+        padding-top: var(--space-xl);
+        border-top: 3px solid;
+        border-image: var(--gradient-main) 1;
+    }
+
+    .actions-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: var(--space-lg);
+    }
+
+    .btn-secondary-custom,
+    .btn-outline-custom,
+    .btn-primary-custom {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        padding: var(--space-md) var(--space-xl);
+        border-radius: var(--radius-lg);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        border: 2px solid;
+        cursor: pointer;
+        min-width: 140px;
+        justify-content: center;
+    }
+
+    .btn-secondary-custom {
+        background: var(--white);
+        color: var(--text-secondary);
+        border-color: var(--gray-300);
+    }
+
+    .btn-secondary-custom:hover {
+        background: var(--dark-orange-subtle);
+        color: var(--text-primary);
+        border-color: var(--dark-orange);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-orange);
+    }
+
+    .btn-outline-custom {
+        background: var(--white);
+        color: var(--dark-orange);
+        border-color: var(--dark-orange);
+    }
+
+    .btn-outline-custom:hover {
+        background: var(--gradient-date);
+        color: var(--white);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-orange);
+    }
+
+    .btn-primary-custom {
+        background: var(--gradient-main);
+        color: var(--white);
+        border-color: var(--dark-rose);
+    }
+
+    .btn-primary-custom:hover {
+        background: var(--gradient-status);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-main);
+    }
+
+    /* Card Number Formatting */
+    .card-input input {
+        font-family: 'Courier New', monospace;
+        letter-spacing: 1px;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .header-content {
+            flex-direction: column;
+            text-align: center;
+            gap: var(--space-lg);
+        }
+
+        .edit-title {
+            font-size: 1.75rem;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .payment-edit-body {
+            padding: var(--space-xl);
+        }
+
+        .form-section {
+            padding: var(--space-lg);
+        }
+
+        .actions-container {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .btn-secondary-custom,
+        .btn-outline-custom,
+        .btn-primary-custom {
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+    }
+</style>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Format card number input
+        document.querySelector('input[name="brojKartice"]').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            if (formattedValue !== e.target.value) {
+                e.target.value = formattedValue;
+            }
+        });
+
+        // Set current date as default if empty
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.querySelector('input[name="datumPlacanja"]');
+            if (!dateInput.value) {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                
+                dateInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+            }
+        });
+    </script>
 }

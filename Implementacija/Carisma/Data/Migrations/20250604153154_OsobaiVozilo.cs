@@ -43,6 +43,7 @@ namespace Carisma.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Vozilo", x => x.Id);
+                    table.PrimaryKey("PK_Vozilo", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Vozilo_Osoba_OsobaId",
                         column: x => x.OsobaId,
