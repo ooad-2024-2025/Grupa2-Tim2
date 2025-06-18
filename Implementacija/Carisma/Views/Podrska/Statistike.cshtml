@@ -1,0 +1,151 @@
+﻿@{
+    ViewData["Title"] = "Statistike podrške";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="text-primary">
+                        <i class="fas fa-chart-bar me-2"></i>
+                        Statistike podrške
+                    </h2>
+                    <p class="text-muted mb-0">Pregled performansi i statusa zahtjeva</p>
+                </div>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>
+                    Nazad na listu
+                </a>
+            </div>
+
+            <!-- Glavne statistike -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-white bg-primary h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-tickets-alt fa-3x mb-3"></i>
+                            <h3 class="card-title">@Model.UkupnoZahtjeva</h3>
+                            <p class="card-text">Ukupno zahtjeva</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-info h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-folder-open fa-3x mb-3"></i>
+                            <h3 class="card-title">@Model.OtvoreniZahtjevi</h3>
+                            <p class="card-text">Otvoreni zahtjevi</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-warning h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-cogs fa-3x mb-3"></i>
+                            <h3 class="card-title">@Model.ZahtjeviUObradi</h3>
+                            <p class="card-text">U obradi</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-success h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-check-circle fa-3x mb-3"></i>
+                            <h3 class="card-title">@Model.ZatvorenikZahtjevi</h3>
+                            <p class="card-text">Zatvoreni</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dodatne statistike -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-danger">
+                        <div class="card-header bg-danger text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Kritični zahtjevi
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <h2 class="text-danger">@Model.KriticniZahtjevi</h2>
+                            <p class="text-muted">Zahtjevi sa kritičnim prioritetom koji nisu zatvoreni</p>
+                            @if (Model.KriticniZahtjevi > 0)
+                            {
+                                <div class="alert alert-warning small">
+                                    <i class="fas fa-clock me-1"></i>
+                                    Trebaju hitnu pažnju (odgovor do 2 sata)
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-warning">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0">
+                                <i class="fas fa-star me-2"></i>
+                                Prosječna ocjena
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <h2 class="text-warning">@Model.ProsjecnaOcjena.ToString("F1")</h2>
+                            <div class="mb-2">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <i class="fas fa-star fa-lg @(i <= Math.Round(Model.ProsjecnaOcjena) ? "text-warning" : "text-muted")"></i>
+                                }
+                            </div>
+                            <p class="text-muted">Zadovoljstvo korisnika našim uslugama</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dodatne informacije -->
+            <div class="card mt-4 shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Objašnjenja
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary">Prioriteti zahtjeva:</h6>
+                            <ul class="list-unstyled">
+                                <li><span class="badge bg-success me-2">🟢</span> Niska - Do 3 dana</li>
+                                <li><span class="badge bg-primary me-2">🔵</span> Srednja - Do 24h</li>
+                                <li><span class="badge bg-warning me-2">🟡</span> Visoka - Do 8h</li>
+                                <li><span class="badge bg-danger me-2">🔴</span> Kritična - Do 2h</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-primary">Statusi zahtjeva:</h6>
+                            <ul class="list-unstyled">
+                                <li><span class="badge bg-info me-2">🔵</span> Otvoren - Čeka obradu</li>
+                                <li><span class="badge bg-warning me-2">🟡</span> U obradi - Tim radi na rješenju</li>
+                                <li><span class="badge bg-secondary me-2">⏳</span> Čeka odgovor - Čeka povratnu informaciju</li>
+                                <li><span class="badge bg-success me-2">✅</span> Zatvoren - Riješen zahtjev</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.2s ease-in-out;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+    }
+</style>

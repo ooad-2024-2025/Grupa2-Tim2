@@ -66,6 +66,34 @@
                 </div>
             </div>
 
+            <!-- Success/Error poruke -->
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (TempData["Info"] != null)
+            {
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>
+                    @TempData["Info"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
             <!-- NOVA NOTIFIKACIJA ZA NOVI ODGOVOR -->
             @if (Model.ImaNoviOdgovor && !User.IsInRole("Podrska") && !User.IsInRole("Administrator"))
             {
@@ -99,6 +127,12 @@
                             <small class="text-muted">
                                 <i class="fas fa-calendar me-1"></i>
                                 Postavljeno: @Model.DatumPostavljanja?.ToString("dd.MM.yyyy HH:mm")
+                                @if (Model.IsRegisteredUser)
+                                {
+                                    <br>
+                                    <i class="fas fa-user-check me-1 text-success"></i>
+                                    <span class="text-success">Registrovani korisnik</span>
+                                }
                             </small>
                         </div>
                         <div class="card-body">
@@ -156,14 +190,17 @@
                                         
                                         <div class="mb-3">
                                             <label class="form-label">Ocjena (1-5 zvjezdica):</label>
-                                            <div class="rating" id="starRating">
+                                            <div class="star-rating" id="starRating">
                                                 @for (int i = 1; i <= 5; i++)
                                                 {
-                                                    <input type="radio" name="ocjena" value="@i" id="star@i" required />
-                                                    <label for="star@i" class="star" data-value="@i">
+                                                    <span class="star" data-rating="@i">
                                                         <i class="fas fa-star"></i>
-                                                    </label>
+                                                    </span>
                                                 }
+                                            </div>
+                                            <input type="hidden" name="ocjena" id="selectedRating" required />
+                                            <div class="invalid-feedback" id="ratingError">
+                                                Molimo odaberite ocjenu.
                                             </div>
                                         </div>
                                         
@@ -173,7 +210,7 @@
                                         </div>
                                         
                                         <div class="d-flex gap-2">
-                                            <button type="submit" class="btn btn-success @(Model.ImaNoviOdgovor ? "pulse" : "")">
+                                            <button type="submit" class="btn btn-success @(Model.ImaNoviOdgovor ? "pulse" : "")" id="submitRating">
                                                 <i class="fas fa-check me-1"></i>
                                                 Pošalji ocjenu
                                             </button>
@@ -200,11 +237,13 @@
                                 <div class="card-body">
                                     <div class="mb-2">
                                         <strong>Ocjena:</strong>
-                                        @for (int i = 1; i <= 5; i++)
-                                        {
-                                            <i class="fas fa-star @(i <= Model.OcjenaKorisnika ? "text-warning" : "text-muted")"></i>
-                                        }
-                                        (@Model.OcjenaKorisnika/5)
+                                        <div class="star-display d-inline-block ms-2">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                <i class="fas fa-star @(i <= Model.OcjenaKorisnika ? "text-warning" : "text-muted")"></i>
+                                            }
+                                        </div>
+                                        <span class="ms-2 text-muted">(@Model.OcjenaKorisnika/5)</span>
                                     </div>
                                     @if (!string.IsNullOrEmpty(Model.KomentarOcjene))
                                     {
@@ -287,6 +326,24 @@
                                     <dt class="col-sm-6">Odgovoreno:</dt>
                                     <dd class="col-sm-6">@Model.DatumOdgovora?.ToString("dd.MM.yyyy")</dd>
                                 }
+
+                                <dt class="col-sm-6">Tip korisnika:</dt>
+                                <dd class="col-sm-6">
+                                    @if (Model.IsRegisteredUser)
+                                    {
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-user-check me-1"></i>
+                                            Registrovan
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+                                            <i class="fas fa-user-times me-1"></i>
+                                            Neregistrovan
+                                        </span>
+                                    }
+                                </dd>
                             </dl>
                         </div>
                     </div>
@@ -324,37 +381,41 @@
 </form>
 
 <style>
-    /* ISPRAVKA ZA ZVJEZDICE - NOVI PRISTUP */
-    .rating {
+    /* POTPUNO NOVA IMPLEMENTACIJA ZVJEZDICA */
+    .star-rating {
         display: flex;
-        justify-content: flex-start;
-        gap: 5px;
-        margin: 10px 0;
+        gap: 8px;
+        margin: 15px 0;
+        align-items: center;
     }
     
-    .rating input {
-        display: none;
-    }
-    
-    .rating .star {
+    .star-rating .star {
         cursor: pointer;
-        font-size: 2rem;
-        color: #ddd;
+        font-size: 2.5rem;
+        color: #e0e0e0;
         transition: all 0.3s ease;
+        position: relative;
         transform: scale(1);
     }
     
-    .rating .star:hover {
-        transform: scale(1.1);
+    .star-rating .star:hover {
+        transform: scale(1.2);
         color: #ffc107;
+        text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
     }
     
-    .rating .star.active {
+    .star-rating .star.active {
         color: #ffc107;
+        text-shadow: 0 0 8px rgba(255, 193, 7, 0.4);
     }
     
-    .rating .star.hover {
+    .star-rating .star.hover {
         color: #ffc107;
+    }
+
+    .star-display .fa-star {
+        font-size: 1.2rem;
+        margin-right: 2px;
     }
 
     /* Animacije za notifikacije */
@@ -403,71 +464,133 @@
     .btn.pulse {
         box-shadow: 0 0 15px rgba(25, 135, 84, 0.3);
     }
+
+    /* Error stanje za zvjezdice */
+    .star-rating.error .star {
+        color: #dc3545;
+        animation: shake 0.5s ease-in-out;
+    }
+
+    @@keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
 </style>
 
 @section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <script>
-        // NOVA LOGIKA ZA ZVJEZDICE
         document.addEventListener('DOMContentLoaded', function() {
-            const rating = document.getElementById('starRating');
-            if (rating) {
-                const stars = rating.querySelectorAll('.star');
-                const inputs = rating.querySelectorAll('input[type="radio"]');
-                let selectedRating = 0;
+            const starRating = document.getElementById('starRating');
+            const selectedRatingInput = document.getElementById('selectedRating');
+            const submitButton = document.getElementById('submitRating');
+            const ratingForm = document.getElementById('ratingForm');
+            const ratingError = document.getElementById('ratingError');
+            
+            if (starRating) {
+                const stars = starRating.querySelectorAll('.star');
+                let currentRating = 0;
+                let hoverRating = 0;
 
-                // Funkcija za ažuriranje prikaza zvjezdica
-                function updateStars(rating) {
+              
+                function updateStars(rating, isHover = false) {
                     stars.forEach((star, index) => {
-                        const starValue = parseInt(star.getAttribute('data-value'));
-                        if (starValue <= rating) {
-                            star.classList.add('active');
+                        const starValue = parseInt(star.getAttribute('data-rating'));
+                        star.classList.remove('active', 'hover');
+                        
+                        if (isHover) {
+                            if (starValue <= rating) {
+                                star.classList.add('hover');
+                            }
                         } else {
-                            star.classList.remove('active');
+                            if (starValue <= rating) {
+                                star.classList.add('active');
+                            }
                         }
                     });
                 }
 
-                // Hover efekat
+              
                 stars.forEach((star, index) => {
+                    const starValue = parseInt(star.getAttribute('data-rating'));
+
                     star.addEventListener('mouseenter', function() {
-                        const hoverValue = parseInt(this.getAttribute('data-value'));
-                        stars.forEach((s, i) => {
-                            const starValue = parseInt(s.getAttribute('data-value'));
-                            if (starValue <= hoverValue) {
-                                s.classList.add('hover');
-                            } else {
-                                s.classList.remove('hover');
-                            }
-                        });
+                        hoverRating = starValue;
+                        updateStars(hoverRating, true);
                     });
 
-                    star.addEventListener('mouseleave', function() {
-                        stars.forEach(s => s.classList.remove('hover'));
-                        updateStars(selectedRating);
-                    });
-
-                    // Klik na zvjezdicu
+                
                     star.addEventListener('click', function() {
-                        selectedRating = parseInt(this.getAttribute('data-value'));
+                        currentRating = starValue;
+                        selectedRatingInput.value = currentRating;
+                        updateStars(currentRating, false);
                         
-                        // Postavi odgovarajući radio button
-                        const input = document.getElementById('star' + selectedRating);
-                        if (input) {
-                            input.checked = true;
-                        }
+                       
+                        starRating.classList.remove('error');
+                        ratingError.style.display = 'none';
                         
-                        updateStars(selectedRating);
                         
-                        // Dodaj mali efekat
-                        this.style.transform = 'scale(1.3)';
+                        this.style.transform = 'scale(1.4)';
                         setTimeout(() => {
                             this.style.transform = 'scale(1)';
                         }, 200);
+                        
+                        console.log('Selektovana ocjena:', currentRating);
                     });
                 });
 
-                // Inicijalno stanje
+                starRating.addEventListener('mouseleave', function() {
+                    updateStars(currentRating, false);
+                });
+
+           
                 updateStars(0);
+            }
+
+           
+            if (ratingForm) {
+                ratingForm.addEventListener('submit', function(e) {
+                    const rating = selectedRatingInput.value;
+                    
+                    if (!rating || rating < 1 || rating > 5) {
+                        e.preventDefault();
+                        
+                        // Pokaži error
+                        starRating.classList.add('error');
+                        ratingError.style.display = 'block';
+                        
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Nedostaje ocjena',
+                            text: 'Molimo vas da odaberete ocjenu (1-5 zvjezdica) prije slanja.',
+                            confirmButtonText: 'U redu',
+                            confirmButtonColor: '#ff66cc'
+                        });
+                        
+                        return false;
+                    }
+                    
+                    // Potvrda slanja
+                    e.preventDefault();
+                    
+                    Swal.fire({
+                        title: 'Potvrda ocjene',
+                        text: `Da li želite poslati ocjenu od ${rating} zvjezdica?`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Da, pošalji',
+                        cancelButtonText: 'Odustani',
+                        confirmButtonColor: '#28a745',
+                        cancelButtonColor: '#6c757d'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Submituj formu
+                            ratingForm.submit();
+                        }
+                    });
+                });
             }
         });
 
@@ -488,44 +611,15 @@
             });
         }
 
-        // Validacija forme za ocjenjivanje
-        document.getElementById('ratingForm')?.addEventListener('submit', function(e) {
-            const selectedRating = document.querySelector('input[name="ocjena"]:checked');
-            if (!selectedRating) {
-                e.preventDefault();
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Nedostaje ocjena',
-                    text: 'Molimo vas da odaberete ocjenu (1-5 zvjezdica) prije slanja.',
-                    confirmButtonText: 'U redu'
-                });
-                return false;
-            }
+        // Auto-dismiss alert poruka
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert-dismissible');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 5000);
+            });
         });
-
-        // Prikaži poruke o uspjehu
-        @if (TempData["Success"] != null)
-        {
-            <text>
-            Swal.fire({
-                icon: 'success',
-                title: 'Uspjeh!',
-                text: '@TempData["Success"]',
-                confirmButtonText: 'U redu'
-            });
-            </text>
-        }
-
-        @if (TempData["Info"] != null)
-        {
-            <text>
-            Swal.fire({
-                icon: 'info',
-                title: 'Informacija',
-                text: '@TempData["Info"]',
-                confirmButtonText: 'U redu'
-            });
-            </text>
-        }
     </script>
 }

@@ -32,20 +32,21 @@
                         <i class="fas fa-user me-2 text-primary"></i>
                         Pitanje korisnika
                     </h5>
+                    <small class="text-muted">
+                        @if (Model.IsRegisteredUser)
+                        {
+                            <i class="fas fa-user-check me-1 text-success"></i>
+                            <span class="text-success">Registrovani korisnik</span>
+                        }
+                        else
+                        {
+                            <i class="fas fa-user-times me-1 text-secondary"></i>
+                            <span class="text-secondary">Neregistrovani korisnik (legacy zahtjev)</span>
+                        }
+                    </small>
                 </div>
                 <div class="card-body">
                     <p class="mb-0">@Model.Pitanje</p>
-                    @if (!string.IsNullOrEmpty(Model.Email))
-                    {
-                        <hr>
-                        <small class="text-muted">
-                            <strong>Kontakt:</strong> @Model.Email
-                            @if (!string.IsNullOrEmpty(Model.ImePrezime))
-                            {
-                                <span> | <strong>Ime:</strong> @Model.ImePrezime</span>
-                            }
-                        </small>
-                    }
                 </div>
             </div>
 
@@ -65,8 +66,6 @@
                         <input type="hidden" asp-for="DatumPostavljanja" />
                         <input type="hidden" asp-for="KorisnikId" />
                         <input type="hidden" asp-for="Hitnost" />
-                        <input type="hidden" asp-for="Email" />
-                        <input type="hidden" asp-for="ImePrezime" />
                         <input type="hidden" asp-for="PodrskaKorisnikId" />
                         <input type="hidden" asp-for="DatumOdgovora" />
                         <input type="hidden" asp-for="ImaNoviOdgovor" />
@@ -146,11 +145,17 @@
                             <strong>Tip korisnika:</strong>
                             @if (Model.IsRegisteredUser)
                             {
-                                <span class="badge bg-primary">Registrovani korisnik</span>
+                                <span class="badge bg-success">
+                                    <i class="fas fa-user-check me-1"></i>
+                                    Registrovani korisnik
+                                </span>
                             }
                             else
                             {
-                                <span class="badge bg-secondary">Neregistrovani korisnik</span>
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-user-times me-1"></i>
+                                    Legacy zahtjev
+                                </span>
                             }
                         </div>
                         <div class="col-md-6">
@@ -160,6 +165,31 @@
                             </span>
                         </div>
                     </div>
+                    @if (Model.DatumOdgovora.HasValue)
+                    {
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Datum odgovora:</strong>
+                                @Model.DatumOdgovora?.ToString("dd.MM.yyyy")
+                            </div>
+                            <div class="col-md-6">
+                                @if (Model.OcjenaKorisnika.HasValue)
+                                {
+                                    <strong>Ocjena korisnika:</strong>
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <i class="fas fa-star @(i <= Model.OcjenaKorisnika ? "text-warning" : "text-muted")"></i>
+                                    }
+                                    <text>(@Model.OcjenaKorisnika/5)</text>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Još nije ocijenjeno</span>
+                                }
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>

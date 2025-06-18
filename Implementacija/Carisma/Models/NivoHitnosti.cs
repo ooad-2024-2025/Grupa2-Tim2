@@ -5,12 +5,12 @@ namespace Carisma.Models
     public enum NivoHitnosti
     {
         [Display(Name = "Niska")]
-        Niska = 1,
+        Niska = 0,
         [Display(Name = "Srednja")]
-        Srednja = 2,
+        Srednja = 1,
         [Display(Name = "Visoka")]
-        Visoka = 3,
+        Visoka = 2,
         [Display(Name = "Kritična")]
-        Kriticna = 4
+        Kriticna = 3
     }
 }
