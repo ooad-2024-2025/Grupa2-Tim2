@@ -37,5 +37,5 @@ Initial Catalog=db_ab9fc3_ooadtimm
 
 User_id=db_ab9fc3_ooadtimm_admin 
 
-Password=Ooad2025
+Password=OOAD2025
 
