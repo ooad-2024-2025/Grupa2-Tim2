@@ -7,9 +7,9 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-10">
-            <!-- Premium Edit Card -->
+            <!-- Premijum  Edit kartica -->
             <div class="premium-edit-card">
-                <!-- Enhanced Header -->
+                <!-- prošireno zaglavlje -->
                 <div class="premium-edit-header">
                     <div class="header-pattern"></div>
                     <div class="header-content">
@@ -42,7 +42,7 @@
                     </div>
                 </div>
 
-                <!-- Enhanced Notifications -->
+                <!-- poboljšane notifikacije -->
                 <div class="notifications-container">
                     @if (TempData["Greska"] != null)
                     {
@@ -77,7 +77,7 @@
                     }
                 </div>
 
-                <!-- Premium Form Body -->
+                <!-- glavni deo premuim forme -->
                 <div class="premium-edit-body">
                     <form asp-action="Edit" method="post" class="premium-form">
                         <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
@@ -317,7 +317,7 @@
     /* Elegantna paleta sa #b16189 */
     :root {
         /* Glavne boje bazirane na #b16189 */
-        --primary-rose: #b16189;           /* Vaša boja */
+        --primary-rose: #b16189;           /* glavna boja */
         --primary-light: #d4a5c7;         /* Svetlija verzija */
         --primary-dark: #8e4c6b;          /* Tamnija verzija */
         --primary-subtle: #f6f1f4;        /* Vrlo bleda verzija */
@@ -402,7 +402,7 @@
         --space-2xl: 3rem;
     }
 
-    /* Main Premium Card */
+    
     .premium-edit-card {
         background: var(--white);
         border-radius: var(--radius-2xl);
@@ -412,7 +412,7 @@
         margin-bottom: var(--space-xl);
     }
 
-    /* Premium Header */
+    
     .premium-edit-header {
         position: relative;
         background: var(--gradient-primary);
@@ -520,7 +520,7 @@
         border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    /* Enhanced Notifications */
+    
     .notifications-container {
         padding: 0 var(--space-xl) var(--space-lg) var(--space-xl);
     }
@@ -611,7 +611,7 @@
         color: var(--text-primary);
     }
 
-    /* Premium Form Body */
+    
     .premium-edit-body {
         padding: var(--space-2xl);
         background: var(--cream);
@@ -621,7 +621,6 @@
         max-width: 100%;
     }
 
-    /* Validation Summary */
     .validation-summary {
         background: linear-gradient(135deg, var(--error-light) 0%, #fef2f2 100%);
         color: var(--error-dark);
@@ -632,7 +631,7 @@
         box-shadow: var(--shadow-primary);
     }
 
-    /* Form Sections */
+    
     .form-section {
         background: var(--white);
         border-radius: var(--radius-xl);
@@ -686,7 +685,7 @@
         margin: 0;
     }
 
-    /* Form Groups */
+    
     .form-group {
         margin-bottom: var(--space-xl);
     }
@@ -711,7 +710,7 @@
         font-weight: 700;
     }
 
-    /* Input Wrapper */
+    
     .input-wrapper {
         position: relative;
     }
@@ -746,7 +745,7 @@
         color: var(--primary-rose);
     }
 
-    /* Select Wrapper */
+    
     .select-wrapper {
         position: relative;
     }
@@ -784,7 +783,7 @@
         color: var(--secondary-teal);
     }
 
-    /* Validation Errors */
+    
     .validation-error {
         display: block;
         color: var(--error-main);
@@ -793,7 +792,7 @@
         font-weight: 600;
     }
 
-    /* Form Help */
+    
     .form-help {
         display: flex;
         align-items: center;
@@ -822,7 +821,7 @@
         color: var(--warning-main);
     }
 
-    /* Current Role */
+    
     .current-role {
         display: flex;
         align-items: center;
@@ -841,7 +840,7 @@
         color: var(--info-dark);
     }
 
-    /* Readonly Field */
+    
     .readonly-field {
         margin-top: var(--space-sm);
     }
@@ -884,7 +883,7 @@
         color: var(--text-muted);
     }
 
-    /* Switch Container */
+    
     .switch-container {
         margin-top: var(--space-sm);
     }
@@ -997,7 +996,7 @@
         color: var(--error-dark);
     }
 
-    /* Info Cards */
+    
     .info-cards {
         display: flex;
         flex-direction: column;
@@ -1065,7 +1064,7 @@
         color: var(--text-primary);
     }
 
-    /* Actions Section */
+    
     .actions-section {
         margin-top: var(--space-2xl);
         padding-top: var(--space-xl);
@@ -1088,7 +1087,7 @@
         align-items: center;
     }
 
-    /* Premium Buttons */
+    
     .btn-secondary-custom,
     .btn-outline-custom,
     .btn-primary-custom {
@@ -1166,7 +1165,7 @@
         box-shadow: var(--shadow-soft);
     }
 
-    /* Animations */
+    /* Animacije */
     @@keyframes slideInDown {
         from {
             opacity: 0;
@@ -1178,7 +1177,7 @@
         }
     }
 
-    /* Responsive Design */
+    /* za prilagodjavanje ekranima */
     @@media (max-width: 768px) {
         .premium-edit-header {
             padding: var(--space-xl);

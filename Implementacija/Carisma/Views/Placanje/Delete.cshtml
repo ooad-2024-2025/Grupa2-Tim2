@@ -7,9 +7,9 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <!-- Premium Delete Confirmation Card -->
+            <!-- Premium kartica za potvrdu brisanja --> 
             <div class="delete-confirmation-card">
-                <!-- Warning Header -->
+                <!-- zaglavlje za upozorenje -->
                 <div class="delete-header">
                     <div class="header-pattern"></div>
                     <div class="header-content">
@@ -30,7 +30,7 @@
                     </div>
                 </div>
 
-                <!-- Payment Details Preview -->
+                <!-- Pregled detalja placanja -->
                 <div class="delete-body">
                     <div class="payment-preview">
                         <div class="preview-header">
@@ -45,7 +45,7 @@
 
                         <div class="preview-content">
                             <div class="row g-4">
-                                <!-- Payment Summary -->
+                                <!-- Podaci o placanju -->
                                 <div class="col-lg-6">
                                     <div class="detail-section financial">
                                         <div class="section-header">
@@ -108,7 +108,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Transaction Details -->
+                                <!-- transakcijski detalji -->
                                 <div class="col-lg-6">
                                     <div class="detail-section transaction">
                                         <div class="section-header">
@@ -215,13 +215,13 @@
 <style>
     /* Delete Confirmation Theme - Glavna boja: #b16189 */
     :root {
-        /* Vaša glavna pink nijansa #b16189 */
-        --primary-rose: #b16189;           /* Vaša glavna boja */
+        /*  glavna pink nijansa #b16189 */
+        --primary-rose: #b16189;           /*  glavna boja */
         --primary-rose-light: #d4a5c7;    /* Svetlija verzija */
         --primary-rose-dark: #8e4c6b;     /* Tamnija verzija */
         --primary-rose-subtle: #f5f1f3;   /* Vrlo bleda */
         
-        /* Warning/Danger colors */
+        /* boje za upozorenja */
         --danger-red: #dc2626;
         --danger-light: #fef2f2;
         --danger-dark: #991b1b;
@@ -250,20 +250,20 @@
         --gray-700: #334155;
         --gray-800: #1e293b;
         
-        /* Text colors */
+        /* boje za tekst */
         --text-primary: #1e293b;
         --text-secondary: #475569;
         --text-muted: #64748b;
         --text-inverse: #ffffff;
         
-        /* Gradients */
+        /* Gradijenti */
         --gradient-warning: linear-gradient(135deg, var(--danger-red) 0%, var(--warning-yellow) 100%);
         --gradient-danger: linear-gradient(135deg, var(--danger-red) 0%, var(--danger-dark) 100%);
         --gradient-primary: linear-gradient(135deg, var(--primary-rose) 0%, var(--primary-rose-light) 100%);
         --gradient-success: linear-gradient(135deg, var(--success-green) 0%, #059669 100%);
         --gradient-pending: linear-gradient(135deg, var(--pending-blue) 0%, var(--pending-dark) 100%);
         
-        /* Shadows */
+        /* Senke */
         --shadow-danger: 0 4px 20px rgba(220, 38, 38, 0.2);
         --shadow-warning: 0 4px 20px rgba(245, 158, 11, 0.15);
         --shadow-primary: 0 4px 20px rgba(177, 97, 137, 0.15);
@@ -271,7 +271,7 @@
         --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
         --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         
-        /* Spacing */
+        /* razmaci */
         --space-xs: 0.25rem;
         --space-sm: 0.5rem;
         --space-md: 1rem;
@@ -286,7 +286,7 @@
         --radius-2xl: 1.5rem;
     }
 
-    /* Main Card */
+    
     .delete-confirmation-card {
         background: var(--white);
         border-radius: var(--radius-2xl);
@@ -296,7 +296,7 @@
         margin-bottom: var(--space-xl);
     }
 
-    /* Warning Header */
+    
     .delete-header {
         position: relative;
         background: var(--gradient-warning);
@@ -374,13 +374,13 @@
         backdrop-filter: blur(10px);
     }
 
-    /* Delete Body */
+    
     .delete-body {
         padding: var(--space-2xl);
         background: var(--white);
     }
 
-    /* Payment Preview */
+    
     .payment-preview {
         background: var(--light-gray);
         border-radius: var(--radius-xl);
@@ -503,7 +503,7 @@
         padding-left: var(--space-lg);
     }
 
-    /* Amount Display */
+    
     .detail-value.amount {
         display: flex;
         align-items: baseline;
@@ -527,7 +527,7 @@
         font-family: 'Courier New', monospace;
     }
 
-    /* Status Indicators */
+    
     .status-indicator {
         display: inline-flex;
         align-items: center;
@@ -563,7 +563,7 @@
         border-color: var(--warning-yellow);
     }
 
-    /* Date Display */
+    
     .detail-value.date {
         padding: var(--space-md);
         background: var(--gray-100);
@@ -588,7 +588,7 @@
         font-family: 'Courier New', monospace;
     }
 
-    /* Card Preview */
+    
     .card-preview {
         display: flex;
         align-items: center;
@@ -623,7 +623,7 @@
         font-style: italic;
     }
 
-    /* Warning Notice */
+   
     .warning-notice {
         background: linear-gradient(135deg, var(--warning-light) 0%, #fef3c7 100%);
         border: 2px solid var(--warning-yellow);
@@ -678,7 +678,7 @@
         line-height: 1.4;
     }
 
-    /* Actions */
+    
     .actions-section {
         padding-top: var(--space-xl);
         border-top: 2px solid var(--gray-200);
@@ -777,7 +777,7 @@
         margin: 0;
     }
 
-    /* Animations */
+    /* Aniimacije */
     @@keyframes pulse-warning {
         0%, 100% {
             transform: scale(1);
@@ -789,7 +789,7 @@
         }
     }
 
-    /* Responsive */
+    /* za prilagodjavanje */
     @@media (max-width: 768px) {
         .header-content {
             flex-direction: column;

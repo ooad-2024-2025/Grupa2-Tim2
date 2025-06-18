@@ -7,9 +7,9 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <!-- Premium Payments Management Card -->
+            <!-- Premium kartica za upravljanje placanjima -->
             <div class="payments-management-card">
-                <!-- Enhanced Header -->
+                <!-- zaglavlje -->
                 <div class="payments-header">
                     <div class="header-pattern"></div>
                     <div class="header-content">
@@ -25,7 +25,7 @@
                             </div>
                         </div>
 
-                        <!-- Enhanced Statistics Dashboard -->
+                        <!-- za statistiku dashboard -->
                         <div class="stats-dashboard">
                             <div class="stat-card total">
                                 <div class="stat-icon">
@@ -73,7 +73,7 @@
                     </div>
                 </div>
 
-                <!-- Premium Data Table -->
+                
                 <div class="payments-table-container">
                     <div class="table-wrapper">
                         <table class="payments-table">
@@ -94,7 +94,7 @@
                                     @foreach (var item in Model)
                                     {
                                         <tr class="payment-row">
-                                            <!-- Payment ID -->
+                                            <!-- Placanje ID -->
                                             <td>
                                                 <div class="payment-id-cell">
                                                     <div class="payment-icon">
@@ -107,7 +107,7 @@
                                                 </div>
                                             </td>
 
-                                            <!-- Amount -->
+                                            <!-- Kolicina -->
                                             <td>
                                                 <div class="amount-cell">
                                                     <span class="amount-value">@item.iznos.ToString("C")</span>
@@ -118,7 +118,7 @@
                                                 </div>
                                             </td>
 
-                                            <!-- Date -->
+                                            <!-- Datum -->
                                             <td>
                                                 <div class="date-cell">
                                                     <div class="date-main">
@@ -177,7 +177,7 @@
                                                 </div>
                                             </td>
 
-                                            <!-- Card Number -->
+                                            <!-- Broj kartice -->
                                             <td>
                                                 <div class="card-cell">
                                                     @if (!string.IsNullOrEmpty(item.brojKartice))
@@ -199,7 +199,7 @@
                                                 </div>
                                             </td>
 
-                                            <!-- Payment Method -->
+                                            <!-- metod placanja -->
                                             <td>
                                                 <div class="method-cell">
                                                     <div class="method-badge stripe">
@@ -209,7 +209,7 @@
                                                 </div>
                                             </td>
 
-                                            <!-- Actions -->
+                                            <!-- Akcije -->
                                             <td>
                                                 <div class="actions-container">
                                                     <div class="actions-group">
@@ -274,8 +274,8 @@
 <style>
     /* Payment Management Theme - Glavna boja: #b16189 sa komplementarnim nijansama */
     :root {
-        /* Vaša glavna pink nijansa #b16189 */
-        --primary-rose: #b16189;           /* Vaša glavna boja */
+        /*  glavna pink nijansa #b16189 */
+        --primary-rose: #b16189;           /*  glavna boja */
         --primary-rose-light: #d4a5c7;    /* Svetlija verzija */
         --primary-rose-lighter: #e6c4d7;  /* Još svetlija */
         --primary-rose-lightest: #f5f1f3;  /* Vrlo bleda */
@@ -329,20 +329,20 @@
         --gray-800: #1e293b;
         --gray-900: #0f172a;
         
-        /* Text colors */
+        /* Text boje */
         --text-primary: #1e293b;
         --text-secondary: #475569;
         --text-muted: #64748b;
         --text-inverse: #ffffff;
         
-        /* Gradients */
+        /* Gradijenti */
         --gradient-main: linear-gradient(135deg, var(--primary-rose) 0%, var(--primary-rose-light) 100%);
         --gradient-success: linear-gradient(135deg, var(--success-green) 0%, var(--sage-light) 100%);
         --gradient-warning: linear-gradient(135deg, var(--warning-yellow) 0%, var(--warm-gold-light) 100%);
         --gradient-error: linear-gradient(135deg, var(--error-red) 0%, var(--primary-rose-light) 100%);
         --gradient-pending: linear-gradient(135deg, var(--pending-blue) 0%, var(--dusty-blue-light) 100%);
         
-        /* Shadows */
+        /* Senke */
         --shadow-main: 0 4px 20px rgba(177, 97, 137, 0.15);
         --shadow-success: 0 4px 20px rgba(97, 177, 160, 0.15);
         --shadow-warning: 0 4px 20px rgba(177, 149, 97, 0.15);
@@ -353,7 +353,7 @@
         --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         
-        /* Transitions */
+        /* tranzicije-promjene */
         --transition-fast: 0.15s ease;
         --transition-normal: 0.2s ease;
         --transition-slow: 0.3s ease;
@@ -365,7 +365,7 @@
         --radius-xl: 1rem;
         --radius-2xl: 1.5rem;
         
-        /* Spacing */
+        /* Razmaci */
         --space-xs: 0.25rem;
         --space-sm: 0.5rem;
         --space-md: 1rem;
@@ -384,7 +384,7 @@
         margin-bottom: var(--space-xl);
     }
 
-    /* Premium Header sa vašom bojom */
+    /* Premium Header sa glavnom bojom */
     .payments-header {
         position: relative;
         background: var(--gradient-main);
@@ -459,7 +459,7 @@
         font-weight: 400;
     }
 
-    /* Statistics Dashboard */
+    
     .stats-dashboard {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -554,7 +554,7 @@
         transition: width var(--transition-slow);
     }
 
-    /* Table Container */
+    
     .payments-table-container {
         padding: var(--space-xl);
         background: var(--white);
@@ -568,7 +568,7 @@
         box-shadow: var(--shadow-md);
     }
 
-    /* Table */
+    
     .payments-table {
         width: 100%;
         border-collapse: collapse;
@@ -611,7 +611,7 @@
         background: transparent;
     }
 
-    /* Payment ID Cell */
+    
     .payment-id-cell {
         display: flex;
         align-items: center;
@@ -650,7 +650,7 @@
         font-family: monospace;
     }
 
-    /* Amount Cell */
+    
     .amount-cell {
         display: flex;
         flex-direction: column;
@@ -679,7 +679,7 @@
         border: 1px solid var(--primary-rose-light);
     }
 
-    /* Date Cell */
+    
     .date-cell {
         display: flex;
         flex-direction: column;
@@ -790,7 +790,7 @@
         line-height: 1.2;
     }
 
-    /* Card Cell */
+    
     .card-cell {
         display: flex;
         flex-direction: column;
@@ -842,7 +842,7 @@
         font-style: italic;
     }
 
-    /* Method Cell */
+    
     .method-cell {
         display: flex;
         flex-direction: column;
@@ -864,7 +864,7 @@
         color: var(--white);
     }
 
-    /* Actions */
+    
     .actions-container {
         display: flex;
         justify-content: flex-end;
@@ -934,7 +934,7 @@
         color: var(--white);
     }
 
-    /* Empty State */
+    
     .empty-state.premium {
         text-align: center;
         padding: 4.5rem 2rem;
@@ -981,7 +981,7 @@
         font-size: 1rem;
     }
 
-    /* Animations */
+    /* Animacije */
     @@keyframes pulse {
         0%, 100% {
             opacity: 1;
@@ -991,7 +991,7 @@
         }
     }
 
-    /* Responsive Design */
+    /* Prilagodljivost ekranima */
     @@media (max-width: 1200px) {
         .stats-dashboard {
             grid-template-columns: repeat(2, 1fr);
@@ -1058,7 +1058,7 @@
         }
     }
 
-    /* Scrollbar sa vašom bojom */
+    /* Scrollbar sa glavnom bojom */
     .table-wrapper {
         overflow-x: auto;
     }

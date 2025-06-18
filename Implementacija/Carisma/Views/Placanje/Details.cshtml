@@ -7,9 +7,9 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-10">
-            <!-- Premium Payment Details Card -->
+            <!-- Premium karticaa detalji za placanje -->
             <div class="payment-details-card">
-                <!-- Dark Rose/Orange Header -->
+                <!-- Dark Rose/Orange zaglavlje -->
                 <div class="payment-details-header">
                     <div class="header-pattern"></div>
                     <div class="header-content">
@@ -29,7 +29,7 @@
                     </div>
                 </div>
 
-                <!-- Payment Content Body -->
+                <!-- sadrzaj placanja -->
                 <div class="payment-details-body">
                     <div class="row g-4">
                         <!-- Finansijski podaci -->
@@ -222,7 +222,7 @@
                         </div>
                     </div>
 
-                    <!-- Actions -->
+                    <!-- Akcije -->
                     <div class="actions-section">
                         <div class="actions-container">
                             <a asp-action="Index" class="btn-back">
@@ -242,7 +242,7 @@
 </div>
 
 <style>
-    /* Dark Rose & Orange Palette - same as Edit */
+    /* Dark Rose & Orange Palette - kao i za Edit */
     :root {
         /* Dark Rose */
         --dark-rose: #c1617c;             /* Tamna roze */
@@ -256,7 +256,7 @@
         --dark-orange-subtle: #f5f2f0;    /* Vrlo bleda tamna narandžasta */
         --dark-orange-deep: #b8632e;      /* Dublja tamna narandžasta */
         
-        /* Gradients */
+        /* Gradijenti */
         --gradient-main: linear-gradient(135deg, var(--dark-rose) 0%, var(--dark-orange) 100%);
         --gradient-financial: linear-gradient(135deg, var(--dark-rose-deep) 0%, var(--dark-rose) 100%);
         --gradient-transaction: linear-gradient(135deg, var(--dark-orange-deep) 0%, var(--dark-orange) 100%);
@@ -271,20 +271,20 @@
         --text-secondary: #64748b;
         --text-muted: #94a3b8;
         
-        /* Status Colors using theme */
+        /* Statusne boje na temuu */
         --success-main: var(--dark-rose-deep);
         --warning-main: var(--dark-orange);
         --danger-main: var(--dark-rose);
         --info-main: var(--dark-orange-deep);
         
-        /* Shadows */
+        /* Senke */
         --shadow-main: 0 8px 32px rgba(193, 97, 124, 0.15), 0 4px 16px rgba(214, 117, 55, 0.1);
         --shadow-rose: 0 4px 20px rgba(193, 97, 124, 0.2);
         --shadow-orange: 0 4px 20px rgba(214, 117, 55, 0.2);
         --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
         --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
         
-        /* Spacing */
+        /* Razmaci */
         --space-xs: 0.25rem;
         --space-sm: 0.5rem;
         --space-md: 1rem;
@@ -292,14 +292,14 @@
         --space-xl: 2rem;
         --space-2xl: 3rem;
         
-        /* Radius */
+        /* Radijus */
         --radius-md: 0.5rem;
         --radius-lg: 0.75rem;
         --radius-xl: 1rem;
         --radius-2xl: 1.5rem;
     }
 
-    /* Main Card */
+    
     .payment-details-card {
         background: var(--white);
         border-radius: var(--radius-2xl);
@@ -309,7 +309,7 @@
         margin-bottom: var(--space-xl);
     }
 
-    /* Header */
+    
     .payment-details-header {
         position: relative;
         background: var(--gradient-main);
@@ -383,13 +383,13 @@
         backdrop-filter: blur(10px);
     }
 
-    /* Details Body */
+    
     .payment-details-body {
         padding: var(--space-2xl);
         background: var(--white);
     }
 
-    /* Details Sections */
+    
     .details-section {
         background: var(--light-gray);
         border-radius: var(--radius-xl);
@@ -451,7 +451,7 @@
         margin: 0;
     }
 
-    /* Detail Items */
+    
     .detail-item {
         margin-bottom: var(--space-xl);
         padding-bottom: var(--space-lg);
@@ -485,7 +485,7 @@
         margin-left: var(--space-lg);
     }
 
-    /* Amount Display */
+    
     .amount-display {
         display: flex;
         align-items: baseline;
@@ -509,7 +509,7 @@
         font-family: 'Courier New', monospace;
     }
 
-    /* Status Cards */
+    
     .status-card {
         display: flex;
         align-items: center;
@@ -585,7 +585,7 @@
         color: var(--text-secondary);
     }
 
-    /* Date Display */
+    
     .date-display {
         display: flex;
         align-items: center;
@@ -626,7 +626,7 @@
         font-family: 'Courier New', monospace;
     }
 
-    /* Card Display */
+    
     .card-display {
         padding: var(--space-md);
         background: var(--dark-rose-subtle);
@@ -677,7 +677,7 @@
         font-size: 1.2rem;
     }
 
-    /* Info Cards */
+   
     .info-cards {
         display: flex;
         flex-direction: column;
@@ -729,7 +729,7 @@
         color: var(--text-primary);
     }
 
-    /* Empty Data */
+    
     .empty-data {
         color: var(--text-muted);
         font-style: italic;
@@ -738,7 +738,7 @@
         gap: var(--space-sm);
     }
 
-    /* Actions */
+    
     .actions-section {
         margin-top: var(--space-2xl);
         padding-top: var(--space-xl);
@@ -795,13 +795,13 @@
         box-shadow: var(--shadow-main);
     }
 
-    /* Animations */
+    /* Animacije */
     @@keyframes pulse {
         0%, 100% { opacity: 1; }
         50% { opacity: 0.5; }
     }
 
-    /* Responsive */
+    /* prilagodljivost */
     @@media (max-width: 768px) {
         .header-content {
             flex-direction: column;

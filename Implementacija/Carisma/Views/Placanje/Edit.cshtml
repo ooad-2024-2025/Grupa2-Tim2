@@ -7,9 +7,9 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <!-- Premium Payment Edit Card -->
+            <!-- edit kartica za placanje -->
             <div class="payment-edit-card">
-                <!-- Dark Rose/Orange Header -->
+                <!-- Dark Rose/Orange zaglavlje -->
                 <div class="payment-edit-header">
                     <div class="header-pattern"></div>
                     <div class="header-content">
@@ -32,7 +32,7 @@
                     </div>
                 </div>
 
-                <!-- Form Body -->
+                
                 <div class="payment-edit-body">
                     <form asp-action="Edit" method="post" class="payment-form">
                         <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
@@ -171,7 +171,7 @@
                             </div>
                         </div>
 
-                        <!-- Actions Section -->
+                        
                         <div class="actions-section">
                             <div class="actions-container">
                                 <a asp-action="Index" class="btn-secondary-custom">
@@ -212,7 +212,7 @@
         --dark-orange-subtle: #f5f2f0;    /* Vrlo bleda tamna narandžasta */
         --dark-orange-deep: #b8632e;      /* Dublja tamna narandžasta */
         
-        /* Gradients */
+        /* Gradijenti */
         --gradient-main: linear-gradient(135deg, var(--dark-rose) 0%, var(--dark-orange) 100%);
         --gradient-amount: linear-gradient(135deg, var(--dark-rose-deep) 0%, var(--dark-rose) 100%);
         --gradient-date: linear-gradient(135deg, var(--dark-orange-deep) 0%, var(--dark-orange) 100%);
@@ -230,14 +230,14 @@
         --text-muted: #94a3b8;
         --danger-color: #ef4444;
         
-        /* Shadows */
+        /* Senke */
         --shadow-main: 0 8px 32px rgba(193, 97, 124, 0.15), 0 4px 16px rgba(214, 117, 55, 0.1);
         --shadow-rose: 0 4px 20px rgba(193, 97, 124, 0.2);
         --shadow-orange: 0 4px 20px rgba(214, 117, 55, 0.2);
         --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
         --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
         
-        /* Spacing */
+        /* Razmaci */
         --space-xs: 0.25rem;
         --space-sm: 0.5rem;
         --space-md: 1rem;
@@ -245,14 +245,14 @@
         --space-xl: 2rem;
         --space-2xl: 3rem;
         
-        /* Radius */
+        /* Radijua */
         --radius-md: 0.5rem;
         --radius-lg: 0.75rem;
         --radius-xl: 1rem;
         --radius-2xl: 1.5rem;
     }
 
-    /* Main Card */
+    
     .payment-edit-card {
         background: var(--white);
         border-radius: var(--radius-2xl);
@@ -262,7 +262,7 @@
         margin-bottom: var(--space-xl);
     }
 
-    /* Header */
+    
     .payment-edit-header {
         position: relative;
         background: var(--gradient-main);
@@ -339,13 +339,13 @@
         backdrop-filter: blur(10px);
     }
 
-    /* Form Body */
+    
     .payment-edit-body {
         padding: var(--space-2xl);
         background: var(--white);
     }
 
-    /* Validation Summary */
+    
     .validation-summary {
         background: linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%);
         color: var(--danger-color);
@@ -355,7 +355,7 @@
         margin-bottom: var(--space-xl);
     }
 
-    /* Form Sections */
+    
     .form-section {
         background: var(--light-gray);
         border-radius: var(--radius-xl);
@@ -415,7 +415,7 @@
         margin: 0;
     }
 
-    /* Form Groups */
+    
     .form-group {
         margin-bottom: var(--space-xl);
     }
@@ -440,7 +440,7 @@
         font-weight: 700;
     }
 
-    /* Input Wrappers */
+    
     .input-wrapper {
         position: relative;
         display: flex;
@@ -508,7 +508,7 @@
         color: var(--dark-rose);
     }
 
-    /* Select Wrapper */
+    
     .select-wrapper {
         position: relative;
     }
@@ -545,7 +545,7 @@
         color: var(--dark-rose);
     }
 
-    /* Validation & Help */
+    
     .validation-error {
         display: block;
         color: var(--danger-color);
@@ -576,7 +576,7 @@
         width: 12px;
     }
 
-    /* Current Status */
+    
     .current-status {
         display: flex;
         align-items: center;
@@ -595,7 +595,7 @@
         color: var(--dark-rose);
     }
 
-    /* Actions */
+    /* Akcije */
     .actions-section {
         margin-top: var(--space-2xl);
         padding-top: var(--space-xl);
@@ -668,13 +668,13 @@
         box-shadow: var(--shadow-main);
     }
 
-    /* Card Number Formatting */
+    /* formatiranje kartice */
     .card-input input {
         font-family: 'Courier New', monospace;
         letter-spacing: 1px;
     }
 
-    /* Responsive */
+    /* prilagodljivost */
     @@media (max-width: 768px) {
         .header-content {
             flex-direction: column;
@@ -715,7 +715,7 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     
     <script>
-        // Format card number input
+        // Formatiranje unusa broja kartice
         document.querySelector('input[name="brojKartice"]').addEventListener('input', function (e) {
             let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
             let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
@@ -724,7 +724,7 @@
             }
         });
 
-        // Set current date as default if empty
+        // Postavi trenutni datum za defaukt opciju ako se ne unese nista
         document.addEventListener('DOMContentLoaded', function() {
             const dateInput = document.querySelector('input[name="datumPlacanja"]');
             if (!dateInput.value) {

@@ -7,9 +7,9 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-10">
-            <!-- Premium Vehicle Edit Card -->
+            <!-- kartica za edit vozila -->
             <div class="premium-vehicle-edit-card">
-                <!-- Enhanced Header -->
+                <!-- Zaglavlje -->
                 <div class="premium-vehicle-edit-header">
                     <div class="header-pattern"></div>
                     <div class="header-content">
@@ -43,7 +43,7 @@
                     </div>
                 </div>
 
-                <!-- Enhanced Notifications -->
+                <!-- Notifikacije -->
                 <div class="notifications-container">
                     @if (TempData["Poruka"] != null)
                     {
@@ -78,7 +78,7 @@
                     }
                 </div>
 
-                <!-- Premium Form Body -->
+                
                 <div class="premium-vehicle-edit-body">
                     <form asp-action="Edit" method="post" class="premium-vehicle-edit-form">
                         @Html.AntiForgeryToken()
@@ -86,7 +86,7 @@
                         <input type="hidden" asp-for="Id" />
                         
                         <div class="row g-4">
-                            <!-- Vehicle Details Section -->
+                            <!-- sekcija sa detaljima o vozilu -->
                             <div class="col-lg-6">
                                 <div class="form-section">
                                     <div class="section-header">
@@ -97,7 +97,7 @@
                                     </div>
                                     
                                     <div class="section-content">
-                                        <!-- Vehicle Brand -->
+                                        <!-- Marka vizila -->
                                         <div class="form-group">
                                             <label asp-for="Marka" class="form-label">
                                                 <i class="fas fa-tag"></i>
@@ -117,7 +117,7 @@
                                             </div>
                                         </div>
 
-                                        <!-- Vehicle Model -->
+                                        <!-- Model vozila -->
                                         <div class="form-group">
                                             <label asp-for="Model" class="form-label">
                                                 <i class="fas fa-car-side"></i>
@@ -137,7 +137,7 @@
                                             </div>
                                         </div>
 
-                                        <!-- Production Year -->
+                                        <!-- Godina proizvodnje -->
                                         <div class="form-group">
                                             <label asp-for="Godina" class="form-label">
                                                 <i class="fas fa-calendar"></i>
@@ -157,7 +157,7 @@
                                             </div>
                                         </div>
 
-                                        <!-- Current Status Display -->
+                                        <!-- Trenutni status -->
                                         <div class="form-group">
                                             <label class="form-label">
                                                 <i class="fas fa-info-circle"></i>
@@ -184,7 +184,7 @@
                                 </div>
                             </div>
 
-                            <!-- Rental Details Section -->
+                            <!-- Detalji za iznajmljivanje -->
                             <div class="col-lg-6">
                                 <div class="form-section">
                                     <div class="section-header">
@@ -195,7 +195,7 @@
                                     </div>
                                     
                                     <div class="section-content">
-                                        <!-- Daily Price -->
+                                        <!-- Cijena po danu -->
                                         <div class="form-group">
                                             <label asp-for="CijenaPoDanu" class="form-label">
                                                 <i class="fas fa-money-bill"></i>
@@ -215,7 +215,7 @@
                                             </div>
                                         </div>
 
-                                        <!-- Vehicle Owner -->
+                                        <!-- Vlasnik -->
                                         <div class="form-group">
                                             <label asp-for="OsobaId" class="form-label">
                                                 <i class="fas fa-user"></i>
@@ -238,7 +238,7 @@
                                             </div>
                                         </div>
 
-                                        <!-- Vehicle Status -->
+                                        <!-- Status vozila -->
                                         <div class="form-group">
                                             <label asp-for="Status" class="form-label">
                                                 <i class="fas fa-flag"></i>
@@ -283,7 +283,7 @@
                                             </div>
                                         </div>
 
-                                        <!-- Change Summary -->
+                                        <!-- Pregled izmjena -->
                                         <div class="change-summary">
                                             <div class="summary-header">
                                                 <i class="fas fa-history"></i>
@@ -305,7 +305,7 @@
                             </div>
                         </div>
 
-                        <!-- Actions Section -->
+                        <!-- nazad na listu -->
                         <div class="actions-section">
                             <div class="actions-container">
                                 <div class="actions-left">
@@ -337,8 +337,8 @@
 <style>
     /* Vehicle Edit Theme - Glavna boja: #b16189 sa automotive akcentima */
     :root {
-        /* Vaša glavna pink nijansa #b16189 */
-        --primary-rose: #b16189;           /* Vaša glavna boja */
+        /*  glavna pink nijansa #b16189 */
+        --primary-rose: #b16189;           /*  glavna boja */
         --primary-rose-light: #d4a5c7;    /* Svetlija verzija */
         --primary-rose-dark: #8e4c6b;     /* Tamnija verzija */
         --primary-rose-subtle: #f5f1f3;   /* Vrlo bleda */
@@ -354,7 +354,7 @@
         --automotive-orange-subtle: #fff7ed;
         --automotive-orange-dark: #c2410c;
         
-        /* Status colors */
+        
         --success-green: #059669;
         --success-light: #d1fae5;
         --success-dark: #047857;
@@ -381,20 +381,20 @@
         --gray-800: #1e293b;
         --gray-900: #0f172a;
         
-        /* Text colors */
+        /* Text boje */
         --text-primary: #1e293b;
         --text-secondary: #475569;
         --text-muted: #64748b;
         --text-inverse: #ffffff;
         
-        /* Gradients */
+        /* Gradijenti */
         --gradient-main: linear-gradient(135deg, var(--primary-rose) 0%, var(--automotive-orange) 100%);
         --gradient-vehicle: linear-gradient(135deg, var(--automotive-blue) 0%, var(--primary-rose) 100%);
         --gradient-rental: linear-gradient(135deg, var(--automotive-orange) 0%, var(--primary-rose-light) 100%);
         --gradient-success: linear-gradient(135deg, var(--success-green) 0%, #059669 100%);
         --gradient-info: linear-gradient(135deg, var(--automotive-blue) 0%, var(--automotive-blue-dark) 100%);
         
-        /* Shadows */
+        /* Senke */
         --shadow-main: 0 4px 20px rgba(177, 97, 137, 0.15);
         --shadow-automotive: 0 4px 20px rgba(37, 99, 235, 0.15);
         --shadow-orange: 0 4px 20px rgba(234, 88, 12, 0.15);
@@ -404,7 +404,7 @@
         --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         
-        /* Transitions */
+        /* Tranzicije */
         --transition-fast: 0.15s ease;
         --transition-normal: 0.2s ease;
         --transition-slow: 0.3s ease;
@@ -416,7 +416,7 @@
         --radius-xl: 1rem;
         --radius-2xl: 1.5rem;
         
-        /* Spacing */
+        /* razmaci */
         --space-xs: 0.25rem;
         --space-sm: 0.5rem;
         --space-md: 1rem;
@@ -425,7 +425,7 @@
         --space-2xl: 3rem;
     }
 
-    /* Main Premium Card */
+    
     .premium-vehicle-edit-card {
         background: var(--white);
         border-radius: var(--radius-2xl);
@@ -542,7 +542,7 @@
         border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    /* Enhanced Notifications */
+    
     .notifications-container {
         padding: 0 var(--space-xl) var(--space-lg) var(--space-xl);
     }
@@ -643,7 +643,7 @@
         max-width: 100%;
     }
 
-    /* Validation Summary */
+    
     .validation-summary {
         background: linear-gradient(135deg, var(--error-light) 0%, #fef2f2 100%);
         color: var(--error-dark);
@@ -654,7 +654,7 @@
         box-shadow: var(--shadow-main);
     }
 
-    /* Form Sections */
+    
     .form-section {
         background: var(--white);
         border-radius: var(--radius-xl);
@@ -708,7 +708,7 @@
         margin: 0;
     }
 
-    /* Form Groups */
+    
     .form-group {
         margin-bottom: var(--space-xl);
     }
@@ -733,7 +733,7 @@
         font-weight: 700;
     }
 
-    /* Input Wrapper */
+    
     .input-wrapper {
         position: relative;
     }
@@ -790,7 +790,7 @@
         color: var(--primary-rose);
     }
 
-    /* Select Wrapper */
+    
     .select-wrapper {
         position: relative;
     }
@@ -828,7 +828,7 @@
         color: var(--automotive-blue);
     }
 
-    /* Validation Errors */
+    
     .validation-error {
         display: block;
         color: var(--error-red);
@@ -837,7 +837,7 @@
         font-weight: 600;
     }
 
-    /* Form Help */
+    
     .form-help {
         display: flex;
         align-items: center;
@@ -857,7 +857,7 @@
         flex-shrink: 0;
     }
 
-    /* Current Owner */
+    
     .current-owner {
         display: flex;
         align-items: center;
@@ -945,7 +945,7 @@
         line-height: 1.4;
     }
 
-    /* Status Container */
+    
     .status-container {
         display: flex;
         flex-direction: column;
@@ -1039,7 +1039,7 @@
         color: var(--text-secondary);
     }
 
-    /* Change Summary */
+    
     .change-summary {
         background: linear-gradient(135deg, var(--gray-100) 0%, var(--primary-rose-subtle) 100%);
         border: 1px solid var(--primary-rose-light);
@@ -1081,7 +1081,7 @@
         font-family: monospace;
     }
 
-    /* Actions Section */
+    
     .actions-section {
         margin-top: var(--space-2xl);
         padding-top: var(--space-xl);
@@ -1104,7 +1104,7 @@
         align-items: center;
     }
 
-    /* Premium Buttons */
+    
     .btn-secondary-custom,
     .btn-info-custom,
     .btn-primary-custom {
@@ -1182,7 +1182,7 @@
         box-shadow: var(--shadow-main);
     }
 
-    /* Animations */
+    /* Animacije */
     @@keyframes slideInDown {
         from {
             opacity: 0;
@@ -1194,7 +1194,7 @@
         }
     }
 
-    /* Responsive Design */
+    /* prilagodljivost ekranima */
     @@media (max-width: 768px) {
         .premium-vehicle-edit-header {
             padding: var(--space-xl);
@@ -1271,7 +1271,7 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Price formatting
+            // formatiranje cijene
             const priceInput = document.querySelector('input[name="CijenaPoDanu"]');
             if (priceInput) {
                 priceInput.addEventListener('input', function(e) {
@@ -1282,7 +1282,7 @@
                 });
             }
 
-            // Year validation
+            // validacija za godinu
             const yearInput = document.querySelector('input[name="Godina"]');
             if (yearInput) {
                 yearInput.addEventListener('input', function(e) {
@@ -1295,7 +1295,7 @@
                 });
             }
 
-            // Form change detection
+            // detekcija promjena u formi
             let originalFormData = new FormData(document.querySelector('.premium-vehicle-edit-form'));
             
             function hasFormChanged() {
@@ -1308,7 +1308,9 @@
                 return false;
             }
 
-            // Warn on page leave if form has changes
+            // prikazati upozorenje pri napuštanju stranice ako postoje promjene u formi
+
+
             window.addEventListener('beforeunload', function(e) {
                 if (hasFormChanged()) {
                     e.preventDefault();
@@ -1316,7 +1318,7 @@
                 }
             });
 
-            // Remove warning when form is submitted
+            // ukloni upozorenje kada je forma poslata
             document.querySelector('.premium-vehicle-edit-form').addEventListener('submit', function() {
                 window.removeEventListener('beforeunload', arguments.callee);
             });

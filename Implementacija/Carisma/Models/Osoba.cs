@@ -21,7 +21,7 @@ namespace Carisma.Models
         [StringLength(50, MinimumLength = 3, ErrorMessage = "Korisničko ime mora imati između 3 i 50 karaktera.")]
         public string korisnicko_ime { get; set; }
 
-        // Dodaj ova nova svojstva za integraciju sa Identity
+        //  integracija sa Identity
         [Required(ErrorMessage = "Ime je obavezno.")]
         [StringLength(50, ErrorMessage = "Ime ne može biti duže od 50 karaktera.")]
         public string Ime { get; set; }
@@ -30,7 +30,7 @@ namespace Carisma.Models
         [StringLength(50, ErrorMessage = "Prezime ne može biti duže od 50 karaktera.")]
         public string Prezime { get; set; }
 
-        public string? IdentityUserId { get; set; }  // Povezivanje sa Identity korisnicima
+        public string? IdentityUserId { get; set; }  
 
         public Uloga? uloga { get; set; }
         public bool blokiran { get; set; } = false;

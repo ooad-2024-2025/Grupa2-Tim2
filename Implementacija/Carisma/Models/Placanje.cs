@@ -10,12 +10,10 @@ namespace Carisma.Models
         public StatusPlacanja statusPlacanja { get; set; } 
         public String? brojKartice { get; set; }
         
-        // Foreign key za korisnika
         public int korisnikId { get; set; }
         [ForeignKey("korisnikId")]
         public virtual Osoba korisnik { get; set; }
         
-        // Foreign key za rezervaciju - SAMO OVAJ OSTAVITE
         public int? RezervacijaId { get; set; }
         [ForeignKey("RezervacijaId")]
         public virtual Rezervacija Rezervacija { get; set; }

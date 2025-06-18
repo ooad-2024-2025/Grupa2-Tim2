@@ -22,7 +22,7 @@ namespace Carisma.Models
         
         public int? korisnikId { get; set; }  // nullable ako je opcionalno
         [ForeignKey("korisnikId")]
-       // public Osoba? korisnik { get; set; }
+       
 
         public int voziloId { get; set; }
         [ForeignKey("voziloId")]

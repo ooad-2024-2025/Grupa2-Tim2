@@ -7,7 +7,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-10">
-                <!-- Header Section -->
+                <!-- Zaglavlje -->
                 <div class="details-header">
                     <div class="header-content">
                         <div class="brand-badge">@Model.Marka</div>
@@ -35,9 +35,9 @@
                     </div>
                 </div>
 
-                <!-- Main Content -->
+                <!-- Glavni sadrzaj -->
                 <div class="vehicle-card">
-                    <!-- Compact Image Section -->
+                    <!-- Kompaktni dio sa slikom -->
                     <div class="vehicle-image-section">
                         <div class="image-container">
                             <img src="~/images/vozila/@(GetVoziloImage(Model.Marka, Model.Model))" 
@@ -54,9 +54,9 @@
                         </div>
                     </div>
 
-                    <!-- Info Section -->
+                    <!-- sekcija za informacije -->
                     <div class="vehicle-info-section">
-                        <!-- Quick Specs -->
+                        <!-- Brze specifikacije -->
                         <div class="quick-specs">
                             <div class="spec-item">
                                 <i class="fas fa-car"></i>
@@ -80,7 +80,7 @@
 
                 <!-- Info Grid -->
                 <div class="info-grid">
-                    <!-- Rental Information -->
+                    <!-- Informacije o najmu -->
                     <div class="info-card">
                         <h4 class="card-title">
                             <i class="fas fa-info-circle"></i>
@@ -126,7 +126,7 @@
                         </div>
                     </div>
 
-                    <!-- Important Notes -->
+                    <!-- Vazne napomene -->
                     <div class="info-card">
                         <h4 class="card-title">
                             <i class="fas fa-exclamation-triangle"></i>
@@ -212,7 +212,7 @@
         max-width: 1200px;
     }
 
-    /* Compact Header */
+    
     .details-header {
         background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(20px);
@@ -296,7 +296,7 @@
         color: white;
     }
 
-    /* Compact Main Card */
+    
     .vehicle-card {
         background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(20px);
@@ -309,7 +309,7 @@
         min-height: 220px;
     }
 
-    /* Compact Image */
+    
     .vehicle-image-section {
         background: linear-gradient(135deg, #f7fafc, #edf2f7);
         display: flex;
@@ -490,7 +490,7 @@
         text-align: center;
     }
 
-    /* Action Section */
+    
     .action-section {
         display: flex;
         justify-content: space-between;
@@ -577,7 +577,7 @@
         cursor: not-allowed;
     }
 
-    /* Responsive Design */
+    /* prilagodljivost ekranima */
     @@media (max-width: 992px) {
         .vehicle-card {
             grid-template-columns: 1fr;

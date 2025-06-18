@@ -225,8 +225,8 @@
 <style>
     /* Paleta bazirana na #b16189 sa komplementarnim bojama */
     :root {
-        /* Glavna paleta sa vašom bojom */
-        --primary-rose: #b16189;           /* Vaša boja */
+        /* Glavna paleta sa glavnom bojom */
+        --primary-rose: #b16189;           /* glavna boja */
         --primary-light: #d4a5c7;         /* Svetlija verzija */
         --primary-dark: #8e4c6b;          /* Tamnija verzija */
         --primary-subtle: #f6f1f4;        /* Vrlo bleda verzija */
@@ -262,7 +262,7 @@
         --danger-color: #dc2626;
         --info-color: var(--dusty-teal);
         
-        /* Shadows */
+        /* Senke */
         --shadow-primary: rgba(177, 97, 137, 0.12);
         --shadow-sage: rgba(97, 177, 136, 0.12);
         --shadow-teal: rgba(97, 142, 177, 0.12);
@@ -270,7 +270,7 @@
         --shadow-medium: rgba(0, 0, 0, 0.1);
     }
 
-    /* Main card */
+    
     .management-card {
         background: var(--white);
         border-radius: 16px;
@@ -279,7 +279,7 @@
         overflow: hidden;
     }
 
-    /* Header sa vašom bojom u gradijantu */
+    /* Header sa glavnom bojom u gradijantu */
     .card-header {
         background: linear-gradient(135deg, var(--primary-rose) 0%, var(--primary-dark) 50%, var(--primary-dark-bg) 100%);
         color: var(--white);
@@ -358,13 +358,13 @@
         margin-top: 0.25rem;
     }
 
-    /* Card body */
+    
     .card-body {
         padding: 2.5rem;
         background: var(--white);
     }
 
-    /* Alerts */
+    
     .alert {
         display: flex;
         align-items: center;
@@ -407,7 +407,7 @@
         opacity: 0.9;
     }
 
-    /* Table wrapper */
+    
     .table-wrapper {
         background: var(--white);
         border-radius: 12px;
@@ -416,7 +416,7 @@
         box-shadow: 0 2px 12px var(--shadow-primary);
     }
 
-    /* Table */
+    
     .data-table {
         width: 100%;
         border-collapse: collapse;
@@ -454,7 +454,7 @@
         transform: translateY(-1px);
     }
 
-    /* User cell sa vašom bojom u avatar-u */
+    /* User cell sa glavnom bojom u avatar-u */
     .user-cell {
         display: flex;
         align-items: center;
@@ -490,7 +490,7 @@
         font-weight: 500;
     }
 
-    /* Name cell */
+    
     .full-name {
         font-weight: 500;
         color: var(--text-primary);
@@ -502,7 +502,7 @@
         font-style: italic;
     }
 
-    /* Contact cell */
+    
     .contact-item {
         display: flex;
         align-items: center;
@@ -570,7 +570,7 @@
         border: 1px solid var(--primary-light);
     }
 
-    /* Status badges */
+    
     .status-badge {
         display: inline-flex;
         align-items: center;
@@ -646,7 +646,7 @@
         border-color: var(--primary-rose);
     }
 
-    /* Empty state */
+    
     .empty-state {
         text-align: center;
         padding: 4.5rem 2rem;
@@ -673,7 +673,7 @@
         font-size: 0.95rem;
     }
 
-    /* Responsive */
+    /* da se moze prilagoditi... */
     @@media (max-width: 768px) {
         .header-content {
             flex-direction: column;
@@ -715,7 +715,7 @@
         }
     }
 
-    /* Scrollbar sa vašom bojom */
+    /* Scrollbar sa glavnom bojom */
     .table-wrapper {
         overflow-x: auto;
     }
