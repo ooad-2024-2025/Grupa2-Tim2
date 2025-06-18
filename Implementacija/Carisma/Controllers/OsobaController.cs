@@ -132,7 +132,7 @@ namespace Carisma.Controllers
                 }
             //}
 
-            
+            // Ako ModelState nije valjan, ponovno postavi ViewBag i vrati view
             ViewBag.Uloge = new SelectList(Enum.GetValues(typeof(Uloga)), osoba.uloga);
             return View(osoba);
         }
