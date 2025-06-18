@@ -371,7 +371,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Smooth hover effects for feature items
+            
             const featureItems = document.querySelectorAll('.feature-item');
             featureItems.forEach(item => {
                 item.addEventListener('mouseenter', function() {
@@ -383,17 +383,17 @@
                 });
             });
 
-            // CTA button click effect
+            
             const ctaButton = document.querySelector('.cta-button');
             ctaButton.addEventListener('click', function(e) {
-                // Visual feedback
+         
                 this.style.transform = 'scale(0.98)';
                 setTimeout(() => {
                     this.style.transform = '';
                 }, 150);
             });
 
-            // Parallax effect for floating shapes
+            
             window.addEventListener('scroll', function() {
                 const scrolled = window.pageYOffset;
                 const shapes = document.querySelectorAll('.shape');
